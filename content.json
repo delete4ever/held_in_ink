@@ -1,0 +1,262 @@
+{
+  "$schema": "./content.schema.json",
+  "contentVersion": 3,
+  "prompts": [
+    {
+      "id": "message",
+      "scene": {
+        "kicker": "Third-day letter · Parting",
+        "homeTitle": "A voice carried after marriage",
+        "homeDeck": "Enter a third-day-letter context in which a written voice asks a close relationship to endure across separation.",
+        "theme": "message",
+        "sequence": ["light letter", "carried voice", "enduring relation"],
+        "evidenceLabel": "Attested Han transcription · normalized digital reconstruction",
+        "defaultSurface": "paper"
+      },
+      "layers": {
+        "stroke": {
+          "status": "verified-digital-reconstruction",
+          "symbol": "𛉡",
+          "phrase": "𛉖𛆂𛈆𛉂𛉡",
+          "transcription": "薄文傳聲信",
+          "phraseReading": "pu33 · vai42 · tcyn42 · ciong44 · sai21",
+          "gloss": "This light letter carries my voice.",
+          "guideLabel": "Five standardized Unicode forms — not a facsimile of the historical hand",
+          "reference": "A third-day-letter line: 薄文傳聲信",
+          "referenceNote": "The line is rendered here as a normalized sequence of five Unicode Nüshu forms. The final form, 𛉡 (sai21), corresponds to 信 in this context. This is a transparent digital reconstruction, not a diplomatic transcription or handwriting specimen."
+        },
+        "narrative": {
+          "title": "A light letter carries my voice",
+          "place": "Heyuan Village, Jiangyong County",
+          "storyType": "Attested line · normalized digital reconstruction",
+          "story": [
+            "Three days after a wedding, women close to a bride could send a book that held both sorrow at parting and wishes for the life ahead. In one documented letter from Heyuan Village, the Han transcription includes the line 薄文傳聲信: a light letter carrying the writer’s voice.",
+            "The surrounding passage remembers years of companionship and asks that marriage not be allowed to end the relationship. The letter cannot remove the distance, but it can make a voice present where the writer’s body is absent.",
+            "Here, the five syllabic forms are written as one address. Their digital sequence is a documented reconstruction for this prototype, not a copy of the historical writer’s hand."
+          ],
+          "writingLines": [
+            "The letter is light in the hand.",
+            "It carries a voice across the distance.",
+            "The relationship is asked to endure."
+          ],
+          "after": "The five forms have become an address: a voice carried towards someone absent.",
+          "archiveNote": "薄文傳聲信 is preserved in the Han transcription of a third-day letter from Heyuan Village. The Nüshu sequence shown here is a normalized Unicode reconstruction for this research prototype, not a facsimile or a claim to reproduce the original writer’s hand."
+        },
+        "context": {
+          "note": "The Han transcription 薄文傳聲信 appears in a documented third-day letter from Heyuan Village. Fei-wen Liu translates the surrounding passage as a letter filled with the writer’s words and an appeal for sisterhood to persist after marriage. The concise interface gloss is interpretive; the displayed Nüshu sequence is a normalized Unicode reconstruction.",
+          "sources": [
+            {
+              "label": "Nüshu third-day-letter handkerchief — Han transcription and provenance",
+              "credit": "Museum of the Institute of Ethnology · Academia Sinica",
+              "url": "https://havefun.asdc.sinica.edu.tw/content/repository/resource_content.jsp?oid=4364459"
+            },
+            {
+              "label": "Literacy, Gender, and Class — translation and social analysis",
+              "credit": "Fei-wen Liu · Nan Nü 6.2 · 2004",
+              "url": "https://www.ioe.sinica.edu.tw/WebTools/FilesDownload.ashx?Menuid=530167136406372131&Pname=2004+nan6-2_liu_090904.pdf&Siteid=530167135246736660&fd=ResearcherPublication"
+            },
+            {
+              "label": "Nüshu source data — normalized forms and readings",
+              "credit": "Unicode Consortium · Unicode Character Database 17.0.0",
+              "url": "https://www.unicode.org/Public/17.0.0/ucd/NushuSources.txt"
+            },
+            {
+              "label": "Encoding proposal N3337 — source-character table",
+              "credit": "China · ISO/IEC JTC 1/SC 2/WG 2 · 2007",
+              "url": "https://www.unicode.org/L2/L2007/07303-n3337.pdf"
+            },
+            {
+              "label": "Nüshu: from tears to sunshine — third-day missive context",
+              "credit": "Chen Xiaorong · UNESCO",
+              "url": "https://www.unesco.org/en/articles/nushu-tears-sunshine-0"
+            }
+          ],
+          "artefact": null,
+          "audio": null
+        }
+      }
+    },
+    {
+      "id": "handkerchief",
+      "scene": {
+        "kicker": "Handkerchief letter · Distance",
+        "homeTitle": "Meeting through a handkerchief",
+        "homeDeck": "Follow a reported line in which words sent abroad become a way for separated people to meet.",
+        "theme": "crossing",
+        "sequence": ["ink on cloth", "journey abroad", "meeting in words"],
+        "evidenceLabel": "Reported Han transcription · Nüshu forms pending verification",
+        "defaultSurface": "cloth"
+      },
+      "layers": {
+        "stroke": {
+          "status": "pending-verification",
+          "symbol": null,
+          "phrase": null,
+          "transcription": "寄到国外相会身",
+          "phraseReading": null,
+          "gloss": "May these words travel abroad, so we may meet through them.",
+          "guideLabel": "Nüshu forms withheld until the line can be checked against an authoritative source",
+          "reference": "Reported Han transcription: 寄到国外相会身",
+          "referenceNote": "The Han transcription is reported within a longer handkerchief-letter passage. This prototype does not convert its modern Chinese characters into Nüshu: the syllabic forms and readings remain withheld pending verification."
+        },
+        "narrative": {
+          "title": "Meeting through a handkerchief",
+          "place": "Jiangyong region · correspondence abroad",
+          "storyType": "Reported line · Nüshu forms pending verification",
+          "story": [
+            "When researcher Orie Endo met He Yanxin in 1994, she believed that decades without using Nüshu had caused her to forget it. Their work together became a return to reading, remembering, and writing the script.",
+            "A reported handkerchief-letter passage includes the Han transcription 寄到国外相会身. Its image is relational rather than geographic: the writing travels abroad so that people who cannot stand together may first meet through words.",
+            "Because the corresponding syllabic forms have not yet been checked against an authoritative source, this encounter keeps the Nüshu guide blank. The mark you make is a response to the account, not a reconstructed Nüshu line."
+          ],
+          "writingLines": [
+            "Ink settles on a small handkerchief.",
+            "It leaves the village and crosses the sea.",
+            "People who cannot meet first meet in writing."
+          ],
+          "after": "What you wrote is not an address, but an arrival.",
+          "archiveNote": "寄到国外相会身 is presented as a reported Han transcription. Its Nüshu forms have not been verified, so this archive preserves an unguided response mark and does not label that mark as Nüshu. The English text is curatorial writing, not a historical quotation."
+        },
+        "context": {
+          "note": "Orie Endo records meeting He Yanxin in 1994 and describes the return of He’s Nüshu practice after a long gap. Chinese reporting reproduces the longer handkerchief-letter passage containing 寄到国外相会身 and connects it to writing sent abroad. The interface gloss and narrative beats are curatorial; no surviving handkerchief is represented here.",
+          "sources": [
+            {
+              "label": "Inscribing Intimacy — He Yanxin and the return to Nüshu writing",
+              "credit": "Orie Endo · University of Michigan Deep Blue · 2019 English edition",
+              "url": "https://deepblue.lib.umich.edu/items/5b196955-cb60-490e-90db-64717fa24eba"
+            },
+            {
+              "label": "He Yanxin: Calling and Recalling the Sentiments of Nüshu",
+              "credit": "Oxford Academic · chapter record",
+              "url": "https://academic.oup.com/book/25548/chapter-abstract/192849746"
+            },
+            {
+              "label": "Land and deities: Jiangyong, Nüshu and sister goddesses — reported Han transcription",
+              "credit": "The Paper · 2019",
+              "url": "https://www.thepaper.cn/newsDetail_forward_5187608"
+            }
+          ],
+          "artefact": null,
+          "audio": null
+        }
+      }
+    },
+    {
+      "id": "voicing-sorrow",
+      "scene": {
+        "kicker": "Nüshu song · Witness",
+        "homeTitle": "Giving sorrow a voice",
+        "homeDeck": "Enter a song context in which difficult experience is voiced, heard, and held in relation with other women.",
+        "theme": "witness",
+        "sequence": ["lived experience", "sung testimony", "shared witness"],
+        "evidenceLabel": "Attested Han transcription · Nüshu forms pending verification",
+        "defaultSurface": "paper"
+      },
+      "layers": {
+        "stroke": {
+          "status": "pending-verification",
+          "symbol": null,
+          "phrase": null,
+          "transcription": "要凭女书诉苦情",
+          "phraseReading": null,
+          "gloss": "We need Nüshu to give sorrow a voice.",
+          "guideLabel": "Nüshu forms withheld until the preserved text and readings can be checked",
+          "reference": "Published Han transcription: 要凭女书诉苦情",
+          "referenceNote": "The line is shown only in Han transcription. Its Nüshu syllabic sequence has not been verified for this prototype, and the English gloss is an interpretive interface line rather than a literal quotation."
+        },
+        "narrative": {
+          "title": "Giving sorrow a voice",
+          "place": "Jiangyong County, Hunan",
+          "storyType": "Attributed song · Nüshu forms pending verification",
+          "story": [
+            "Fei-wen Liu discusses a song attributed to a rural woman identified as Cizhu, born in the early twentieth century. The song distinguishes Nüshu from writing pursued for examination or official advancement: its purpose is to speak from the conditions of women’s lives.",
+            "The published Han transcription 要凭女书诉苦情 names that purpose directly. Writing does not automatically cure hardship. It gives difficult experience a form that can be voiced, remembered, and recognized by someone else.",
+            "This encounter therefore treats the page as a place of witness. Until the Nüshu forms are verified, your line remains an unguided response rather than a claim to reproduce the song."
+          ],
+          "writingLines": [
+            "Some lives did not enter official histories.",
+            "She shaped what was difficult to say into song.",
+            "Another woman could read it and know she was not alone."
+          ],
+          "after": "Once sorrow has a form, it can begin to be understood together.",
+          "archiveNote": "要凭女书诉苦情 is presented as a published Han transcription associated with Cizhu’s song. The Nüshu forms remain pending verification, so the saved mark is explicitly an interpretive response. The English wording is curatorial and does not present itself as a translation of the original song."
+        },
+        "context": {
+          "note": "Fei-wen Liu analyzes an attributed song by Cizhu as an explicit account of why women used Nüshu to articulate bitterness and grievance rather than to seek official status. A Chinese secondary source reproduces the Han transcription used here. The interface does not romanticize suffering or describe writing as automatic healing; its focus is expression and shared recognition.",
+          "sources": [
+            {
+              "label": "From being to becoming: Nüshu and sentiments in a Chinese rural community",
+              "credit": "Fei-wen Liu · American Ethnologist 31.3 · 2004",
+              "url": "https://www.ioe.sinica.edu.tw/WebTools/FilesDownload.ashx?Menuid=530167136406372131&Pname=2004+From+being+to+becoming+PDF.pdf&Siteid=530167135246736660&fd=ResearcherPublication"
+            },
+            {
+              "label": "Chinese secondary publication reproducing the Han transcription of Cizhu’s Nüshu song",
+              "credit": "Sohu · secondary source",
+              "url": "https://www.sohu.com/a/166175656_488835"
+            }
+          ],
+          "artefact": null,
+          "audio": null
+        }
+      }
+    },
+    {
+      "id": "addressing-goddess",
+      "scene": {
+        "kicker": "Ritual song · Address",
+        "homeTitle": "Writing to the revered goddess",
+        "homeDeck": "Enter an orally remembered temple-song context in which a written address is sung before a female deity and heard by women nearby.",
+        "theme": "invocation",
+        "sequence": ["no earthly shelter", "written address", "heard aloud"],
+        "evidenceLabel": "Reported oral memory · Nüshu forms pending verification",
+        "defaultSurface": "paper"
+      },
+      "layers": {
+        "stroke": {
+          "status": "pending-verification",
+          "symbol": null,
+          "phrase": null,
+          "transcription": "把笔修书拜贵神",
+          "phraseReading": null,
+          "gloss": "I take up the brush and write to the revered goddess.",
+          "guideLabel": "Nüshu forms withheld because the remembered song has not been matched to a verified sequence",
+          "reference": "Reported Han transcription: 把笔修书拜贵神",
+          "referenceNote": "The line is reported through He Yanxin’s recollection of a Huashan Temple song learned in childhood. It is not presented as a surviving manuscript, and no Nüshu forms are inferred from the modern Han characters."
+        },
+        "narrative": {
+          "title": "Writing to the revered goddess",
+          "place": "Huashan Temple tradition · Jiangyong County",
+          "storyType": "Reported oral memory · Nüshu forms pending verification",
+          "story": [
+            "In a later account, He Yanxin remembered learning a Huashan Temple song from her aunt when she was nine. Its speaker is a young woman without parents or dependable kin: a voice searching for somewhere to place what cannot be carried alone.",
+            "The reported Han transcription includes 把笔修书拜贵神 — taking up the brush to write before a revered deity. In this ritual context, the words are not only placed on a page; they may also be sung aloud and heard among other women.",
+            "No surviving manuscript is claimed here, and the original Nüshu sequence has not been verified. The blank guide keeps that absence visible while the encounter focuses on the act of address."
+          ],
+          "writingLines": [
+            "There is no earthly branch to hold her.",
+            "She takes up the brush and shapes concern into an address.",
+            "The words are sung to the deity and heard by women nearby."
+          ],
+          "after": "This address does not promise an answer; the writing gives concern somewhere to rest.",
+          "archiveNote": "把笔修书拜贵神 is presented through a reported childhood memory of a Huashan Temple song. No surviving manuscript or original author is claimed. Because its Nüshu sequence remains unverified, the saved mark is an interpretive response and the English wording is curatorial."
+        },
+        "context": {
+          "note": "Chinese reporting attributes this line to He Yanxin’s memory of a Huashan Temple song learned from her aunt in childhood. The account concerns an orphaned female speaker addressing a revered deity. This prototype treats it as oral and field-recorded context, not as an extant original manuscript; the English gloss and narrative beats are curatorial writing.",
+          "sources": [
+            {
+              "label": "Land and deities: Jiangyong, Nüshu and sister goddesses — reported oral memory and Han transcription",
+              "credit": "The Paper · 2019",
+              "url": "https://www.thepaper.cn/newsDetail_forward_5187608"
+            },
+            {
+              "label": "From being to becoming — Nüshu genres, sentiment, and social practice",
+              "credit": "Fei-wen Liu · American Ethnologist 31.3 · 2004",
+              "url": "https://www.ioe.sinica.edu.tw/WebTools/FilesDownload.ashx?Menuid=530167136406372131&Pname=2004+From+being+to+becoming+PDF.pdf&Siteid=530167135246736660&fd=ResearcherPublication"
+            }
+          ],
+          "artefact": null,
+          "audio": null
+        }
+      }
+    }
+  ]
+}

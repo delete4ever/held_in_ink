@@ -1,0 +1,10 @@
+{
+  "name": "held-in-ink",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "validate": "node scripts/validate-content.mjs",
+    "build": "node scripts/build.mjs"
+  }
+}
