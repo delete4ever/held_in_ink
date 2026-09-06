@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "node scripts/dev.mjs",
+    "test": "node --test scripts/brush-engine.test.mjs",
     "validate": "node scripts/validate-content.mjs",
     "build": "node scripts/build.mjs"
   }

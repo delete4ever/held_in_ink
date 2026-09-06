@@ -124,8 +124,8 @@ export async function validateContentFile(projectRoot) {
     const strokeFields = ["status", "symbol", "phrase", "transcription", "phraseReading", "gloss", "guideLabel", "reference", "referenceNote"];
     allowedKeys(stroke, strokeFields, `${promptPath}.layers.stroke`);
     ["status", "transcription", "gloss", "guideLabel", "reference", "referenceNote"].forEach((field) => nonBlank(stroke[field], `${promptPath}.layers.stroke.${field}`));
-    if (!["verified-digital-reconstruction", "pending-verification"].includes(stroke.status)) fail(`${promptPath}.layers.stroke.status`, "uses an unsupported verification status");
-    if (stroke.status === "verified-digital-reconstruction") {
+    if (!["verified-digital-reconstruction", "dictionary-derived-reconstruction", "pending-verification"].includes(stroke.status)) fail(`${promptPath}.layers.stroke.status`, "uses an unsupported verification status");
+    if (["verified-digital-reconstruction", "dictionary-derived-reconstruction"].includes(stroke.status)) {
       ["symbol", "phrase", "phraseReading"].forEach((field) => nonBlank(stroke[field], `${promptPath}.layers.stroke.${field}`));
       if (Array.from(stroke.phrase).length < 2) fail(`${promptPath}.layers.stroke.phrase`, "must contain at least two forms");
     } else if (stroke.symbol !== null || stroke.phrase !== null || stroke.phraseReading !== null) {
@@ -133,7 +133,7 @@ export async function validateContentFile(projectRoot) {
     }
 
     const narrative = objectAt(layers.narrative, `${promptPath}.layers.narrative`);
-    const narrativeFields = ["title", "place", "storyType", "story", "writingLines", "after", "archiveNote"];
+    const narrativeFields = ["sender", "receiver", "time", "title", "place", "storyType", "story", "writingLines", "after", "archiveNote"];
     allowedKeys(narrative, narrativeFields, `${promptPath}.layers.narrative`);
     narrativeFields.filter((field) => !["story", "writingLines"].includes(field)).forEach((field) => nonBlank(narrative[field], `${promptPath}.layers.narrative.${field}`));
     if (!Array.isArray(narrative.story) || narrative.story.length < 2) fail(`${promptPath}.layers.narrative.story`, "must contain at least two paragraphs");

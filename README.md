@@ -46,12 +46,12 @@ To create the deployable static output, run `npm run build`. No package installa
 Open `content.json`. Each object in `prompts` is one encounter, organized as follows:
 
 - `scene` contains the homepage title and deck, one of four visual themes, three visible narrative beats, the evidence label, and the default writing surface.
-- `layers.stroke` always records a verification `status`, Han `transcription`, interpretive `gloss`, and source boundary. A verified record also contains `symbol`, `phrase`, and `phraseReading`; a pending record keeps all three fields `null`.
-- `layers.narrative` contains the title, place, evidence status, multiple story paragraphs, three writing-stage reveal lines, after-text, and archive note.
+- `layers.stroke` always records a verification `status`, Han `transcription`, interpretive `gloss`, and source boundary. Both archive-checked and dictionary-derived records contain `symbol`, `phrase`, and `phraseReading`; a pending record keeps all three fields `null`.
+- `layers.narrative` names the fictional `sender` and `receiver`, locates the scene in `time` and `place`, and contains the story, three writing-stage reveal lines, arrival text, and archive note.
 - `layers.context` contains a social-context `note`, a `sources` list, and optional `artefact` and `audio` records.
 - `id` becomes the downloaded file name; keep it short and unique.
 
-To add or replace a guide, use forms that exist in the bundled font, update `layers.stroke.symbol` and `layers.stroke.phrase`, and verify the full syllabic sequence against an authoritative source. Do not convert modern Chinese characters to Nüshu by visual or semantic guesswork. Until verification is complete, keep the status `pending-verification` and the three form fields `null`; the interface will provide an explicitly unguided response surface.
+To add or replace a guide, use forms that exist in the bundled font and update `layers.stroke.symbol`, `layers.stroke.phrase`, and `phraseReading`. Use `verified-digital-reconstruction` only when the complete sequence can be cross-checked against an authoritative text record. Use `dictionary-derived-reconstruction` when standardized candidates are selected from published Han correspondences and Jiangyong readings but the original line has not been matched; state every material ambiguity in `referenceNote`. Do not convert modern Chinese characters by visual or semantic guesswork. If even a transparent candidate sequence cannot be supported, keep `pending-verification` and the three form fields `null`.
 
 `content.schema.json` documents the complete contract. Use `null` for an unavailable `artefact` or `audio` record and an empty array for no sources; do not use empty strings or placeholder file paths. The interface will retain a complete, honest text state when media is absent.
 

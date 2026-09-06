@@ -76,7 +76,7 @@
       "additionalProperties": false,
       "required": ["status", "symbol", "phrase", "transcription", "phraseReading", "gloss", "guideLabel", "reference", "referenceNote"],
       "properties": {
-        "status": { "enum": ["verified-digital-reconstruction", "pending-verification"] },
+        "status": { "enum": ["verified-digital-reconstruction", "dictionary-derived-reconstruction", "pending-verification"] },
         "symbol": {
           "oneOf": [
             { "type": "null" },
@@ -108,7 +108,7 @@
       },
       "allOf": [
         {
-          "if": { "properties": { "status": { "const": "verified-digital-reconstruction" } } },
+          "if": { "properties": { "status": { "enum": ["verified-digital-reconstruction", "dictionary-derived-reconstruction"] } } },
           "then": {
             "properties": {
               "symbol": { "$ref": "#/$defs/nonBlank" },
@@ -134,8 +134,11 @@
     "narrative": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["title", "place", "storyType", "story", "writingLines", "after", "archiveNote"],
+      "required": ["sender", "receiver", "time", "title", "place", "storyType", "story", "writingLines", "after", "archiveNote"],
       "properties": {
+        "sender": { "$ref": "#/$defs/nonBlank" },
+        "receiver": { "$ref": "#/$defs/nonBlank" },
+        "time": { "$ref": "#/$defs/nonBlank" },
         "title": { "$ref": "#/$defs/nonBlank" },
         "place": { "$ref": "#/$defs/nonBlank" },
         "storyType": { "$ref": "#/$defs/nonBlank" },

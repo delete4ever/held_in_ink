@@ -21,4 +21,12 @@ The material visuals are abstract interface treatments. They must not be describ
 
 The phrase `𛉖𛆂𛈆𛉂𛉡` is a normalized digital reconstruction of `薄文傳聲信`, assembled from standardized Unicode forms and their documented Han-character correspondences. It is not a diplomatic transcription or facsimile of the historical hand. The interface gloss “This light letter carries my voice” is intentionally concise and interpretive; it is not presented as a literal scholarly translation.
 
-The other three cards retain their Han transcriptions but deliberately omit Nüshu forms and readings until the complete syllabic sequences can be verified. Their English titles, glosses, narrative paragraphs, writing-stage lines, and closing statements are curatorial interface writing, not historical quotations or literal translations. Any mark saved from those encounters is labeled as an unguided response rather than as Nüshu.
+The other three cards retain attested or reported Han transcriptions and now show explicitly provisional, dictionary-derived sequences. They were assembled by comparing the *Dictionary of Nushu Standard Characters* readings exposed by the Online Nushu Dictionary with Unicode form-to-Han correspondences. They are not transcriptions of the source handkerchief, song manuscript, or historical handwriting:
+
+- `寄到国外相会身` → `𛉓𛇼𛈅𛇒𛉵𛆴𛈛`. Standardized alternatives exist for `寄` and `到`, and `会` has several dialect readings.
+- `要凭女书诉苦情` → `𛅺𛋆𛆁𛈬𛉅𛇰𛊭`. The published Han line is secure, but the readings associated with `凭` and `诉` differ between the two reference systems.
+- `把笔修书拜贵神` → `𛊷𛇞𛉪𛈬𛇣𛋫𛋙`. The line survives here through reported oral memory; `把` has multiple standardized correspondences, while the readings listed for `贵` and `神` diverge across the reference tables.
+
+For this reason, these records use `dictionary-derived-reconstruction`, not `verified-digital-reconstruction`. The interface exposes that uncertainty in each story’s historical-grounding panel.
+
+Lian and Yue, Xiu and Zhen, Cai and Gui, and Qiao and Lan are fictional characters. Their private rooms, gestures, conversations, relationships, and journeys are historical imaginings written for the interaction. The documented or reported lines, material practices, social genres, and historical figures named in the source notes remain distinct from those invented characters. The third card places a Cizhu-attributed song line inside an imagined exchange without recasting it as a surviving private letter; the fourth makes Lan the carrier while the goddess remains the prayer’s final addressee.

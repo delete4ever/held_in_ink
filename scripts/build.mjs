@@ -14,7 +14,7 @@ await validateContentFile(projectRoot);
 await rm(outputDirectory, { recursive: true, force: true });
 await mkdir(outputDirectory, { recursive: true });
 
-for (const file of ["index.html", "styles.css", "app.js", "content.json", "content.schema.json"]) {
+for (const file of ["index.html", "styles.css", "app.js", "brush-engine.js", "content.json", "content.schema.json"]) {
   await cp(join(projectRoot, file), join(outputDirectory, file));
 }
 await cp(join(projectRoot, "assets"), join(outputDirectory, "assets"), { recursive: true });

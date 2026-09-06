@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 const projectRoot = resolve(fileURLToPath(new URL("../", import.meta.url)));
 const requestedPort = Number(process.argv[2]);
 const port = Number.isInteger(requestedPort) && requestedPort > 0 ? requestedPort : 8000;
-const publicRootFiles = new Set(["index.html", "styles.css", "app.js", "content.json", "content.schema.json"]);
+const publicRootFiles = new Set(["index.html", "styles.css", "app.js", "brush-engine.js", "content.json", "content.schema.json"]);
 const mimeTypes = {
   ".css": "text/css; charset=utf-8",
   ".html": "text/html; charset=utf-8",
