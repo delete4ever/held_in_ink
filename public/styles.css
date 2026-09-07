@@ -199,7 +199,7 @@ h2 { margin-bottom: 0; font-size: clamp(32px, 4vw, 48px); line-height: 1.06; }
 .writing-guidance { width: min(100%, 310px); margin-bottom: 4px; }
 .writing-instruction { max-width: 310px; margin: 0; color: var(--ink-soft); font: 16px/1.55 var(--serif); }
 .brush-guidance { display: flex; align-items: center; gap: 9px; margin: 12px 0 0; color: var(--rust-deep); font: 14px/1.4 var(--serif); }
-.brush-guidance > span { display: block; width: 26px; min-width: 26px; height: 5px; border-radius: 100% 18% 18% 100%; background: linear-gradient(90deg, rgba(33,31,26,.95), rgba(33,31,26,.38) 72%, transparent); transform: rotate(-4deg); }
+.brush-guidance > span:first-child { display: block; width: 26px; min-width: 26px; height: 5px; border-radius: 100% 18% 18% 100%; background: linear-gradient(90deg, rgba(33,31,26,.95), rgba(33,31,26,.38) 72%, transparent); transform: rotate(-4deg); }
 .writing-narrative { display: grid; grid-template-columns: minmax(150px, .35fr) minmax(0, 1fr); gap: clamp(20px, 4vw, 48px); align-items: stretch; margin: 0 0 20px; padding: 17px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .writing-narrative[hidden] { display: none; }
 .writing-narrative-intro p { margin: 0; color: var(--ink-soft); font: italic 15px/1.45 var(--serif); }
