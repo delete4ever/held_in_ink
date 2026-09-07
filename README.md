@@ -5,7 +5,7 @@ A static, single-page design prototype for an English-language graduation thesis
 ## Technical approach
 
 - Plain HTML, CSS, and JavaScript: no framework, account, database, or installed dependency. A small Node script copies the static deployment output.
-- `content.json` holds each homepage `scene` plus three explicit layers: `stroke`, `narrative`, and `context`.
+- `public/content.json` holds each homepage `scene` plus three explicit layers: `stroke`, `narrative`, and `context`.
 - The contextual layer is text-first. It records per-character notes and sources, and only renders an artefact or audio recording when a complete credited record is present.
 - The locally bundled Noto Traditional Nüshu font renders the real standardized glyph guide without needing a network connection.
 - Two layered HTML Canvas elements make the writing space: a pale font guide and an ink layer that accepts mouse, pen, and touch through Pointer Events.
@@ -17,19 +17,22 @@ A static, single-page design prototype for an English-language graduation thesis
 
 ```
 Nvshu/
-├── index.html     # homepage choice, four experience stages, dialogs
-├── styles.css     # responsive visual system and paper/ink treatment
-├── app.js         # flow, canvas writing, archive card, image download
-├── content.json   # three-layer prompt records and optional contextual media
-├── content.schema.json # field contract for prompt, source, artefact, and audio records
-├── assets/fonts/  # bundled Noto Traditional Nüshu typeface and its OFL license
-├── scripts/       # dependency-free preview and static build scripts
+├── public/        # the complete browser-facing website
+│   ├── index.html # homepage choice, four experience stages, dialogs
+│   ├── styles.css # responsive visual system and paper/ink treatment
+│   ├── app.js     # flow, writing interaction, arrival, and archive card
+│   ├── brush-engine.js # pressure-, pace-, and material-aware ink model
+│   ├── content.json # four stories in stroke / narrative / context layers
+│   ├── content.schema.json # field contract for stories and optional media
+│   └── assets/fonts/ # bundled Noto Traditional Nüshu font and OFL license
+├── scripts/       # validation, brush tests, local preview, and static build
+├── docs/SOURCES.md # research provenance and reconstruction boundaries
 └── README.md      # local-run and editing notes
 ```
 
 ## Open locally
 
-`content.json` is loaded by the browser, so open the folder with a tiny local server rather than double-clicking `index.html`.
+`public/content.json` is loaded by the browser, so open the project with the local server rather than double-clicking `public/index.html`.
 
 With Node.js installed, in this folder run:
 
@@ -43,7 +46,7 @@ To create the deployable static output, run `npm run build`. No package installa
 
 ## Edit a context or its three layers
 
-Open `content.json`. Each object in `prompts` is one encounter, organized as follows:
+Open `public/content.json`. Each object in `prompts` is one encounter, organized as follows:
 
 - `scene` contains the homepage title and deck, one of four visual themes, three visible narrative beats, the evidence label, and the default writing surface.
 - `layers.stroke` always records a verification `status`, Han `transcription`, interpretive `gloss`, and source boundary. Both archive-checked and dictionary-derived records contain `symbol`, `phrase`, and `phraseReading`; a pending record keeps all three fields `null`.
@@ -53,11 +56,11 @@ Open `content.json`. Each object in `prompts` is one encounter, organized as fol
 
 To add or replace a guide, use forms that exist in the bundled font and update `layers.stroke.symbol`, `layers.stroke.phrase`, and `phraseReading`. Use `verified-digital-reconstruction` only when the complete sequence can be cross-checked against an authoritative text record. Use `dictionary-derived-reconstruction` when standardized candidates are selected from published Han correspondences and Jiangyong readings but the original line has not been matched; state every material ambiguity in `referenceNote`. Do not convert modern Chinese characters by visual or semantic guesswork. If even a transparent candidate sequence cannot be supported, keep `pending-verification` and the three form fields `null`.
 
-`content.schema.json` documents the complete contract. Use `null` for an unavailable `artefact` or `audio` record and an empty array for no sources; do not use empty strings or placeholder file paths. The interface will retain a complete, honest text state when media is absent.
+`public/content.schema.json` documents the complete contract. Use `null` for an unavailable `artefact` or `audio` record and an empty array for no sources; do not use empty strings or placeholder file paths. The interface will retain a complete, honest text state when media is absent.
 
 ## Change the writing surface
 
-The three surface choices are defined in `index.html` and styled in `styles.css`:
+The three surface choices are defined in `public/index.html` and styled in `public/styles.css`:
 
 - `paper` is the default fibre-ground surface.
 - `fan` applies a folded paper-fan silhouette and ribs.
@@ -69,7 +72,7 @@ The selected surface is preserved in the archive-card preview and downloaded PNG
 
 The current version contains no historical image or recording. Paper, fan, and cloth textures remain abstract interface cues and are never used as contextual evidence.
 
-Before adding an `artefact`, obtain a reliable source record and permission information. Then provide all required fields: `kind`, `src`, content-specific `alt`, `caption`, `credit`, `sourceUrl`, and `rights`. Images render as captioned content at their natural aspect ratio, never as a background or decorative crop. Put local media under `assets/` and use an `assets/...` path; HTTP(S) media URLs are also supported.
+Before adding an `artefact`, obtain a reliable source record and permission information. Then provide all required fields: `kind`, `src`, content-specific `alt`, `caption`, `credit`, `sourceUrl`, and `rights`. Images render as captioned content at their natural aspect ratio, never as a background or decorative crop. Put local media under `public/assets/` and use an `assets/...` path in the data; HTTP(S) media URLs are also supported.
 
 Before adding `audio`, provide `src`, `mimeType`, `title`, `description`, a same-page `transcript` or sound description, `credit`, `sourceUrl`, and `rights`. Audio does not autoplay, is muted each time a character is selected, and includes a keyboard-accessible sound toggle alongside native controls.
 

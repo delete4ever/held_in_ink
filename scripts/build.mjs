@@ -1,9 +1,10 @@
 import { cp, mkdir, rm } from "node:fs/promises";
-import { dirname, join, resolve } from "node:path";
+import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { validateContentFile } from "./validate-content.mjs";
 
 const projectRoot = resolve(fileURLToPath(new URL("../", import.meta.url)));
+const publicDirectory = resolve(projectRoot, "public");
 const outputDirectory = resolve(projectRoot, "dist");
 
 if (dirname(outputDirectory) !== projectRoot) {
@@ -12,11 +13,7 @@ if (dirname(outputDirectory) !== projectRoot) {
 
 await validateContentFile(projectRoot);
 await rm(outputDirectory, { recursive: true, force: true });
-await mkdir(outputDirectory, { recursive: true });
-
-for (const file of ["index.html", "styles.css", "app.js", "brush-engine.js", "content.json", "content.schema.json"]) {
-  await cp(join(projectRoot, file), join(outputDirectory, file));
-}
-await cp(join(projectRoot, "assets"), join(outputDirectory, "assets"), { recursive: true });
+await mkdir(dirname(outputDirectory), { recursive: true });
+await cp(publicDirectory, outputDirectory, { recursive: true });
 
 console.log(`Built static site in ${outputDirectory}`);

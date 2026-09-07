@@ -5,9 +5,9 @@ import { extname, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const projectRoot = resolve(fileURLToPath(new URL("../", import.meta.url)));
+const publicDirectory = resolve(projectRoot, "public");
 const requestedPort = Number(process.argv[2]);
 const port = Number.isInteger(requestedPort) && requestedPort > 0 ? requestedPort : 8000;
-const publicRootFiles = new Set(["index.html", "styles.css", "app.js", "brush-engine.js", "content.json", "content.schema.json"]);
 const mimeTypes = {
   ".css": "text/css; charset=utf-8",
   ".html": "text/html; charset=utf-8",
@@ -28,13 +28,8 @@ createServer(async (request, response) => {
   try {
     const pathname = decodeURIComponent(new URL(request.url, "http://localhost").pathname);
     const relativePath = pathname === "/" ? "index.html" : pathname.replace(/^\/+/, "");
-    const publicPath = relativePath.replaceAll("\\", "/");
-    if (!publicRootFiles.has(publicPath) && !publicPath.startsWith("assets/")) {
-      response.writeHead(404).end("Not found");
-      return;
-    }
-    const filePath = resolve(projectRoot, relativePath);
-    if (filePath !== projectRoot && !filePath.startsWith(`${projectRoot}${sep}`)) {
+    const filePath = resolve(publicDirectory, relativePath);
+    if (filePath !== publicDirectory && !filePath.startsWith(`${publicDirectory}${sep}`)) {
       response.writeHead(403).end("Forbidden");
       return;
     }

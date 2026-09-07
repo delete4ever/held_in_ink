@@ -87,7 +87,8 @@ async function validateAudio(record, path, projectRoot) {
 }
 
 export async function validateContentFile(projectRoot) {
-  const contentPath = resolve(projectRoot, "content.json");
+  const publicDirectory = resolve(projectRoot, "public");
+  const contentPath = resolve(publicDirectory, "content.json");
   const data = JSON.parse(await readFile(contentPath, "utf8"));
   objectAt(data, "content");
   allowedKeys(data, ["$schema", "contentVersion", "prompts"], "content");
@@ -148,8 +149,8 @@ export async function validateContentFile(projectRoot) {
     context.sources.forEach((source, sourceIndex) => validateSource(source, `${promptPath}.layers.context.sources[${sourceIndex}]`));
     if (!("artefact" in context)) fail(`${promptPath}.layers.context.artefact`, "must be present; use null when unavailable");
     if (!("audio" in context)) fail(`${promptPath}.layers.context.audio`, "must be present; use null when unavailable");
-    await validateArtefact(context.artefact, `${promptPath}.layers.context.artefact`, projectRoot);
-    await validateAudio(context.audio, `${promptPath}.layers.context.audio`, projectRoot);
+    await validateArtefact(context.artefact, `${promptPath}.layers.context.artefact`, publicDirectory);
+    await validateAudio(context.audio, `${promptPath}.layers.context.audio`, publicDirectory);
   }
 
   return data;

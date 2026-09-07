@@ -6,7 +6,7 @@ import {
   interpolateStrokeSegment,
   modelBrushSample,
   seededNoise
-} from "../brush-engine.js";
+} from "../public/brush-engine.js";
 
 test("pen pressure produces a wider mark", () => {
   const light = modelBrushSample({ pointerType: "pen", pressure: 0.12, speed: 0.4 });
