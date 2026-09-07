@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <a class="skip-link" href="#top">Skip to the experience</a>
     <div class="paper-grain" aria-hidden="true"></div>
     <main class="site-shell">
       <header class="site-header">
@@ -36,6 +37,7 @@
           <div class="context-choice-grid" id="home-context-list" aria-label="Choose one of four Nüshu contexts">
             <p class="context-loading">Loading the four contexts…</p>
           </div>
+          <p class="home-method-note">Each encounter is a fictional composite. Its documentary status is named before you enter, and the sources remain available inside the story.</p>
         </section>
 
         <section class="panel entering-panel" data-stage="entering" hidden>
@@ -43,6 +45,10 @@
           <div class="narrative-layout">
             <div class="narrative-copy">
               <p class="quiet-intro" id="story-time"></p>
+              <div class="evidence-boundary" id="evidence-boundary" role="note">
+                <strong>Fictional composite</strong>
+                <span id="evidence-boundary-status"></span>
+              </div>
               <h1 id="story-title">A light letter carries my voice</h1>
               <div class="character-reference">
                 <span class="reference-symbol nushu-glyph" id="reference-symbol">𛉡</span>
@@ -107,19 +113,12 @@
               <p class="eyebrow">Take up her line</p>
               <h2 id="writing-title">Carry the words down the page</h2>
               <p class="writing-reference" id="writing-reference">薄文傳聲信 · “This light letter carries my voice.”</p>
+              <p class="writing-evidence" id="writing-evidence"></p>
             </div>
             <div class="writing-guidance">
               <p class="writing-instruction" id="writing-instruction">Follow the pale forms from top to bottom. Move at the pace of a letter being written.</p>
               <p class="brush-guidance" id="brush-guidance"><span aria-hidden="true"></span>Pressure or pace shapes the ink.</p>
             </div>
-          </div>
-          <div class="writing-narrative" id="writing-narrative" hidden>
-            <div class="writing-narrative-intro">
-              <p class="writing-narrative-label">As the line gathers</p>
-              <p id="writing-narrative-intro">Stay with her for a moment.</p>
-            </div>
-            <div class="writing-narrative-lines" id="writing-narrative-lines"></div>
-            <p class="visually-hidden" id="writing-narrative-status" aria-live="polite"></p>
           </div>
           <fieldset class="surface-picker">
             <legend>Writing surface</legend>
@@ -150,6 +149,24 @@
               </button>
             </div>
           </fieldset>
+          <div class="writing-narrative" id="writing-narrative" hidden>
+            <div class="writing-narrative-intro">
+              <p class="writing-narrative-label">As the line gathers</p>
+              <p id="writing-narrative-intro">Stay with her for a moment.</p>
+            </div>
+            <div class="writing-narrative-lines" id="writing-narrative-lines"></div>
+            <p class="visually-hidden" id="writing-narrative-status" aria-live="polite"></p>
+          </div>
+          <div class="input-path">
+            <button class="text-button" id="input-mode-action" type="button" data-action="toggle-input-mode" aria-pressed="false">Use the keyboard-paced pathway</button>
+            <p id="input-mode-note">If drawing is not accessible to you, attend to each form with a deliberate key press. This records rhythm, not simulated handwriting.</p>
+          </div>
+          <section class="accessible-writing" id="accessible-writing" aria-labelledby="accessible-writing-title" hidden>
+            <p class="eyebrow" id="accessible-writing-title">Keyboard-paced attention</p>
+            <span class="accessible-form nushu-glyph" id="accessible-form" aria-hidden="true"></span>
+            <p class="accessible-form-status" id="accessible-form-status" aria-live="polite"></p>
+            <button class="button button-primary" id="accessible-form-action" type="button" data-action="attend-form">Attend to form 1</button>
+          </section>
           <div class="canvas-frame surface-paper" id="canvas-frame">
             <canvas id="guide-canvas" aria-hidden="true"></canvas>
             <canvas id="writing-canvas" aria-label="A canvas for tracing the selected Nüshu form" aria-describedby="writing-instruction brush-guidance ink-status"></canvas>
@@ -168,14 +185,18 @@
             <p class="ink-status" id="ink-status" aria-live="polite">Begin at the top.</p>
             <div class="tool-actions">
               <button class="text-button" type="button" data-action="clear">Clear and begin again</button>
-              <button class="button button-primary" id="pause-action" type="button" data-action="pause">Send the line onward</button>
+              <button class="text-button partial-action" id="partial-action" type="button" data-action="pause-partial" hidden>Continue with a partial trace</button>
+              <button class="button button-primary" id="pause-action" type="button" data-action="pause" disabled>Complete the line to send it</button>
             </div>
           </div>
         </section>
 
         <section class="panel after-panel" data-stage="after" hidden>
           <p class="eyebrow">The line has arrived</p>
-          <div class="after-mark" aria-hidden="true"><canvas id="after-canvas"></canvas></div>
+          <figure class="after-trace">
+            <div class="after-mark"><canvas id="after-canvas" aria-label="Your personal trace from the writing stage"></canvas></div>
+            <figcaption id="after-trace-caption">Your handwriting trace, before interpretation</figcaption>
+          </figure>
           <section class="after-interpretation" aria-labelledby="after-message-title">
             <div class="after-message-card">
               <span class="after-form nushu-glyph" id="after-form" aria-hidden="true"></span>
@@ -184,6 +205,10 @@
                 <h2 id="after-message-title"><span id="after-transcription"></span></h2>
                 <p class="after-meaning" id="after-meaning"></p>
               </div>
+            </div>
+            <div class="after-boundary" role="note">
+              <p class="eyebrow">Evidence boundary</p>
+              <p id="after-evidence-status"></p>
             </div>
             <div class="after-reading">
               <div class="after-reading-heading">
@@ -198,8 +223,18 @@
             </div>
           </section>
           <p class="after-quote" id="after-quote"></p>
+          <section class="care-reflection" aria-labelledby="care-reflection-title">
+            <p class="eyebrow">Pause before keeping</p>
+            <h2 id="care-reflection-title">What changed when the line passed through your hand?</h2>
+            <label for="reflection-notice">What did your pace, hesitation, or the surface make you notice?</label>
+            <textarea id="reflection-notice" rows="3" aria-describedby="reflection-privacy"></textarea>
+            <label for="reflection-unknown">What remains unknowable about this woman’s experience?</label>
+            <textarea id="reflection-unknown" rows="3" aria-describedby="reflection-privacy"></textarea>
+            <p id="reflection-privacy">Your words stay in this page only. They are not added to the downloaded record.</p>
+          </section>
           <div class="panel-actions">
-            <button class="button button-primary" type="button" data-action="archive">Keep this trace</button>
+            <button class="button button-primary" type="button" data-action="archive">Keep a record of this encounter</button>
+            <button class="button button-quiet" type="button" data-action="review-context">Return to the documented context</button>
             <button class="button button-quiet" type="button" data-action="return-writing">Write it again</button>
           </div>
         </section>
@@ -215,10 +250,10 @@
                 <p class="card-reference" id="card-reference"></p>
                 <p class="card-background" id="card-background"></p>
               </div>
-              <div class="card-footer">One line, carried between sisters</div>
+              <div class="card-footer" id="card-footer">A personal record of encounter · not a heritage object</div>
             </article>
             <div class="archive-copy">
-              <h2 id="archive-title">A trace to carry forward</h2>
+              <h2 id="archive-title">A record of attentive encounter</h2>
               <p id="archive-description"></p>
               <button class="button button-primary" type="button" data-action="download">Download image</button>
               <button class="text-button" type="button" data-action="start-over">Carry another message</button>
