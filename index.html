@@ -23,21 +23,47 @@
       </header>
 
       <section class="experience" id="top">
-        <div class="stage-label"><span id="stage-number">00</span><span id="stage-name">Choose</span></div>
+        <div class="stage-label"><span id="stage-number">00</span><span id="stage-name">Threshold</span></div>
         <div class="progress" aria-label="Experience progress">
           <span></span><span></span><span></span><span></span>
         </div>
 
-        <section class="panel home-panel" data-stage="home">
+        <section class="panel threshold-panel" data-stage="threshold" aria-labelledby="threshold-title">
+          <div class="threshold-layout">
+            <div class="threshold-copy">
+              <p class="eyebrow">Before the first letter</p>
+              <h1 id="threshold-title">Some words survive because someone chooses to carry them.</h1>
+              <p class="threshold-deck">Across distance, work, marriage, separation, and ritual, Nüshu was shaped by women writing toward one another. Here, four imagined voices invite you to slow down and carry a line through your own hand.</p>
+              <p class="threshold-role"><strong>Your role:</strong> You are not entering the past, and you do not speak for these women. For a short while, you become a temporary carrier of their words.</p>
+              <div class="threshold-boundary" role="note">
+                <p class="eyebrow">Before you cross</p>
+                <p>The four women and their scenes are fictional composites grounded in documented histories. The evidence behind each line and form is named as you move through the encounter.</p>
+              </div>
+              <div class="threshold-actions">
+                <button class="button button-primary" type="button" data-action="enter-threshold">Begin carrying</button>
+                <button class="text-button" type="button" data-action="skip-threshold">Skip introduction</button>
+              </div>
+            </div>
+            <ol class="care-route" aria-label="The path of the encounter">
+              <li><span>01</span><strong>Receive</strong><small>Listen before interpreting</small></li>
+              <li><span>02</span><strong>Attend</strong><small>Let rhythm shape the mark</small></li>
+              <li><span>03</span><strong>Carry</strong><small>Keep the source boundary visible</small></li>
+              <li><span>04</span><strong>Return</strong><small>Bring attention back to context</small></li>
+            </ol>
+          </div>
+        </section>
+
+        <section class="panel home-panel" data-stage="home" hidden>
           <div class="home-intro">
-            <p class="eyebrow">Four women · four messages</p>
+            <p class="eyebrow">Four women · four imagined messages</p>
             <h1>Whose words will you carry?</h1>
-            <p>Each woman has something she cannot deliver alone. Choose her story, take up her line, and send it towards the sister waiting at the other end.</p>
+            <p>Each encounter begins with words addressed across distance. Choose a story, take up its line, and carry it toward a receiving presence.</p>
           </div>
           <div class="context-choice-grid" id="home-context-list" aria-label="Choose one of four Nüshu contexts">
             <p class="context-loading">Loading the four contexts…</p>
           </div>
           <p class="home-method-note">Each encounter is a fictional composite. Its documentary status is named before you enter, and the sources remain available inside the story.</p>
+          <button class="text-button revisit-threshold" type="button" data-action="revisit-threshold">Read the opening again</button>
         </section>
 
         <section class="panel entering-panel" data-stage="entering" hidden>

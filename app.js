@@ -38,7 +38,7 @@ const state = {
   lastKeyboardAttendTime: null,
   partialTrace: false,
   sending: false,
-  stage: "home",
+  stage: "threshold",
   surface: "paper",
   activeAudio: null,
   returnFocus: null
@@ -123,12 +123,31 @@ const els = {
 };
 
 const stageLabels = {
-  home: ["00", "Choose"],
-  entering: ["01", "Story"],
-  writing: ["02", "Writing"],
-  after: ["03", "Arrival"],
-  archive: ["04", "Keep"]
+  threshold: ["00", "Threshold"],
+  home: ["01", "Choose"],
+  entering: ["02", "Story"],
+  writing: ["03", "Writing"],
+  after: ["04", "Arrival"],
+  archive: ["05", "Keep"]
 };
+
+const thresholdSessionKey = "held-in-ink-threshold-seen-v1";
+
+function thresholdWasSeen() {
+  try {
+    return window.sessionStorage.getItem(thresholdSessionKey) === "yes";
+  } catch {
+    return false;
+  }
+}
+
+function rememberThreshold() {
+  try {
+    window.sessionStorage.setItem(thresholdSessionKey, "yes");
+  } catch {
+    // The introduction still works when browser storage is unavailable.
+  }
+}
 
 const surfaceLabels = {
   paper: "paper",
@@ -174,7 +193,7 @@ async function loadPrompts() {
   state.prompts = data.prompts;
   renderHomepage();
   selectPrompt(state.prompts[0]);
-  setStage("home", false);
+  setStage(thresholdWasSeen() ? "home" : "threshold", false);
   if (document.fonts) {
     try {
       const symbols = state.prompts.map((prompt) => strokeFor(prompt).phrase || "").join("");
@@ -904,7 +923,7 @@ function setStage(stage, moveFocus = true) {
   els.stageName.textContent = name;
   const index = ["entering", "writing", "after", "archive"].indexOf(stage);
   els.progress.forEach((line, i) => line.classList.toggle("is-current", i === index));
-  if (stage === "home") delete document.body.dataset.scene;
+  if (stage === "home" || stage === "threshold") delete document.body.dataset.scene;
   else if (state.current) document.body.dataset.scene = state.current.scene.theme;
   const motionIsReduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
   window.scrollTo({ top: 0, behavior: motionIsReduced ? "auto" : "smooth" });
@@ -1912,6 +1931,15 @@ function reviewContext() {
 
 document.addEventListener("click", (event) => {
   const action = event.target.closest("[data-action]")?.dataset.action;
+  if (action === "enter-threshold" || action === "skip-threshold") {
+    rememberThreshold();
+    setStage("home");
+  }
+  if (action === "revisit-threshold") {
+    hidePicker();
+    if (els.about.open) els.about.close();
+    setStage("threshold");
+  }
   if (action === "home") {
     event.preventDefault();
     clearWriting({ resetInputMode: true });
