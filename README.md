@@ -17,6 +17,7 @@ A static, single-page design prototype for an English-language graduation thesis
 
 - A first-visit narrative threshold positions the visitor as a temporary carrier rather than a spokesperson, owner, or traveller with direct access to the past. It can be skipped and revisited without interrupting later returns to the four encounters.
 - The threshold previews the care loop as receive, attend, carry, and return, while naming the fictional-composite and documentary boundaries before role-play begins.
+- English and Simplified Chinese versions share the same evidence states, source URLs, Nüshu forms, completion logic, and care loop. Language can be changed at any stage without discarding the visitor's current trace.
 
 - The drawing path asks for an attempt in every form region before its primary send action becomes available. It does not score visual correctness. A secondary partial-trace route remains available and keeps that incompleteness visible at Arrival.
 - Narrative lines unfold at character-settlement pauses rather than according to total pointer distance. This ties story progression to attentive completion without claiming to measure understanding or care.

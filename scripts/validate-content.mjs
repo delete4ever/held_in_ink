@@ -86,9 +86,9 @@ async function validateAudio(record, path, projectRoot) {
   httpUrl(record.sourceUrl, `${path}.sourceUrl`);
 }
 
-export async function validateContentFile(projectRoot) {
+export async function validateContentFile(projectRoot, filename = "content.json") {
   const publicDirectory = resolve(projectRoot, "public");
-  const contentPath = resolve(publicDirectory, "content.json");
+  const contentPath = resolve(publicDirectory, filename);
   const data = JSON.parse(await readFile(contentPath, "utf8"));
   objectAt(data, "content");
   allowedKeys(data, ["$schema", "contentVersion", "prompts"], "content");
@@ -156,11 +156,41 @@ export async function validateContentFile(projectRoot) {
   return data;
 }
 
+export function validateBilingualContent(english, chinese) {
+  english.prompts.forEach((englishPrompt, index) => {
+    const chinesePrompt = chinese.prompts[index];
+    const stablePairs = [
+      ["id", englishPrompt.id, chinesePrompt?.id],
+      ["scene.theme", englishPrompt.scene.theme, chinesePrompt?.scene?.theme],
+      ["scene.defaultSurface", englishPrompt.scene.defaultSurface, chinesePrompt?.scene?.defaultSurface],
+      ["stroke.status", englishPrompt.layers.stroke.status, chinesePrompt?.layers?.stroke?.status],
+      ["stroke.symbol", englishPrompt.layers.stroke.symbol, chinesePrompt?.layers?.stroke?.symbol],
+      ["stroke.phrase", englishPrompt.layers.stroke.phrase, chinesePrompt?.layers?.stroke?.phrase],
+      ["stroke.transcription", englishPrompt.layers.stroke.transcription, chinesePrompt?.layers?.stroke?.transcription],
+      ["stroke.phraseReading", englishPrompt.layers.stroke.phraseReading, chinesePrompt?.layers?.stroke?.phraseReading]
+    ];
+    stablePairs.forEach(([field, englishValue, chineseValue]) => {
+      if (englishValue !== chineseValue) fail(`bilingual.prompts[${index}].${field}`, "must match across languages");
+    });
+    const englishUrls = englishPrompt.layers.context.sources.map((source) => source.url);
+    const chineseUrls = chinesePrompt.layers.context.sources.map((source) => source.url);
+    if (JSON.stringify(englishUrls) !== JSON.stringify(chineseUrls)) {
+      fail(`bilingual.prompts[${index}].layers.context.sources`, "must preserve source count, order, and URLs across languages");
+    }
+  });
+}
+
 const scriptPath = process.argv[1] ? resolve(process.argv[1]) : "";
 if (scriptPath === fileURLToPath(import.meta.url)) {
   const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-  validateContentFile(projectRoot)
-    .then((data) => console.log(`Validated ${data.prompts.length} contextual prompt records.`))
+  Promise.all([
+    validateContentFile(projectRoot, "content.json"),
+    validateContentFile(projectRoot, "content.zh.json")
+  ])
+    .then((files) => {
+      validateBilingualContent(files[0], files[1]);
+      console.log(`Validated ${files.reduce((sum, data) => sum + data.prompts.length, 0)} bilingual contextual prompt records.`);
+    })
     .catch((error) => {
       console.error(error.message);
       process.exitCode = 1;
