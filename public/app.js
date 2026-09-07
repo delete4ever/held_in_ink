@@ -14,9 +14,9 @@ function initialLanguage() {
     const saved = window.localStorage.getItem(languagePreferenceKey);
     if (["en", "zh"].includes(saved)) return saved;
   } catch {
-    // Fall through to the browser language when storage is unavailable.
+    // Fall through to the site default when storage is unavailable.
   }
-  return navigator.language?.toLowerCase().startsWith("zh") ? "zh" : "en";
+  return "en";
 }
 
 const state = {
