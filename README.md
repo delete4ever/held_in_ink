@@ -10,8 +10,17 @@ A static, single-page design prototype for an English-language graduation thesis
 - The locally bundled Noto Traditional Nüshu font renders the real standardized glyph guide without needing a network connection.
 - Two layered HTML Canvas elements make the writing space: a pale font guide and an ink layer that accepts mouse, pen, and touch through Pointer Events.
 - The writing surface can switch between paper, a paper fan, and woven cloth. These are deliberately abstract visual cues, not reconstructions of historical objects.
-- A third canvas generates the archive preview; a separate high-resolution canvas creates the downloadable PNG.
-- Responsive CSS keeps the writing area usable on both a desktop and a phone browser.
+- Recorded strokes use normalized coordinates, so the personal trace survives the transition from the hidden writing canvas into both the Arrival view and the archive preview. A separate high-resolution canvas creates the downloadable PNG.
+- Responsive CSS keeps the writing area usable on both a desktop and a phone browser; on narrow screens, the current narrative line remains beside the writing activity as the page moves.
+
+## Interaction and ethical framing
+
+- The drawing path asks for an attempt in every form region before its primary send action becomes available. It does not score visual correctness. A secondary partial-trace route remains available and keeps that incompleteness visible at Arrival.
+- Narrative lines unfold at character-settlement pauses rather than according to total pointer distance. This ties story progression to attentive completion without claiming to measure understanding or care.
+- A keyboard-paced pathway offers one deliberate activation per form. It records a small rhythm-sensitive attention trace and labels that trace separately from handwriting; it does not generate a counterfeit Nüshu hand.
+- Arrival presents the personal trace before the standardized line, names the boundary between fiction and documentary evidence again, and offers private reflection prompts before archival action.
+- The archive is described as a personal record of encounter, not a heritage object. Reflection text remains in the current page only and is not included in the downloaded image.
+- The care loop can return from Arrival to the expanded source context, keeping interpretation answerable to documentation rather than ending with possession of an image.
 
 ## File structure
 

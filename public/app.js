@@ -33,6 +33,11 @@ const state = {
   lineResponseTimer: null,
   writingDistance: 0,
   revealedWritingLines: 0,
+  writingAspectRatio: 1,
+  inputMode: "draw",
+  lastKeyboardAttendTime: null,
+  partialTrace: false,
+  sending: false,
   stage: "home",
   surface: "paper",
   activeAudio: null,
@@ -50,6 +55,7 @@ const els = {
   storyBody: document.querySelector("#story-body"),
   storyPlace: document.querySelector("#story-place"),
   storyType: document.querySelector("#story-type"),
+  evidenceBoundaryStatus: document.querySelector("#evidence-boundary-status"),
   referenceSymbol: document.querySelector("#reference-symbol"),
   storyReference: document.querySelector("#story-reference"),
   referenceNote: document.querySelector("#reference-note"),
@@ -69,12 +75,21 @@ const els = {
   contextAudio: document.querySelector("#context-audio"),
   writingTitle: document.querySelector("#writing-title"),
   writingReference: document.querySelector("#writing-reference"),
+  writingEvidence: document.querySelector("#writing-evidence"),
   writingInstruction: document.querySelector("#writing-instruction"),
   writingNarrative: document.querySelector("#writing-narrative"),
   writingNarrativeIntro: document.querySelector("#writing-narrative-intro"),
   writingNarrativeLines: document.querySelector("#writing-narrative-lines"),
   writingNarrativeStatus: document.querySelector("#writing-narrative-status"),
+  inputModeAction: document.querySelector("#input-mode-action"),
+  inputModeNote: document.querySelector("#input-mode-note"),
+  accessibleWriting: document.querySelector("#accessible-writing"),
+  accessibleForm: document.querySelector("#accessible-form"),
+  accessibleFormStatus: document.querySelector("#accessible-form-status"),
+  accessibleFormAction: document.querySelector("#accessible-form-action"),
   afterQuote: document.querySelector("#after-quote"),
+  afterTraceCaption: document.querySelector("#after-trace-caption"),
+  afterEvidenceStatus: document.querySelector("#after-evidence-status"),
   afterForm: document.querySelector("#after-form"),
   afterTranscription: document.querySelector("#after-transcription"),
   afterMeaning: document.querySelector("#after-meaning"),
@@ -84,6 +99,7 @@ const els = {
   cardForm: document.querySelector("#card-form"),
   cardReference: document.querySelector("#card-reference"),
   cardBackground: document.querySelector("#card-background"),
+  cardFooter: document.querySelector("#card-footer"),
   archiveTitle: document.querySelector("#archive-title"),
   archiveDescription: document.querySelector("#archive-description"),
   promptPicker: document.querySelector("#prompt-picker"),
@@ -99,7 +115,10 @@ const els = {
   brushCursor: document.querySelector("#brush-cursor"),
   brushReadout: document.querySelector("#brush-readout"),
   brushInput: document.querySelector("#brush-input"),
+  partialAction: document.querySelector("#partial-action"),
   pauseAction: document.querySelector("#pause-action"),
+  reflectionNotice: document.querySelector("#reflection-notice"),
+  reflectionUnknown: document.querySelector("#reflection-unknown"),
   about: document.querySelector("#about-dialog")
 };
 
@@ -143,7 +162,8 @@ function syncCanvasFrameState() {
   const cursorClass = state.cursorActive ? " is-cursor-active" : "";
   const sizeClass = state.current && hasStrokeGuide() && state.guideSize === "comfort" ? " is-comfort-guide" : "";
   const preservedClass = state.lineResponsePreserved ? " is-line-preserved" : "";
-  els.canvasFrame.className = `canvas-frame surface-${state.surface}${guideClass}${sizeClass}${inkClass}${drawingClass}${cursorClass}${preservedClass}`;
+  const sendingClass = state.sending ? " is-sending" : "";
+  els.canvasFrame.className = `canvas-frame surface-${state.surface}${guideClass}${sizeClass}${inkClass}${drawingClass}${cursorClass}${preservedClass}${sendingClass}`;
 }
 
 async function loadPrompts() {
@@ -219,6 +239,22 @@ function narrativeFor(prompt = state.current) {
 
 function hasStrokeGuide(stroke = strokeFor()) {
   return ["verified-digital-reconstruction", "dictionary-derived-reconstruction"].includes(stroke.status);
+}
+
+function totalForms() {
+  return state.current && hasStrokeGuide() ? Array.from(strokeFor().phrase || "").length : 0;
+}
+
+function evidenceBoundaryText(prompt = state.current) {
+  if (!prompt) return "";
+  const stroke = strokeFor(prompt);
+  if (stroke.status === "verified-digital-reconstruction") {
+    return "The people and scene are imagined; the line and displayed forms are archive-checked.";
+  }
+  if (stroke.status === "dictionary-derived-reconstruction") {
+    return "The people and scene are imagined; the source line is reported, while the displayed forms are provisional dictionary matches.";
+  }
+  return "The people and scene are imagined. No verified Nüshu form is supplied for this open response.";
 }
 
 function mediaUrl(value) {
@@ -549,13 +585,16 @@ function renderHomepage() {
 
     const bottom = document.createElement("span");
     bottom.className = "context-choice-bottom";
+    const boundary = document.createElement("span");
+    boundary.className = "context-choice-boundary";
+    boundary.textContent = "Fictional composite";
     const evidence = document.createElement("span");
     evidence.className = "context-choice-evidence";
     evidence.textContent = prompt.scene.evidenceLabel;
     const action = document.createElement("span");
     action.className = "context-choice-action";
     action.textContent = "Carry her words →";
-    bottom.append(evidence, action);
+    bottom.append(boundary, evidence, action);
 
     button.append(top, title, deck, sequence, bottom);
     return button;
@@ -646,6 +685,7 @@ function selectPrompt(prompt) {
   }));
   els.storyPlace.textContent = narrative.place;
   els.storyType.textContent = narrative.storyType;
+  els.evidenceBoundaryStatus.textContent = prompt.scene.evidenceLabel;
   els.referenceSymbol.textContent = verified ? stroke.symbol : "Form pending";
   els.referenceSymbol.classList.toggle("nushu-glyph", verified);
   els.referenceSymbol.classList.toggle("is-pending-form", !verified);
@@ -667,6 +707,7 @@ function selectPrompt(prompt) {
   els.beginAction.textContent = `Write for ${narrative.sender}`;
   els.writingTitle.textContent = `Carry ${narrative.sender}’s words to ${narrative.receiver}`;
   els.writingReference.textContent = `${stroke.transcription} · “${stroke.gloss}”`;
+  els.writingEvidence.textContent = evidenceBoundaryText(prompt);
   els.writingInstruction.textContent = verified
     ? `Follow the ${Array.from(stroke.phrase).length} pale forms from top to bottom. Let the line unfold slowly.`
     : "Let your mark answer the story in your own way.";
@@ -678,15 +719,17 @@ function selectPrompt(prompt) {
   els.guideSizePicker.hidden = !verified;
   els.writingNarrativeIntro.textContent = `Stay with ${narrative.sender} as the words take shape.`;
   els.afterQuote.textContent = narrative.after;
+  els.afterEvidenceStatus.textContent = evidenceBoundaryText(prompt);
   renderAfterFeedback();
   els.cardForm.textContent = narrative.title;
   els.cardReference.textContent = `${narrative.sender} → ${narrative.receiver} · ${stroke.transcription}`;
   els.cardBackground.textContent = narrative.archiveNote;
-  els.archiveTitle.textContent = `A trace for ${narrative.receiver}`;
-  els.archiveDescription.textContent = `Keep the line you carried from ${narrative.sender} to ${narrative.receiver}.`;
+  els.archiveTitle.textContent = `A record of your encounter with ${narrative.sender}’s line`;
+  els.archiveDescription.textContent = `This keeps your temporary involvement visible without claiming ownership of Nüshu or ${narrative.sender}’s story.`;
   renderContext(prompt.layers.context);
+  els.characterContext.open = false;
   setupWritingNarrative();
-  clearWriting();
+  clearWriting({ resetInputMode: true });
 }
 
 function setupWritingNarrative() {
@@ -705,9 +748,11 @@ function setupWritingNarrative() {
 function revealWritingNarrative() {
   const lines = state.current ? narrativeFor().writingLines : [];
   if (!lines.length) return;
-  const isPhrase = Boolean(strokeFor().phrase);
-  const stepDistance = Math.max(90, Math.min(els.writing.clientWidth, els.writing.clientHeight) * (isPhrase ? 0.9 : 0.28));
-  const targetCount = Math.min(lines.length, 1 + Math.floor(state.writingDistance / stepDistance));
+  const total = totalForms();
+  const completed = state.completedCharacters.size;
+  const targetCount = total > 0
+    ? Math.min(lines.length, Math.max(state.hasMarks ? 1 : 0, 1 + Math.floor((completed / total) * (lines.length - 1))))
+    : Math.min(lines.length, state.hasMarks ? 1 + Math.floor(Math.max(0, state.strokes.length - 1) / 2) : 0);
 
   while (state.revealedWritingLines < targetCount) {
     const index = state.revealedWritingLines;
@@ -716,16 +761,143 @@ function revealWritingNarrative() {
     els.writingNarrativeStatus.textContent = lines[index];
     state.revealedWritingLines += 1;
   }
+
+  els.writingNarrativeLines.querySelectorAll(".writing-narrative-line").forEach((line, index) => {
+    line.classList.toggle("is-current", index === state.revealedWritingLines - 1);
+  });
+}
+
+function lineIsComplete() {
+  const total = totalForms();
+  return total > 0 ? state.completedCharacters.size === total : state.hasMarks;
+}
+
+function syncCompletionControls() {
+  const complete = lineIsComplete();
+  const hasPartial = state.hasMarks && !complete;
+  els.pauseAction.disabled = !complete || state.sending;
+  els.pauseAction.textContent = complete ? "Send the line onward" : "Complete the line to send it";
+  els.partialAction.hidden = !hasPartial || state.sending;
+  els.inputModeAction.disabled = state.hasMarks || state.sending;
+  els.accessibleFormAction.disabled = complete || state.sending;
+  if (state.hasMarks) els.inputModeAction.title = "Clear the page before changing the input pathway";
+  else els.inputModeAction.removeAttribute("title");
+}
+
+function captureWritingGeometry() {
+  const rect = els.writing.getBoundingClientRect();
+  if (rect.width > 0 && rect.height > 0) state.writingAspectRatio = rect.width / rect.height;
+}
+
+function applyInputMode() {
+  const keyboardMode = state.inputMode === "keyboard";
+  const traceLabel = keyboardMode
+    ? "keyboard-paced attention trace"
+    : state.partialTrace ? "partial handwriting trace" : "handwriting trace";
+  els.canvasFrame.hidden = keyboardMode;
+  els.accessibleWriting.hidden = !keyboardMode;
+  els.inputModeAction.setAttribute("aria-pressed", String(keyboardMode));
+  els.inputModeAction.textContent = keyboardMode ? "Return to the drawing pathway" : "Use the keyboard-paced pathway";
+  els.inputModeNote.textContent = keyboardMode
+    ? "Each press records a pause mark rather than imitating handwriting. Clear the trace to change pathways."
+    : "If drawing is not accessible to you, attend to each form with a deliberate key press. This records rhythm, not simulated handwriting.";
+  els.afterTraceCaption.textContent = `Your ${traceLabel}, before interpretation`;
+  els.after.setAttribute("aria-label", `Your ${traceLabel} from the writing stage`);
+  els.card.setAttribute("aria-label", `Your saved ${traceLabel} record`);
+  els.cardFooter.textContent = `${traceLabel[0].toUpperCase()}${traceLabel.slice(1)} · personal record, not a heritage object`;
+  renderAccessiblePath();
+  syncCompletionControls();
+}
+
+function toggleInputMode() {
+  if (state.hasMarks || state.sending) return;
+  captureWritingGeometry();
+  state.inputMode = state.inputMode === "draw" ? "keyboard" : "draw";
+  applyInputMode();
+  if (state.inputMode === "draw") requestAnimationFrame(setupWritingCanvases);
+  else requestAnimationFrame(() => els.accessibleFormAction.focus());
+}
+
+function renderAccessiblePath() {
+  if (!state.current) return;
+  const forms = Array.from(strokeFor().phrase || "");
+  const readings = strokeFor().phraseReading?.split(/\s*·\s*/) || [];
+  const index = forms.findIndex((_, formIndex) => !state.completedCharacters.has(formIndex));
+  if (index === -1) {
+    els.accessibleForm.textContent = forms.at(-1) || "";
+    els.accessibleFormStatus.textContent = `All ${forms.length} forms have been attended to. The line is ready to send.`;
+    els.accessibleFormAction.textContent = "Line ready";
+    return;
+  }
+  els.accessibleForm.textContent = forms[index] || "";
+  const reading = readings[index] ? `, read ${readings[index]}` : "";
+  els.accessibleFormStatus.textContent = `Form ${index + 1} of ${forms.length}${reading}. Pause, then activate the button when you are ready.`;
+  els.accessibleFormAction.textContent = `Attend to form ${index + 1}`;
+}
+
+function keyboardTracePoint(x, y, width, speed = 0.32) {
+  return {
+    x,
+    y,
+    width,
+    speed,
+    force: 0.48,
+    ink: 0.88,
+    tilt: 0,
+    tiltAngle: 0,
+    pointerType: "keyboard",
+    usesHardwarePressure: false,
+    time: 0
+  };
+}
+
+function attendToNextForm() {
+  if (state.inputMode !== "keyboard" || state.sending) return;
+  const total = totalForms();
+  const index = Array.from({ length: total }, (_, formIndex) => formIndex)
+    .find((formIndex) => !state.completedCharacters.has(formIndex));
+  if (index === undefined) return;
+  const now = performance.now();
+  const pauseWeight = state.lastKeyboardAttendTime === null
+    ? 0.52
+    : clamp((now - state.lastKeyboardAttendTime) / 2400, 0.2, 1);
+  state.lastKeyboardAttendTime = now;
+  const centreY = (index + 0.5) / total;
+  const direction = index % 2 === 0 ? 1 : -1;
+  const halfLength = 0.022 + pauseWeight * 0.035;
+  const markWidth = 0.007 + pauseWeight * 0.006;
+  const seed = (state.strokeCounter + 1) * 7919;
+  state.strokeCounter += 1;
+  state.strokes.push({
+    seed,
+    points: [
+      keyboardTracePoint(0.5 - direction * halfLength, centreY - 0.012, markWidth),
+      keyboardTracePoint(0.5 + direction * halfLength, centreY + 0.012, markWidth * 0.72)
+    ]
+  });
+  state.hasMarks = true;
+  state.completedCharacters.add(index);
+  state.writingDistance += 1;
+  els.inkStatus.textContent = index === total - 1
+    ? `${total} of ${total} · the line is ready.`
+    : `${index + 1} of ${total} · pause before the next form.`;
+  revealWritingNarrative();
+  renderAccessiblePath();
+  syncCompletionControls();
+  scheduleLineResponse(total);
 }
 
 function setStage(stage, moveFocus = true) {
   const previousStage = state.stage;
+  if (previousStage === "writing" && stage !== "writing") captureWritingGeometry();
   if (stage !== "entering") stopActiveAudio();
   if (stage !== "writing") {
     updateBrushCursor();
     clearCharacterPause();
   }
   state.stage = stage;
+  if (stage !== "writing") state.sending = false;
+  syncCanvasFrameState();
   els.panels.forEach((panel) => { panel.hidden = panel.dataset.stage !== stage; });
   const [number, name] = stageLabels[stage];
   els.stageNumber.textContent = number;
@@ -745,7 +917,11 @@ function setStage(stage, moveFocus = true) {
     }
   }
 
-  if (stage === "writing") requestAnimationFrame(() => setupWritingCanvases(previousStage === "after"));
+  if (stage === "writing") requestAnimationFrame(() => {
+    applyInputMode();
+    setupWritingCanvases(previousStage === "after");
+    syncCompletionControls();
+  });
   if (stage === "after") requestAnimationFrame(drawAfterMark);
   if (stage === "archive") requestAnimationFrame(drawArchiveCard);
 }
@@ -780,6 +956,8 @@ function guideLayout(width, height) {
 
 function setupWritingCanvases() {
   const rect = els.canvasFrame.getBoundingClientRect();
+  if (rect.width <= 0 || rect.height <= 0) return;
+  state.writingAspectRatio = rect.width / rect.height;
   sizeCanvas(els.guide, rect.width, rect.height);
   const writeCtx = sizeCanvas(els.writing, rect.width, rect.height);
   writeCtx.clearRect(0, 0, rect.width, rect.height);
@@ -963,7 +1141,7 @@ function characterTargetDimensions(layout) {
 }
 
 function expectedCharacterIndex() {
-  const total = guideLayout(els.writing.clientWidth, els.writing.clientHeight).positions.length;
+  const total = totalForms();
   for (let index = 0; index < total; index += 1) {
     if (!state.completedCharacters.has(index)) return index;
   }
@@ -1041,6 +1219,8 @@ function settleCharacter(index) {
     : `${index + 1} of ${total} · continue downward.`;
   state.activeCharacterIndex = null;
   syncCharacterTargets();
+  revealWritingNarrative();
+  syncCompletionControls();
   scheduleLineResponse(total);
 }
 
@@ -1312,6 +1492,7 @@ function previewBrushCursor(event) {
 
 function drawEventSamples(event) {
   const rect = els.writing.getBoundingClientRect();
+  if (rect.width > 0 && rect.height > 0) state.writingAspectRatio = rect.width / rect.height;
   const bounds = { x: 0, y: 0, width: rect.width, height: rect.height };
   const ctx = els.writing.getContext("2d");
 
@@ -1374,6 +1555,7 @@ function startDrawing(event) {
   );
   state.hasMarks = true;
   syncGuideSizeControls();
+  syncCompletionControls();
   syncCanvasFrameState();
   updateBrushReadout(point);
   updateBrushCursor(point);
@@ -1453,9 +1635,13 @@ function cancelDrawing(event) {
   updateBrushCursor();
 }
 
-function clearWriting() {
+function clearWriting({ resetInputMode = false } = {}) {
   const pointerId = state.activePointerId;
+  if (resetInputMode) state.inputMode = "draw";
   state.hasMarks = false;
+  state.partialTrace = false;
+  state.sending = false;
+  state.lastKeyboardAttendTime = null;
   state.drawing = false;
   state.lastPoint = null;
   state.lastDirection = { x: 0, y: 1 };
@@ -1478,7 +1664,6 @@ function clearWriting() {
   els.inkStatus.textContent = state.current && !hasStrokeGuide()
     ? "The page is open."
     : "Begin with the first form at the top.";
-  els.pauseAction.textContent = "Send the line onward";
   const ctx = els.writing.getContext("2d");
   ctx?.clearRect(0, 0, els.writing.clientWidth, els.writing.clientHeight);
   if (pointerId !== null && els.writing.hasPointerCapture?.(pointerId)) els.writing.releasePointerCapture(pointerId);
@@ -1486,25 +1671,38 @@ function clearWriting() {
   syncCanvasFrameState();
   setupCharacterFeedback();
   els.guide.classList.remove("is-faded");
-  els.writingNarrativeLines.querySelectorAll(".writing-narrative-line").forEach((line) => line.classList.remove("is-revealed"));
+  els.writingNarrativeLines.querySelectorAll(".writing-narrative-line").forEach((line) => line.classList.remove("is-revealed", "is-current"));
   els.writingNarrativeStatus.textContent = "";
+  els.reflectionNotice.value = "";
+  els.reflectionUnknown.value = "";
+  applyInputMode();
+  syncCompletionControls();
+}
+
+function fittedRecordingBounds(targetWidth, targetHeight) {
+  const aspect = Number.isFinite(state.writingAspectRatio) && state.writingAspectRatio > 0
+    ? state.writingAspectRatio
+    : 1;
+  let width = targetWidth;
+  let height = width / aspect;
+  if (height > targetHeight) {
+    height = targetHeight;
+    width = height * aspect;
+  }
+  return {
+    x: (targetWidth - width) / 2,
+    y: (targetHeight - height) / 2,
+    width,
+    height
+  };
 }
 
 function copyWritingTo(canvas) {
   const ctx = canvas.getContext("2d");
-  const sourceWidth = els.writing.clientWidth;
-  const sourceHeight = els.writing.clientHeight;
   const targetWidth = canvas.clientWidth;
   const targetHeight = canvas.clientHeight;
-  const scale = Math.min(targetWidth / sourceWidth, targetHeight / sourceHeight);
-  const drawWidth = sourceWidth * scale;
-  const drawHeight = sourceHeight * scale;
-  renderRecordedStrokes(ctx, {
-    x: (targetWidth - drawWidth) / 2,
-    y: (targetHeight - drawHeight) / 2,
-    width: drawWidth,
-    height: drawHeight
-  }, state.surface);
+  if (!ctx || targetWidth <= 0 || targetHeight <= 0) return;
+  renderRecordedStrokes(ctx, fittedRecordingBounds(targetWidth, targetHeight), state.surface);
 }
 
 function drawAfterMark() {
@@ -1588,16 +1786,12 @@ function archiveImage() {
   ctx.restore();
   ctx.strokeStyle = "#d8cdbb";
   ctx.strokeRect(70, 120, cardWidth - 140, 570);
-  const sourceWidth = els.writing.clientWidth;
-  const sourceHeight = els.writing.clientHeight;
-  const scale = Math.min((cardWidth - 260) / sourceWidth, 470 / sourceHeight);
-  const writeWidth = sourceWidth * scale;
-  const writeHeight = sourceHeight * scale;
+  const recordBounds = fittedRecordingBounds(cardWidth - 260, 470);
   renderRecordedStrokes(ctx, {
-    x: (cardWidth - writeWidth) / 2,
-    y: 170 + (470 - writeHeight) / 2,
-    width: writeWidth,
-    height: writeHeight
+    x: 130 + recordBounds.x,
+    y: 170 + recordBounds.y,
+    width: recordBounds.width,
+    height: recordBounds.height
   }, state.surface);
   ctx.fillStyle = "#302d28";
   ctx.font = "43px Georgia";
@@ -1610,7 +1804,11 @@ function archiveImage() {
   wrapText(ctx, narrative.archiveNote, 70, 830, cardWidth - 140, 29);
   ctx.fillStyle = currentAccent();
   ctx.font = "16px Arial";
-  ctx.fillText("ONE LINE, CARRIED BETWEEN SISTERS", 70, 944);
+  ctx.fillText(state.inputMode === "keyboard"
+    ? "KEYBOARD-PACED ATTENTION TRACE · PERSONAL RECORD"
+    : state.partialTrace
+      ? "PARTIAL HANDWRITING TRACE · PERSONAL RECORD"
+      : "HANDWRITING TRACE · PERSONAL RECORD", 70, 944);
   ctx.fillStyle = "#645d52";
   ctx.font = "14px Arial";
   const archiveStatus = strokeFor().status === "verified-digital-reconstruction"
@@ -1678,34 +1876,60 @@ function hidePicker() {
   state.returnFocus = null;
 }
 
-function pauseWithMark() {
+function pauseWithMark({ allowPartial = false } = {}) {
   if (!state.hasMarks) {
     els.inkStatus.textContent = "Begin the first form before sending the line.";
     return;
   }
   settleCharacter(state.activeCharacterIndex);
+  const complete = lineIsComplete();
+  if (!complete && !allowPartial) {
+    const next = state.completedCharacters.size + 1;
+    els.inkStatus.textContent = `The line is not complete yet. Continue with form ${next}, or choose the partial-trace path.`;
+    remindCharacterTarget(Math.min(next - 1, Math.max(0, totalForms() - 1)));
+    return;
+  }
   clearCharacterPause();
+  clearLineResponse();
+  captureWritingGeometry();
+  state.partialTrace = !complete;
+  state.sending = true;
+  applyInputMode();
   els.guide.classList.add("is-faded");
+  syncCanvasFrameState();
+  els.inkStatus.textContent = complete
+    ? "The guide recedes. Stay with your trace before it arrives."
+    : "The guide recedes. This partial trace will remain named as partial.";
   const motionIsReduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-  window.setTimeout(() => setStage("after"), motionIsReduced ? 0 : 900);
+  window.setTimeout(() => setStage("after"), motionIsReduced ? 0 : 1400);
+}
+
+function reviewContext() {
+  setStage("entering");
+  els.characterContext.open = true;
+  requestAnimationFrame(() => els.characterContext.querySelector("summary")?.focus({ preventScroll: true }));
 }
 
 document.addEventListener("click", (event) => {
   const action = event.target.closest("[data-action]")?.dataset.action;
   if (action === "home") {
     event.preventDefault();
-    clearWriting();
+    clearWriting({ resetInputMode: true });
     setStage("home");
   }
   if (action === "begin") setStage("writing");
   if (action === "change") showPicker();
   if (action === "close-picker") hidePicker();
   if (action === "clear") clearWriting();
+  if (action === "toggle-input-mode") toggleInputMode();
+  if (action === "attend-form") attendToNextForm();
   if (action === "pause") pauseWithMark();
+  if (action === "pause-partial") pauseWithMark({ allowPartial: true });
   if (action === "archive") setStage("archive");
-  if (action === "return-writing") setStage("writing");
+  if (action === "review-context") reviewContext();
+  if (action === "return-writing") { clearWriting(); setStage("writing"); }
   if (action === "download") archiveImage();
-  if (action === "start-over") { clearWriting(); setStage("home"); }
+  if (action === "start-over") { clearWriting({ resetInputMode: true }); setStage("home"); }
   if (event.target.closest("[data-open-about]")) els.about.showModal();
   if (event.target.closest("[data-close-about]")) els.about.close();
   const surfaceButton = event.target.closest("[data-surface]");
