@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A quiet, embodied writing encounter with Nüshu."
+    />
+    <title>Held in Ink — A Nüshu Writing Encounter</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="paper-grain" aria-hidden="true"></div>
+    <main class="site-shell">
+      <header class="site-header">
+        <a class="wordmark" href="#top" data-action="home" aria-label="Return to the context choices">
+          <span class="wordmark-mark">女书</span>
+          <span>Held in Ink</span>
+        </a>
+        <button class="text-button" type="button" data-open-about>Context &amp; care</button>
+      </header>
+
+      <section class="experience" id="top">
+        <div class="stage-label"><span id="stage-number">00</span><span id="stage-name">Choose</span></div>
+        <div class="progress" aria-label="Experience progress">
+          <span></span><span></span><span></span><span></span>
+        </div>
+
+        <section class="panel home-panel" data-stage="home">
+          <div class="home-intro">
+            <p class="eyebrow">Four women · four messages</p>
+            <h1>Whose words will you carry?</h1>
+            <p>Each woman has something she cannot deliver alone. Choose her story, take up her line, and send it towards the sister waiting at the other end.</p>
+          </div>
+          <div class="context-choice-grid" id="home-context-list" aria-label="Choose one of four Nüshu contexts">
+            <p class="context-loading">Loading the four contexts…</p>
+          </div>
+        </section>
+
+        <section class="panel entering-panel" data-stage="entering" hidden>
+          <p class="eyebrow">A letter waiting to be carried</p>
+          <div class="narrative-layout">
+            <div class="narrative-copy">
+              <p class="quiet-intro" id="story-time"></p>
+              <h1 id="story-title">A light letter carries my voice</h1>
+              <div class="character-reference">
+                <span class="reference-symbol nushu-glyph" id="reference-symbol">𛉡</span>
+                <div>
+                  <p class="reference-label" id="story-reference">A third-day-letter line: 薄文傳聲信</p>
+                  <p class="reference-note" id="reference-note"></p>
+                </div>
+              </div>
+              <div id="story-body"></div>
+              <div class="story-meta">
+                <span id="story-place"></span>
+                <span aria-hidden="true">·</span>
+                <span id="story-type">Historical fiction grounded in a documented line</span>
+              </div>
+            </div>
+            <div class="symbol-preview" aria-hidden="true">
+              <span class="nushu-glyph is-phrase" id="preview-symbol">𛉖𛆂𛈆𛉂𛉡</span>
+              <ol class="scene-sequence" id="scene-sequence"></ol>
+              <span class="preview-caption" id="guide-label">five standardized forms · one carried message</span>
+            </div>
+          </div>
+
+          <details class="context-layer" id="character-context">
+            <summary>
+              <span class="context-summary-copy">
+                <span class="context-layer-label">Historical grounding</span>
+                <span class="context-summary-title">What is documented, what is imagined</span>
+              </span>
+              <span class="context-summary-status" id="context-summary-status"></span>
+            </summary>
+            <div class="context-body">
+              <section class="context-note" id="context-note-section" aria-labelledby="context-note-heading">
+                <h2 id="context-note-heading">Behind this story</h2>
+                <p id="context-note"></p>
+              </section>
+              <div class="context-record" id="context-record">
+                <section class="context-record-section" aria-labelledby="context-sources-heading">
+                  <h3 id="context-sources-heading">Read the sources</h3>
+                  <div id="context-sources"></div>
+                </section>
+                <section class="context-record-section" id="context-artefact-section" aria-labelledby="context-artefact-heading" hidden>
+                  <h3 id="context-artefact-heading">Photograph or artefact</h3>
+                  <div id="context-artefact"></div>
+                </section>
+                <section class="context-record-section" id="context-audio-section" aria-labelledby="context-audio-heading" hidden>
+                  <h3 id="context-audio-heading">Audio</h3>
+                  <div id="context-audio"></div>
+                </section>
+              </div>
+            </div>
+          </details>
+
+          <div class="panel-actions">
+            <button class="button button-primary" id="begin-action" type="button" data-action="begin">Carry her words</button>
+            <button class="button button-quiet" type="button" data-action="change">Choose another woman</button>
+          </div>
+        </section>
+
+        <section class="panel writing-panel" data-stage="writing" hidden>
+          <div class="writing-heading">
+            <div>
+              <p class="eyebrow">Take up her line</p>
+              <h2 id="writing-title">Carry the words down the page</h2>
+              <p class="writing-reference" id="writing-reference">薄文傳聲信 · “This light letter carries my voice.”</p>
+            </div>
+            <div class="writing-guidance">
+              <p class="writing-instruction" id="writing-instruction">Follow the pale forms from top to bottom. Move at the pace of a letter being written.</p>
+              <p class="brush-guidance" id="brush-guidance"><span aria-hidden="true"></span>Pressure or pace shapes the ink.</p>
+            </div>
+          </div>
+          <div class="writing-narrative" id="writing-narrative" hidden>
+            <div class="writing-narrative-intro">
+              <p class="writing-narrative-label">As the line gathers</p>
+              <p id="writing-narrative-intro">Stay with her for a moment.</p>
+            </div>
+            <div class="writing-narrative-lines" id="writing-narrative-lines"></div>
+            <p class="visually-hidden" id="writing-narrative-status" aria-live="polite"></p>
+          </div>
+          <fieldset class="surface-picker">
+            <legend>Writing surface</legend>
+            <p class="surface-note">Choose what will carry her words.</p>
+            <div class="surface-options" role="group" aria-label="Choose a writing surface">
+              <button class="surface-option is-selected" type="button" data-surface="paper" aria-pressed="true">
+                <span class="surface-swatch surface-swatch-paper" aria-hidden="true"></span>
+                <span><strong>Paper</strong><small>quiet fibre</small></span>
+              </button>
+              <button class="surface-option" type="button" data-surface="fan" aria-pressed="false">
+                <span class="surface-swatch surface-swatch-fan" aria-hidden="true"></span>
+                <span><strong>Fan</strong><small>folded paper</small></span>
+              </button>
+              <button class="surface-option" type="button" data-surface="cloth" aria-pressed="false">
+                <span class="surface-swatch surface-swatch-cloth" aria-hidden="true"></span>
+                <span><strong>Woven cloth</strong><small>threaded ground</small></span>
+              </button>
+            </div>
+          </fieldset>
+          <fieldset class="guide-size-picker" id="guide-size-picker">
+            <legend>Guide size</legend>
+            <div class="guide-size-options" role="group" aria-label="Choose the tracing guide size">
+              <button class="guide-size-option is-selected" type="button" data-guide-size="comfort" aria-pressed="true">
+                <strong>Comfort</strong><small>Larger forms for tracing</small>
+              </button>
+              <button class="guide-size-option" type="button" data-guide-size="compact" aria-pressed="false">
+                <strong>Compact</strong><small>See the whole line at once</small>
+              </button>
+            </div>
+          </fieldset>
+          <div class="canvas-frame surface-paper" id="canvas-frame">
+            <canvas id="guide-canvas" aria-hidden="true"></canvas>
+            <canvas id="writing-canvas" aria-label="A canvas for tracing the selected Nüshu form" aria-describedby="writing-instruction brush-guidance ink-status"></canvas>
+            <div class="character-feedback-layer" id="character-feedback-layer" aria-hidden="true"></div>
+            <span class="brush-cursor" id="brush-cursor" aria-hidden="true"></span>
+            <div class="brush-readout" id="brush-readout" aria-hidden="true">
+              <span class="brush-pressure"><i></i></span>
+              <span><strong>Ink brush</strong><small id="brush-input">pressure · pace</small></span>
+            </div>
+            <span class="canvas-corner top-left" aria-hidden="true"></span>
+            <span class="canvas-corner top-right" aria-hidden="true"></span>
+            <span class="canvas-corner bottom-left" aria-hidden="true"></span>
+            <span class="canvas-corner bottom-right" aria-hidden="true"></span>
+          </div>
+          <div class="writing-tools">
+            <p class="ink-status" id="ink-status" aria-live="polite">Begin at the top.</p>
+            <div class="tool-actions">
+              <button class="text-button" type="button" data-action="clear">Clear and begin again</button>
+              <button class="button button-primary" id="pause-action" type="button" data-action="pause">Send the line onward</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel after-panel" data-stage="after" hidden>
+          <p class="eyebrow">The line has arrived</p>
+          <div class="after-mark" aria-hidden="true"><canvas id="after-canvas"></canvas></div>
+          <section class="after-interpretation" aria-labelledby="after-message-title">
+            <div class="after-message-card">
+              <span class="after-form nushu-glyph" id="after-form" aria-hidden="true"></span>
+              <div>
+                <p class="eyebrow">What you carried</p>
+                <h2 id="after-message-title"><span id="after-transcription"></span></h2>
+                <p class="after-meaning" id="after-meaning"></p>
+              </div>
+            </div>
+            <div class="after-reading">
+              <div class="after-reading-heading">
+                <p class="eyebrow">How the line is read</p>
+                <p class="after-reading-note" id="after-reading-note"></p>
+              </div>
+              <div class="after-reading-list" id="after-reading-list"></div>
+            </div>
+            <div class="delivery-journey">
+              <p class="eyebrow">From one hand to another</p>
+              <div class="delivery-track" id="delivery-track" aria-label="The message moves from its source context, through your hand, toward a receiving presence"></div>
+            </div>
+          </section>
+          <p class="after-quote" id="after-quote"></p>
+          <div class="panel-actions">
+            <button class="button button-primary" type="button" data-action="archive">Keep this trace</button>
+            <button class="button button-quiet" type="button" data-action="return-writing">Write it again</button>
+          </div>
+        </section>
+
+        <section class="panel archive-panel" data-stage="archive" hidden>
+          <p class="eyebrow">Kept in your hand</p>
+          <div class="archive-layout">
+            <article class="archive-card" id="archive-card">
+              <div class="card-topline"><span>HELD IN INK</span><span>女书</span></div>
+              <canvas id="card-canvas" aria-label="Your saved writing card"></canvas>
+              <div class="card-copy">
+                <p class="card-form" id="card-form"></p>
+                <p class="card-reference" id="card-reference"></p>
+                <p class="card-background" id="card-background"></p>
+              </div>
+              <div class="card-footer">One line, carried between sisters</div>
+            </article>
+            <div class="archive-copy">
+              <h2 id="archive-title">A trace to carry forward</h2>
+              <p id="archive-description"></p>
+              <button class="button button-primary" type="button" data-action="download">Download image</button>
+              <button class="text-button" type="button" data-action="start-over">Carry another message</button>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <aside class="prompt-picker" id="prompt-picker" hidden aria-label="Choose a prompt">
+        <div class="picker-heading">
+          <div>
+            <p class="eyebrow">Four women</p>
+            <h2>Whose words will you carry?</h2>
+          </div>
+          <button class="close-button" type="button" data-action="close-picker" aria-label="Close prompt picker">×</button>
+        </div>
+        <div class="prompt-list" id="prompt-list"></div>
+      </aside>
+    </main>
+
+    <dialog class="about-dialog" id="about-dialog">
+      <button class="close-button dialog-close" type="button" data-close-about aria-label="Close">×</button>
+      <p class="eyebrow">Context &amp; care</p>
+      <h2>Writing with attention</h2>
+      <p>Nüshu is a women’s script associated with Jiangyong County, Hunan, China. It has carried letters, songs, and intimate forms of support across generations.</p>
+      <p>The four named women and the moments around them are imagined. Their letters, songs, settings, and social ties are grounded in the historical sources inside each story.</p>
+      <p>Nüshu is syllabic: one form may carry the sounds of several Chinese words. The first guide is checked against a documented letter; the other three are clearly marked as provisional dictionary reconstructions.</p>
+      <p class="source-note">This is a living cultural heritage. Enter as a guest, and let each line return your attention to the women and communities that carried it.</p>
+    </dialog>
+
+    <noscript>This prototype needs JavaScript enabled to load its writing prompts.</noscript>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>

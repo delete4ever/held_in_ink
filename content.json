@@ -1,0 +1,294 @@
+{
+  "$schema": "./content.schema.json",
+  "contentVersion": 3,
+  "prompts": [
+    {
+      "id": "message",
+      "scene": {
+        "kicker": "Heyuan Village · early twentieth century",
+        "homeTitle": "Lian’s third-day letter",
+        "homeDeck": "Yue has crossed into her husband’s household. On the third morning, her sworn sister Lian sends a slim book after her.",
+        "theme": "message",
+        "sequence": ["Lian writes before noon", "your hand carries her voice", "Yue opens the book"],
+        "evidenceLabel": "Documented line · archive-checked forms",
+        "defaultSurface": "paper"
+      },
+      "layers": {
+        "stroke": {
+          "status": "verified-digital-reconstruction",
+          "symbol": "𛉡",
+          "phrase": "𛉖𛆂𛈆𛉂𛉡",
+          "transcription": "薄文傳聲信",
+          "phraseReading": "pu33 · vai42 · tcyn42 · ciong44 · sai21",
+          "gloss": "This light letter carries my voice.",
+          "guideLabel": "Five standardized forms · checked against the documented line",
+          "reference": "薄文傳聲信 · A light letter carries my voice",
+          "referenceNote": "Lian adds this line to the third-day book that will reach Yue in her new household."
+        },
+        "narrative": {
+          "sender": "Lian",
+          "receiver": "Yue",
+          "time": "The third morning after Yue’s wedding",
+          "title": "Carry Lian’s voice to Yue",
+          "place": "Heyuan Village · early twentieth century",
+          "storyType": "Historical fiction · grounded in a documented third-day letter",
+          "story": [
+            "Yue left three mornings ago. The room where Lian helped dress her for the wedding is quiet again. By noon, the women at home will send a third-day book to the new household.",
+            "Before it is wrapped, Lian adds one line for the friend she has called sister since girlhood: 薄文傳聲信—a light letter carrying her voice. The road to Yue is not long, yet marriage has put a whole household between them.",
+            "Lian leaves the brush beside the open page. Write the five signs in her place. When Yue opens the book in an unfamiliar room, let her meet the voice she knows."
+          ],
+          "writingLines": [
+            "The book is thin in your hands.",
+            "Lian’s brush pauses before the first mark.",
+            "The road ends at another household; her voice goes farther."
+          ],
+          "after": "Yue opens the book. Before she reads on, she knows who has sent it.",
+          "archiveNote": "Lian’s line crossed the road to Yue’s new household. Somewhere inside the little book, their girlhood room remained open."
+        },
+        "context": {
+          "note": "Lian and Yue are fictional. Their story follows the documented practice of giving a third-day book to a bride, and the quoted line comes from a Heyuan Village letter. The forms are standardized digital characters rather than a copy of the historical hand.",
+          "sources": [
+            {
+              "label": "Third-day letter from Heyuan Village",
+              "credit": "Museum of the Institute of Ethnology · Academia Sinica",
+              "url": "https://havefun.asdc.sinica.edu.tw/content/repository/resource_content.jsp?oid=4364459"
+            },
+            {
+              "label": "Translation and social history of the letter",
+              "credit": "Fei-wen Liu · Nan Nü 6.2 · 2004",
+              "url": "https://www.ioe.sinica.edu.tw/WebTools/FilesDownload.ashx?Menuid=530167136406372131&Pname=2004+nan6-2_liu_090904.pdf&Siteid=530167135246736660&fd=ResearcherPublication"
+            },
+            {
+              "label": "Third-day missives and Nüshu practice",
+              "credit": "Chen Xiaorong · UNESCO Courier",
+              "url": "https://www.unesco.org/en/articles/nushu-tears-sunshine-0"
+            },
+            {
+              "label": "Unicode Nüshu forms and readings",
+              "credit": "Unicode Consortium · Unicode Character Database 17.0.0",
+              "url": "https://www.unicode.org/Public/17.0.0/ucd/NushuSources.txt"
+            }
+          ],
+          "artefact": null,
+          "audio": null
+        }
+      }
+    },
+    {
+      "id": "handkerchief",
+      "scene": {
+        "kicker": "Jiangyong · the 1990s",
+        "homeTitle": "Xiu’s handkerchief abroad",
+        "homeDeck": "Xiu returns to a script her hand almost forgot. Zhen, the younger friend she calls sister, is far across the sea.",
+        "theme": "crossing",
+        "sequence": ["Xiu steadies the cloth", "your hand crosses the sea", "Zhen unfolds the meeting"],
+        "evidenceLabel": "Reported line · provisional forms",
+        "defaultSurface": "cloth"
+      },
+      "layers": {
+        "stroke": {
+          "status": "dictionary-derived-reconstruction",
+          "symbol": "𛉓",
+          "phrase": "𛉓𛇼𛈅𛇒𛉵𛆴𛈛",
+          "transcription": "寄到国外相会身",
+          "phraseReading": "tci21 · lau21 · kuw5 · nguw33 · siang44 · vwe33 · cie44",
+          "gloss": "May these words travel abroad, so we may meet through them.",
+          "guideLabel": "Seven standardized forms · provisional dictionary match",
+          "reference": "寄到国外相会身 · May the writing travel so we may meet",
+          "referenceNote": "Xiu asks the handkerchief to travel abroad and let her meet Zhen through writing."
+        },
+        "narrative": {
+          "sender": "Xiu",
+          "receiver": "Zhen",
+          "time": "A quiet afternoon after Zhen has gone home",
+          "title": "Fold Xiu’s greeting for Zhen",
+          "place": "Jiangyong · the 1990s",
+          "storyType": "Historical fiction · inspired by a recorded return to Nüshu writing",
+          "story": [
+            "Xiu presses a plain handkerchief flat with both palms. She has not written Nüshu for years. The first mark comes slowly; by the third, her wrist remembers the old angle.",
+            "Zhen is abroad now—the younger friend who once sat beside her and listened. A letter could arrive, but cloth can be held. Xiu chooses 寄到国外相会身, words asking the handkerchief to travel overseas so they may meet through it.",
+            "Set down the seven signs for Xiu, then fold the cloth inward. Zhen will open it from the other side of the distance."
+          ],
+          "writingLines": [
+            "The cloth catches lightly beneath the brush.",
+            "Xiu’s hand remembers by moving.",
+            "Folded between the strokes is the meeting she cannot make."
+          ],
+          "after": "Far away, Zhen unfolds the handkerchief and rests her palm over the writing.",
+          "archiveNote": "Xiu folded the cloth small enough to travel. Far away, Zhen opened it wide enough for a meeting."
+        },
+        "context": {
+          "note": "Xiu and Zhen are fictional. Their story draws on accounts of He Yanxin returning to Nüshu in 1994 and sending writing on handkerchiefs abroad. The Han line is reported; these seven forms are provisional dictionary matches, with alternatives for 寄, 到, and 会.",
+          "sources": [
+            {
+              "label": "He Yanxin and the return to Nüshu writing",
+              "credit": "Orie Endo · Inscribing Intimacy · 2019 English edition",
+              "url": "https://deepblue.lib.umich.edu/items/5b196955-cb60-490e-90db-64717fa24eba"
+            },
+            {
+              "label": "The reported handkerchief line",
+              "credit": "The Paper · 2019",
+              "url": "https://www.thepaper.cn/newsDetail_forward_5187608"
+            },
+            {
+              "label": "Standard characters and Jiangyong readings",
+              "credit": "Gong Zhebing & Tang Gongwei · Online Nushu Dictionary",
+              "url": "https://nushuscript.org/en-US/"
+            },
+            {
+              "label": "Unicode Nüshu forms and readings",
+              "credit": "Unicode Consortium · Unicode Character Database 17.0.0",
+              "url": "https://www.unicode.org/Public/17.0.0/ucd/NushuSources.txt"
+            }
+          ],
+          "artefact": null,
+          "audio": null
+        }
+      }
+    },
+    {
+      "id": "voicing-sorrow",
+      "scene": {
+        "kicker": "Rural Jiangyong · early twentieth century",
+        "homeTitle": "Cai’s hidden song",
+        "homeDeck": "Cai writes from her husband’s household to Gui, the sworn sister who knows the sound of her unguarded voice.",
+        "theme": "witness",
+        "sequence": ["Cai writes after dark", "your hand gives sorrow rhythm", "Gui lends the line her breath"],
+        "evidenceLabel": "Published song line · provisional forms",
+        "defaultSurface": "paper"
+      },
+      "layers": {
+        "stroke": {
+          "status": "dictionary-derived-reconstruction",
+          "symbol": "𛅺",
+          "phrase": "𛅺𛋆𛆁𛈬𛉅𛇰𛊭",
+          "transcription": "要凭女书诉苦情",
+          "phraseReading": "njie33 · fang44 · njyu13 · cyu44 · cya42 · khu35 · tsiong42",
+          "gloss": "We need Nüshu to give sorrow a voice.",
+          "guideLabel": "Seven standardized forms · provisional dictionary match",
+          "reference": "要凭女书诉苦情 · Let Nüshu voice this bitterness",
+          "referenceNote": "Cai remembers a line sung by women before her, trusting Gui to hear what the household cannot."
+        },
+        "narrative": {
+          "sender": "Cai",
+          "receiver": "Gui",
+          "time": "After the household lamps are lowered",
+          "title": "Let Gui hear what Cai cannot say here",
+          "place": "Rural Jiangyong · early twentieth century",
+          "storyType": "Historical fiction · built around a song attributed to Cizhu",
+          "story": [
+            "After the lamps are lowered, Cai draws a scrap of paper from beneath her sewing basket. All day she has answered the household with the same two words: I’m well.",
+            "Only Gui, her sworn sister in the village she left, will hear what that answer conceals. Cai remembers 要凭女书诉苦情—not for praise, not to win anything, but because hurt needs a voice and Gui knows how to listen.",
+            "Carry the seven signs home to Gui. She cannot change Cai’s days, but she can sing the line back and keep it from being borne alone."
+          ],
+          "writingLines": [
+            "The house is quiet enough for the truth.",
+            "Cai leaves room where ordinary words have failed.",
+            "Gui will lend the line her breath."
+          ],
+          "after": "Gui reads it twice—the second time aloud, so Cai’s sorrow is not left alone on the page.",
+          "archiveNote": "Cai sent what she could not say aloud. Gui gave it breath and sent the song back across the hills."
+        },
+        "context": {
+          "note": "Cai and Gui are fictional, and this private exchange is imagined. The line belongs to a song attributed to Cizhu, an early-twentieth-century Jiangyong woman; Nüshu songs were meant to be voiced and shared. The seven displayed forms are provisional dictionary matches rather than a manuscript transcription.",
+          "sources": [
+            {
+              "label": "Cizhu’s song and the social life of Nüshu lament",
+              "credit": "Fei-wen Liu · American Ethnologist 31.3 · 2004",
+              "url": "https://www.ioe.sinica.edu.tw/WebTools/FilesDownload.ashx?Menuid=530167136406372131&Pname=2004+From+being+to+becoming+PDF.pdf&Siteid=530167135246736660&fd=ResearcherPublication"
+            },
+            {
+              "label": "Published Han transcription of the song line",
+              "credit": "Sohu · secondary source",
+              "url": "https://www.sohu.com/a/166175656_488835"
+            },
+            {
+              "label": "Standard characters and Jiangyong readings",
+              "credit": "Gong Zhebing & Tang Gongwei · Online Nushu Dictionary",
+              "url": "https://nushuscript.org/en-US/"
+            },
+            {
+              "label": "Unicode Nüshu forms and readings",
+              "credit": "Unicode Consortium · Unicode Character Database 17.0.0",
+              "url": "https://www.unicode.org/Public/17.0.0/ucd/NushuSources.txt"
+            }
+          ],
+          "artefact": null,
+          "audio": null
+        }
+      }
+    },
+    {
+      "id": "addressing-goddess",
+      "scene": {
+        "kicker": "Huashan Temple road · early twentieth century",
+        "homeTitle": "Qiao’s prayer for the mountain",
+        "homeDeck": "Qiao cannot make the temple journey. She entrusts her written address to Lan, who will sing it before the goddess.",
+        "theme": "invocation",
+        "sequence": ["Qiao folds the page", "your hand joins Lan’s journey", "Lan sings before the goddess"],
+        "evidenceLabel": "Oral-memory line · provisional forms",
+        "defaultSurface": "paper"
+      },
+      "layers": {
+        "stroke": {
+          "status": "dictionary-derived-reconstruction",
+          "symbol": "𛊷",
+          "phrase": "𛊷𛇞𛉪𛈬𛇣𛋫𛋙",
+          "transcription": "把笔修书拜贵神",
+          "phraseReading": "pwe35 · pa5 · siou44 · cyu44 · poe21 · tciang33 · cyu33",
+          "gloss": "I take up the brush and write to the revered goddess.",
+          "guideLabel": "Seven standardized forms · provisional dictionary match",
+          "reference": "把笔修书拜贵神 · I take up the brush and write to the goddess",
+          "referenceNote": "Qiao writes towards the goddess; Lan will carry the page up the mountain and sing it for her."
+        },
+        "narrative": {
+          "sender": "Qiao",
+          "receiver": "Lan",
+          "time": "Before sunrise on the day of the temple journey",
+          "title": "Take Qiao’s words up the mountain",
+          "place": "Huashan Temple road · early twentieth century",
+          "storyType": "Historical fiction · grounded in a remembered temple song",
+          "story": [
+            "Before sunrise, Lan comes to Qiao’s door on her way to Huashan Temple. Qiao has no parents left to ask on her behalf. She gives Lan a folded page and asks her not to open it until she reaches the shrine.",
+            "把笔修书拜贵神: words about taking up the brush and writing to the revered goddess. Qiao’s hand has made them; Lan will give them breath among the women on the mountain.",
+            "Write the seven signs Qiao entrusts to her. Lan will carry the page inside her sleeve, close to the pulse in her wrist."
+          ],
+          "writingLines": [
+            "Qiao folds the paper before dawn.",
+            "Lan carries it close to her wrist.",
+            "At the temple, one sister’s hand becomes the other sister’s voice."
+          ],
+          "after": "At the shrine, Lan unfolds the page. Qiao is not on the mountain, but her words are.",
+          "archiveNote": "Qiao stayed below the mountain. Lan carried her page upward, and one sister’s silence entered another sister’s voice."
+        },
+        "context": {
+          "note": "Qiao and Lan are fictional, and the handover between them is imagined. Their scene draws on He Yanxin’s childhood memory of a Huashan Temple song whose speaker is orphaned. The Han line survives through oral memory; these seven forms are provisional dictionary matches.",
+          "sources": [
+            {
+              "label": "The remembered Huashan Temple song",
+              "credit": "The Paper · 2019",
+              "url": "https://www.thepaper.cn/newsDetail_forward_5187608"
+            },
+            {
+              "label": "Nüshu genres, sentiment, and shared performance",
+              "credit": "Fei-wen Liu · American Ethnologist 31.3 · 2004",
+              "url": "https://www.ioe.sinica.edu.tw/WebTools/FilesDownload.ashx?Menuid=530167136406372131&Pname=2004+From+being+to+becoming+PDF.pdf&Siteid=530167135246736660&fd=ResearcherPublication"
+            },
+            {
+              "label": "Standard characters and Jiangyong readings",
+              "credit": "Gong Zhebing & Tang Gongwei · Online Nushu Dictionary",
+              "url": "https://nushuscript.org/en-US/"
+            },
+            {
+              "label": "Unicode Nüshu forms and readings",
+              "credit": "Unicode Consortium · Unicode Character Database 17.0.0",
+              "url": "https://www.unicode.org/Public/17.0.0/ucd/NushuSources.txt"
+            }
+          ],
+          "artefact": null,
+          "audio": null
+        }
+      }
+    }
+  ]
+}
