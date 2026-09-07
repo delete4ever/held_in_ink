@@ -1,0 +1,294 @@
+{
+  "$schema": "./content.schema.json",
+  "contentVersion": 3,
+  "prompts": [
+    {
+      "id": "message",
+      "scene": {
+        "kicker": "河渊村 · 二十世纪初",
+        "homeTitle": "莲的三朝书",
+        "homeDeck": "月已嫁入夫家。第三日清晨，结拜姊妹莲将一册薄薄的书送往她的新居。",
+        "theme": "message",
+        "sequence": ["莲在午前落笔", "你的手替她捎去声音", "月展开这册书"],
+        "evidenceLabel": "文献所载句 · 字形经档案核对",
+        "defaultSurface": "paper"
+      },
+      "layers": {
+        "stroke": {
+          "status": "verified-digital-reconstruction",
+          "symbol": "𛉡",
+          "phrase": "𛉖𛆂𛈆𛉂𛉡",
+          "transcription": "薄文傳聲信",
+          "phraseReading": "pu33 · vai42 · tcyn42 · ciong44 · sai21",
+          "gloss": "这封薄信，替我传去声音。",
+          "guideLabel": "五个规范字形 · 已与文献所载句核对",
+          "reference": "薄文傳聲信 · 轻薄书信，传我声音",
+          "referenceNote": "莲把这一句写进三朝书，让它去往月的新家。"
+        },
+        "narrative": {
+          "sender": "莲",
+          "receiver": "月",
+          "time": "月成婚后的第三个清晨",
+          "title": "替莲把声音送到月的身边",
+          "place": "河渊村 · 二十世纪初",
+          "storyType": "历史虚构 · 以文献所载三朝书为据",
+          "story": [
+            "月离开已有三个清晨。出嫁那日，莲曾在房中替她整衣，如今屋子又静了下来。午时以前，家中的女人们要把三朝书送往夫家。",
+            "书页包起之前，莲为这位自少女时便以姊妹相称的友人添上一句：薄文傳聲信——薄薄一纸，替她传去声音。去往月身边的路并不远，婚姻却已在她们之间隔开一整个家门。",
+            "莲把笔搁在未干的纸旁。请代她写下这五个字。愿月在陌生的房中展开书册时，先遇见那个熟悉的声音。"
+          ],
+          "writingLines": [
+            "薄薄的书册停在你手中。",
+            "第一笔落下以前，莲的笔稍稍一顿。",
+            "路止于另一户人家，她的声音却仍向前去。"
+          ],
+          "after": "月展开书册。还未继续读下去，她已经知道是谁寄来了它。",
+          "archiveNote": "莲的句子越过村路，来到月的新家。小小书册之中，她们少女时共处的房间仿佛仍未关上。"
+        },
+        "context": {
+          "note": "莲与月皆为虚构人物。故事取材于新娘出嫁后第三日获赠三朝书的文献记录；所引句出自河渊村的一封书信。页面呈现的是规范化数字字形，并非对历史手迹的摹写。",
+          "sources": [
+            {
+              "label": "河渊村三朝书",
+              "credit": "中央研究院民族学研究所博物馆",
+              "url": "https://havefun.asdc.sinica.edu.tw/content/repository/resource_content.jsp?oid=4364459"
+            },
+            {
+              "label": "书信译文与社会历史研究",
+              "credit": "Fei-wen Liu（刘斐玟）· Nan Nü 6.2 · 2004",
+              "url": "https://www.ioe.sinica.edu.tw/WebTools/FilesDownload.ashx?Menuid=530167136406372131&Pname=2004+nan6-2_liu_090904.pdf&Siteid=530167135246736660&fd=ResearcherPublication"
+            },
+            {
+              "label": "三朝书与女书实践",
+              "credit": "Chen Xiaorong · 联合国教科文组织《信使》",
+              "url": "https://www.unesco.org/en/articles/nushu-tears-sunshine-0"
+            },
+            {
+              "label": "Unicode 女书字形与读音",
+              "credit": "Unicode Consortium · Unicode Character Database 17.0.0",
+              "url": "https://www.unicode.org/Public/17.0.0/ucd/NushuSources.txt"
+            }
+          ],
+          "artefact": null,
+          "audio": null
+        }
+      }
+    },
+    {
+      "id": "handkerchief",
+      "scene": {
+        "kicker": "江永 · 二十世纪九十年代",
+        "homeTitle": "绣寄往海外的手帕",
+        "homeDeck": "绣重新拾起手几乎遗忘的文字。那位被她唤作姊妹的年轻友人贞，已远在海的另一边。",
+        "theme": "crossing",
+        "sequence": ["绣将手帕轻轻展平", "你的手越过海面", "贞展开这一场相会"],
+        "evidenceLabel": "报道所载句 · 暂定字形",
+        "defaultSurface": "cloth"
+      },
+      "layers": {
+        "stroke": {
+          "status": "dictionary-derived-reconstruction",
+          "symbol": "𛉓",
+          "phrase": "𛉓𛇼𛈅𛇒𛉵𛆴𛈛",
+          "transcription": "寄到国外相会身",
+          "phraseReading": "tci21 · lau21 · kuw5 · nguw33 · siang44 · vwe33 · cie44",
+          "gloss": "愿字迹远渡海外，使我们借它相会。",
+          "guideLabel": "七个规范字形 · 暂依字典配对",
+          "reference": "寄到国外相会身 · 愿文字远行，使我们由此相会",
+          "referenceNote": "绣托手帕远渡重洋，好让她与贞在文字之中重逢。"
+        },
+        "narrative": {
+          "sender": "绣",
+          "receiver": "贞",
+          "time": "贞离开以后，一个安静的午后",
+          "title": "替绣把问候叠好，寄给贞",
+          "place": "江永 · 二十世纪九十年代",
+          "storyType": "历史虚构 · 受一则重拾女书书写的记录启发",
+          "story": [
+            "绣用双掌把素净的手帕按平。她已有多年不曾写女书。第一笔来得迟缓；写到第三笔，手腕才忆起从前的斜度。",
+            "贞如今远在海外——那位曾坐在她身旁静静听着的年轻友人。信也能够抵达，可布帛能被贴身握住。绣选了“寄到国外相会身”，愿手帕替她远行，让两人在文字中相会。",
+            "请替绣写下这七个字，再把布帛向内叠起。贞会从距离的另一端，将它缓缓展开。"
+          ],
+          "writingLines": [
+            "笔锋掠过，布纹轻轻牵住它。",
+            "绣的手在移动中一点点记起。",
+            "不能亲赴的相会，被叠进了这些笔画。"
+          ],
+          "after": "海的另一边，贞展开手帕，把掌心轻轻覆在字迹之上。",
+          "archiveNote": "绣把布帛叠得足够小，让它能够远行；贞在远方将它展开，展开得足够容纳一场相会。"
+        },
+        "context": {
+          "note": "绣与贞皆为虚构人物。故事参考了何艳新于1994年重拾女书、并把书写在手帕上的文字寄往海外的记述。汉字句见于报道；页面上的七个女书字形暂依字典配对，其中“寄”“到”“会”仍存在其他可能字形。",
+          "sources": [
+            {
+              "label": "何艳新与重拾女书书写",
+              "credit": "Orie Endo · Inscribing Intimacy · 2019 English edition",
+              "url": "https://deepblue.lib.umich.edu/items/5b196955-cb60-490e-90db-64717fa24eba"
+            },
+            {
+              "label": "手帕文字的报道记录",
+              "credit": "澎湃新闻 · 2019",
+              "url": "https://www.thepaper.cn/newsDetail_forward_5187608"
+            },
+            {
+              "label": "规范字形与江永读音",
+              "credit": "Gong Zhebing、Tang Gongwei · Online Nushu Dictionary",
+              "url": "https://nushuscript.org/en-US/"
+            },
+            {
+              "label": "Unicode 女书字形与读音",
+              "credit": "Unicode Consortium · Unicode Character Database 17.0.0",
+              "url": "https://www.unicode.org/Public/17.0.0/ucd/NushuSources.txt"
+            }
+          ],
+          "artefact": null,
+          "audio": null
+        }
+      }
+    },
+    {
+      "id": "voicing-sorrow",
+      "scene": {
+        "kicker": "江永乡间 · 二十世纪初",
+        "homeTitle": "采写在暗处的歌",
+        "homeDeck": "采从夫家写信给桂——那位知道她卸下防备时，声音是什么模样的结拜姊妹。",
+        "theme": "witness",
+        "sequence": ["采在灯灭后落笔", "你的手让苦情有了节奏", "桂把自己的气息借给这一句"],
+        "evidenceLabel": "已刊歌句 · 暂定字形",
+        "defaultSurface": "paper"
+      },
+      "layers": {
+        "stroke": {
+          "status": "dictionary-derived-reconstruction",
+          "symbol": "𛅺",
+          "phrase": "𛅺𛋆𛆁𛈬𛉅𛇰𛊭",
+          "transcription": "要凭女书诉苦情",
+          "phraseReading": "njie33 · fang44 · njyu13 · cyu44 · cya42 · khu35 · tsiong42",
+          "gloss": "要凭女书，把苦情诉出声来。",
+          "guideLabel": "七个规范字形 · 暂依字典配对",
+          "reference": "要凭女书诉苦情 · 借女书说出心中苦情",
+          "referenceNote": "采想起旧日女人们唱过的一句；她相信桂会听见这户人家无法听见的声音。"
+        },
+        "narrative": {
+          "sender": "采",
+          "receiver": "桂",
+          "time": "家中的灯火一一低下以后",
+          "title": "让桂听见采无法在此说出的话",
+          "place": "江永乡间 · 二十世纪初",
+          "storyType": "历史虚构 · 围绕一首相传为慈珠所作的歌展开",
+          "story": [
+            "灯火熄下以后，采从针线篮底取出一片纸。整整一日，她都用同样两个字回答这户人家：我好。",
+            "只有留在故村的结拜姊妹桂，听得见这句回答遮住了什么。采想起“要凭女书诉苦情”——不是为了得人称许，也不是为了换取什么，只因伤痛需要声音，而桂懂得如何倾听。",
+            "请把这七个字带回桂的身边。她无法改变采的日子，却能把这一句重新唱出，让苦楚不必由一人独自承受。"
+          ],
+          "writingLines": [
+            "夜深得足以容下真话。",
+            "日常言语失效之处，采留下了一点空白。",
+            "桂会把自己的气息借给这一句。"
+          ],
+          "after": "桂读了两遍。第二遍，她将它唱出声来，于是采的苦楚不再独自留在纸上。",
+          "archiveNote": "采寄出了无法当面说出的事。桂赋予它气息，又让歌声越过山岭，回到她身边。"
+        },
+        "context": {
+          "note": "采与桂皆为虚构人物，两人的私下往来亦属想象。所引句出自一首相传由二十世纪初江永女性慈珠所作的歌；女书歌谣本就需要被吟唱、被共同聆听。页面上的七个字形是暂依字典所得的配对，并非手稿转录。",
+          "sources": [
+            {
+              "label": "慈珠之歌与女书诉苦歌的社会生命",
+              "credit": "Fei-wen Liu（刘斐玟）· American Ethnologist 31.3 · 2004",
+              "url": "https://www.ioe.sinica.edu.tw/WebTools/FilesDownload.ashx?Menuid=530167136406372131&Pname=2004+From+being+to+becoming+PDF.pdf&Siteid=530167135246736660&fd=ResearcherPublication"
+            },
+            {
+              "label": "歌句的汉字转写",
+              "credit": "搜狐 · 二手资料",
+              "url": "https://www.sohu.com/a/166175656_488835"
+            },
+            {
+              "label": "规范字形与江永读音",
+              "credit": "Gong Zhebing、Tang Gongwei · Online Nushu Dictionary",
+              "url": "https://nushuscript.org/en-US/"
+            },
+            {
+              "label": "Unicode 女书字形与读音",
+              "credit": "Unicode Consortium · Unicode Character Database 17.0.0",
+              "url": "https://www.unicode.org/Public/17.0.0/ucd/NushuSources.txt"
+            }
+          ],
+          "artefact": null,
+          "audio": null
+        }
+      }
+    },
+    {
+      "id": "addressing-goddess",
+      "scene": {
+        "kicker": "花山庙山路 · 二十世纪初",
+        "homeTitle": "巧托往山中的祷词",
+        "homeDeck": "巧无法亲赴庙中，便把写好的敬辞托付给兰，请她在神女面前唱出。",
+        "theme": "invocation",
+        "sequence": ["巧把纸页折好", "你的手随兰走上山路", "兰在神女面前唱出它"],
+        "evidenceLabel": "口述记忆句 · 暂定字形",
+        "defaultSurface": "paper"
+      },
+      "layers": {
+        "stroke": {
+          "status": "dictionary-derived-reconstruction",
+          "symbol": "𛊷",
+          "phrase": "𛊷𛇞𛉪𛈬𛇣𛋫𛋙",
+          "transcription": "把笔修书拜贵神",
+          "phraseReading": "pwe35 · pa5 · siou44 · cyu44 · poe21 · tciang33 · cyu33",
+          "gloss": "我提笔修书，敬呈尊贵神女。",
+          "guideLabel": "七个规范字形 · 暂依字典配对",
+          "reference": "把笔修书拜贵神 · 提笔修书，敬拜神女",
+          "referenceNote": "巧向神女写去；兰会把纸页带上山，在庙前替她唱出。"
+        },
+        "narrative": {
+          "sender": "巧",
+          "receiver": "兰",
+          "time": "上山赴庙的那一天，日出以前",
+          "title": "把巧的话带上山去",
+          "place": "花山庙山路 · 二十世纪初",
+          "storyType": "历史虚构 · 以记忆中流传的庙歌为据",
+          "story": [
+            "日出以前，兰在前往花山庙的途中来到巧的门前。巧已无父母可替她祈求，便交给兰一页折好的纸，请她到了神前再打开。",
+            "“把笔修书拜贵神”——提笔修书，敬呈尊贵神女。字由巧的手写下；到了山中，兰会在众多女人之间把它唱出，赋予它气息。",
+            "请写下巧所托付的七个字。兰会把纸页藏在衣袖里，贴近腕间跳动的脉搏，一路带上山去。"
+          ],
+          "writingLines": [
+            "天亮以前，巧把纸页折好。",
+            "兰将它贴近腕间的脉搏。",
+            "到了庙中，一位姊妹的手会成为另一位姊妹的声音。"
+          ],
+          "after": "神女面前，兰展开纸页。巧不在山上，她的话却已抵达。",
+          "archiveNote": "巧留在山下。兰把她的纸页带向高处，一位姊妹的沉默由此进入另一位姊妹的声音。"
+        },
+        "context": {
+          "note": "巧与兰皆为虚构人物，两人交付纸页的场景亦属想象。故事取材于何艳新童年记忆中的一首花山庙歌，歌中叙述者是一名孤女。汉字句经由口述记忆留存；页面上的七个字形暂依字典配对。",
+          "sources": [
+            {
+              "label": "记忆中的花山庙歌",
+              "credit": "澎湃新闻 · 2019",
+              "url": "https://www.thepaper.cn/newsDetail_forward_5187608"
+            },
+            {
+              "label": "女书体裁、情感与共同吟唱",
+              "credit": "Fei-wen Liu（刘斐玟）· American Ethnologist 31.3 · 2004",
+              "url": "https://www.ioe.sinica.edu.tw/WebTools/FilesDownload.ashx?Menuid=530167136406372131&Pname=2004+From+being+to+becoming+PDF.pdf&Siteid=530167135246736660&fd=ResearcherPublication"
+            },
+            {
+              "label": "规范字形与江永读音",
+              "credit": "Gong Zhebing、Tang Gongwei · Online Nushu Dictionary",
+              "url": "https://nushuscript.org/en-US/"
+            },
+            {
+              "label": "Unicode 女书字形与读音",
+              "credit": "Unicode Consortium · Unicode Character Database 17.0.0",
+              "url": "https://www.unicode.org/Public/17.0.0/ucd/NushuSources.txt"
+            }
+          ],
+          "artefact": null,
+          "audio": null
+        }
+      }
+    }
+  ]
+}
