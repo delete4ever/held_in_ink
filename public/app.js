@@ -112,7 +112,8 @@ const els = {
   afterReadingNote: document.querySelector("#after-reading-note"),
   deliveryTrack: document.querySelector("#delivery-track"),
   cardForm: document.querySelector("#card-form"),
-  cardReference: document.querySelector("#card-reference"),
+  cardTranscription: document.querySelector("#card-transcription"),
+  cardReading: document.querySelector("#card-reading"),
   cardBackground: document.querySelector("#card-background"),
   cardFooter: document.querySelector("#card-footer"),
   archiveTitle: document.querySelector("#archive-title"),
@@ -233,6 +234,9 @@ const staticZh = {
   writeAgain: "再写一次",
   keptHand: "留在你手中",
   savedCardAria: "你保存的书写卡片",
+  meaningLabel: "所写之意",
+  hanTranscription: "汉字转写",
+  jiangyongReading: "江永读音",
   downloadImage: "下载图像",
   carryAnother: "传递另一句话",
   promptPickerAria: "选择一封书信",
@@ -257,18 +261,18 @@ const dynamicCopy = {
     fictionalComposite: "Fictional composite", carryWords: "Carry her words →", rights: ({ value }) => `Rights: ${value}`,
     withheld: "Withheld", notRecorded: "Not recorded", incompleteSource: "The source record is incomplete, so it is not presented as a citation.", noSource: "No source record has been added. This entry should not be treated as historical evidence.", notAttached: "Not attached", invalidArtefact: "This record is missing required source, credit, rights, caption, or alt-text information, so the material is not displayed.", noArtefact: "No verified photograph or artefact is attached to this entry. No reconstruction is substituted.", viewSource: "View source record", unavailable: "Unavailable", artefactLoadError: "The credited artefact could not be loaded. No replacement image is shown.", invalidAudio: "This record is missing required source, credit, rights, description, or transcript information, so no audio is loaded.", noAudio: "No credited audio is attached to this entry. Nothing will play.", audioSuffix: "Audio never starts automatically and begins muted.", startsMuted: "Starts muted.", sound: "Sound", on: "On", off: "Off", transcript: "Read transcript or sound description", viewAudio: "View audio source record", soundUnavailable: "Sound unavailable", audioLoadError: "The credited audio could not be loaded. Nothing will play.",
     formPending: "Form pending", writeFor: ({ sender }) => `Write for ${sender}`, writingTitle: ({ sender, receiver }) => `Carry ${sender}’s words to ${receiver}`,
-    guidedInstruction: ({ count }) => `Follow the ${count} pale forms from top to bottom. Let the line unfold slowly.`, openInstruction: "Let your mark answer the story in your own way.",
+    guidedInstruction: ({ count }) => `Follow the ${count} pale forms from top to bottom. Let the line unfold slowly.`, fanGuidedInstruction: ({ count }) => `Follow ${count} pale forms down each short column, moving from the right column to the left.`, openInstruction: "Let your mark answer the story in your own way.",
     canvasVerified: ({ line }) => `A canvas for tracing the Nüshu line transcribed as ${line}`, canvasProvisional: ({ line }) => `A canvas for tracing provisional standardized forms for the line ${line}`, canvasOpen: ({ title }) => `An open writing canvas for ${title}`,
-    stayWith: ({ sender }) => `Stay with ${sender} as the words take shape.`, archiveTitle: ({ sender }) => `A record of your encounter with ${sender}’s line`, archiveDescription: ({ sender }) => `This keeps your temporary involvement visible without claiming ownership of Nüshu or ${sender}’s story.`,
+    stayWith: ({ sender }) => `Stay with ${sender} as the words take shape.`, archiveDescription: ({ transcription, reading }) => `Han transcription: ${transcription}. Jiangyong reading: ${reading}. This remains a personal record of encounter, not a heritage object.`,
     readingVerified: ({ count }) => `Jiangyong readings recorded for these ${count} forms.`, readingProvisional: ({ count }) => `Provisional Jiangyong readings for these ${count} standardized forms.`, readingUnavailable: "A checked syllable reading is not available for this line.", readTranscription: "Read the Han transcription beneath the line.", yourHand: "Your hand", deliveryDynamicAria: ({ sender, receiver }) => `${sender}’s words move through your hand towards ${receiver}`,
     sendOnward: "Send the line onward", completeToSend: "Complete the line to send it", clearBeforeInput: "Clear the page before changing the input pathway", returnDrawing: "Return to the drawing pathway", useKeyboard: "Use the keyboard-paced pathway", keyboardModeNote: "Each press records a pause mark rather than imitating handwriting. Clear the trace to change pathways.", drawingModeNote: "If drawing is not accessible to you, attend to each form with a deliberate key press. This records rhythm, not simulated handwriting.",
     keyboardTrace: "keyboard-paced attention trace", partialTraceLabel: "partial handwriting trace", handwritingTrace: "handwriting trace", traceCaption: ({ trace }) => `Your ${trace}, before interpretation`, traceAria: ({ trace }) => `Your ${trace} from the writing stage`, savedTraceAria: ({ trace }) => `Your saved ${trace} record`, traceFooter: ({ trace }) => `${trace[0].toUpperCase()}${trace.slice(1)} · personal record, not a heritage object`,
     allForms: ({ count }) => `All ${count} forms have been attended to. The line is ready to send.`, lineReady: "Line ready", formStatus: ({ index, count, reading }) => `Form ${index} of ${count}${reading ? `, read ${reading}` : ""}. Pause, then activate the button when you are ready.`, attendForm: ({ index }) => `Attend to form ${index}`,
     keyboardProgressReady: ({ total }) => `${total} of ${total} · the line is ready.`, keyboardProgress: ({ index, total }) => `${index} of ${total} · pause before the next form.`,
-    pageOpen: "The page is open.", beginFirstTop: "Begin with the first form at the top.", clearBeforeGuide: "Clear the page to change the guide size", lineReadyFor: ({ sender, receiver }) => `${sender}’s line is ready for ${receiver}.`, sendItOnward: "Send it onward", startHere: "start here", next: "next", progressReady: ({ total }) => `${total} of ${total} · the line is ready.`, progressContinue: ({ index, total }) => `${index} of ${total} · continue downward.`, returnToForm: ({ index }) => `Return to the pale area for form ${index}.`, continueForm: ({ index }) => `Continue with form ${index} below.`,
+    pageOpen: "The page is open.", beginFirstTop: "Begin with the first form at the top.", clearBeforeGuide: "Clear the page to change the guide size", lineReadyFor: ({ sender, receiver }) => `${sender}’s line is ready for ${receiver}.`, sendItOnward: "Send it onward", startHere: "start here", next: "next", progressReady: ({ total }) => `${total} of ${total} · the line is ready.`, progressContinue: ({ index, total }) => `${index} of ${total} · continue downward.`, progressNextColumn: ({ index, total }) => `${index} of ${total} · move to the top of the left column.`, returnToForm: ({ index }) => `Return to the pale area for form ${index}.`, continueForm: ({ index }) => `Continue with form ${index} below.`, continueNextColumn: ({ index }) => `Continue with form ${index} at the top of the left column.`,
     pressurePace: "pressure · pace", touchPressure: "touch pressure", stylusPressure: "stylus pressure", paceSensing: "pace sensing", stylusPace: "stylus · pace", touchPace: "touch · pace", pressureDeepens: "Your pressure deepens the ink.", slowerFuller: "A slower movement leaves a fuller stroke.",
     beginBeforeSend: "Begin the first form before sending the line.", incompleteLine: ({ index }) => `The line is not complete yet. Continue with form ${index}, or choose the partial-trace path.`, guideRecedes: "The guide recedes. Stay with your trace before it arrives.", partialRecedes: "The guide recedes. This partial trace will remain named as partial.",
-    surfacePaper: "paper", surfaceFan: "paper fan", surfaceCloth: "woven cloth", archiveKeyboard: "KEYBOARD-PACED ATTENTION TRACE · PERSONAL RECORD", archivePartial: "PARTIAL HANDWRITING TRACE · PERSONAL RECORD", archiveHandwriting: "HANDWRITING TRACE · PERSONAL RECORD", archiveDocumented: "HISTORICAL FICTION · DOCUMENTED LINE", archiveProvisional: "HISTORICAL FICTION · PROVISIONAL FORMS", archiveOpen: "HISTORICAL FICTION · OPEN RESPONSE"
+    surfacePaper: "paper", surfaceFan: "paper fan", surfaceCloth: "woven cloth", meaningLabel: "MEANING", hanTranscription: "HAN TRANSCRIPTION", jiangyongReading: "JIANGYONG READING", archiveKeyboard: "KEYBOARD-PACED ATTENTION TRACE · PERSONAL RECORD", archivePartial: "PARTIAL HANDWRITING TRACE · PERSONAL RECORD", archiveHandwriting: "HANDWRITING TRACE · PERSONAL RECORD", archiveDocumented: "HISTORICAL FICTION · DOCUMENTED LINE", archiveProvisional: "HISTORICAL FICTION · PROVISIONAL FORMS", archiveOpen: "HISTORICAL FICTION · OPEN RESPONSE"
   },
   zh: {
     stageThreshold: "序", stageHome: "择信", stageEntering: "入信", stageWriting: "落笔", stageAfter: "抵达", stageArchive: "留存",
@@ -280,18 +284,18 @@ const dynamicCopy = {
     fictionalComposite: "复合虚构人物", carryWords: "接过她的话 →", rights: ({ value }) => `权利说明：${value}`,
     withheld: "暂不呈现", notRecorded: "尚无记录", incompleteSource: "来源记录尚不完整，故不作为引文呈现。", noSource: "此处尚未加入来源记录，不应将本条目视为历史证据。", notAttached: "尚未附入", invalidArtefact: "此记录缺少必要的来源、署名、权利说明、图注或替代文字，相关材料因此不予展示。", noArtefact: "此条目未附入经过核实的照片或文物图像，也不以重构图替代。", viewSource: "查看来源记录", unavailable: "暂不可用", artefactLoadError: "已署名的文物图像未能载入，页面不会以其他图像替代。", invalidAudio: "此记录缺少必要的来源、署名、权利说明、描述或文字记录，因此不载入声音。", noAudio: "此条目未附入有明确署名的声音材料，页面不会播放音频。", audioSuffix: "声音不会自动播放，初始状态为静音。", startsMuted: "初始为静音。", sound: "声音", on: "开启", off: "关闭", transcript: "阅读文字记录或声音描述", viewAudio: "查看声音来源记录", soundUnavailable: "声音暂不可用", audioLoadError: "已署名的声音材料未能载入，页面不会播放音频。",
     formPending: "字形待考", writeFor: ({ sender }) => `替${sender}落笔`, writingTitle: ({ sender, receiver }) => `把${sender}的话送到${receiver}身边`,
-    guidedInstruction: ({ count }) => `依次描写由上而下的 ${count} 个淡色字形，让这一行慢慢展开。`, openInstruction: "让你的笔迹以自己的方式回应这个故事。",
+    guidedInstruction: ({ count }) => `依次描写由上而下的 ${count} 个淡色字形，让这一行慢慢展开。`, fanGuidedInstruction: ({ count }) => `依次描写 ${count} 个淡色字形：每列自上而下，并由右列移至左列。`, openInstruction: "让你的笔迹以自己的方式回应这个故事。",
     canvasVerified: ({ line }) => `描写女书句“${line}”的画布`, canvasProvisional: ({ line }) => `描写“${line}”暂定规范字形的画布`, canvasOpen: ({ title }) => `为“${title}”开放的书写画布`,
-    stayWith: ({ sender }) => `字句渐成时，陪${sender}停留片刻。`, archiveTitle: ({ sender }) => `你与${sender}这行文字相遇的记录`, archiveDescription: ({ sender }) => `它留下你片刻的参与，却不意味着你拥有女书或${sender}的故事。`,
+    stayWith: ({ sender }) => `字句渐成时，陪${sender}停留片刻。`, archiveDescription: ({ transcription, reading }) => `汉字转写：${transcription}。江永读音：${reading}。此为个人相遇记录，并非文化遗产物件。`,
     readingVerified: ({ count }) => `这 ${count} 个字形采用已有记录的江永读音。`, readingProvisional: ({ count }) => `这 ${count} 个规范字形采用暂定的江永读音。`, readingUnavailable: "这一行暂无经过核对的音节读法。", readTranscription: "请从字形下方阅读汉字转写。", yourHand: "你的手", deliveryDynamicAria: ({ sender, receiver }) => `${sender}的话经过你的手，向${receiver}而去`,
     sendOnward: "让这行字继续前行", completeToSend: "写完整行，才可送出", clearBeforeInput: "请先清去笔迹，再更换输入方式", returnDrawing: "回到手写描摹", useKeyboard: "使用键盘节奏模式", keyboardModeNote: "每次按键只记录一次停顿的节奏，并不模仿手写。若要更换方式，请先清去笔迹。", drawingModeNote: "若手写描摹不便，可用一次有意识的按键凝视每个字形。系统只记录节奏，不模拟手写。",
     keyboardTrace: "键盘节奏留下的凝神痕迹", partialTraceLabel: "未竟的手写痕迹", handwritingTrace: "手写痕迹", traceCaption: ({ trace }) => `解释以前，你留下的${trace}`, traceAria: ({ trace }) => `你在书写阶段留下的${trace}`, savedTraceAria: ({ trace }) => `你保存的${trace}记录`, traceFooter: ({ trace }) => `${trace} · 个人相遇记录，并非文化遗产物件`,
     allForms: ({ count }) => `${count} 个字形均已凝神看过，这一行可以送出了。`, lineReady: "这一行已经写好", formStatus: ({ index, count, reading }) => `第 ${index} 个，共 ${count} 个${reading ? `，读作 ${reading}` : ""}。停一停，准备好后再按下按钮。`, attendForm: ({ index }) => `凝神看第 ${index} 个字形`,
     keyboardProgressReady: ({ total }) => `${total}/${total} · 这一行已经写好。`, keyboardProgress: ({ index, total }) => `${index}/${total} · 写下一字以前，请先停一停。`,
-    pageOpen: "纸页已经展开。", beginFirstTop: "请从最上方的第一个字形开始。", clearBeforeGuide: "请先清去笔迹，再调整字帖大小", lineReadyFor: ({ sender, receiver }) => `${sender}的这一行，已经可以送往${receiver}。`, sendItOnward: "送它继续前行", startHere: "从这里开始", next: "下一字", progressReady: ({ total }) => `${total}/${total} · 这一行已经写好。`, progressContinue: ({ index, total }) => `${index}/${total} · 继续向下。`, returnToForm: ({ index }) => `请回到第 ${index} 个字形的淡色区域。`, continueForm: ({ index }) => `请继续描写下方第 ${index} 个字形。`,
+    pageOpen: "纸页已经展开。", beginFirstTop: "请从最上方的第一个字形开始。", clearBeforeGuide: "请先清去笔迹，再调整字帖大小", lineReadyFor: ({ sender, receiver }) => `${sender}的这一行，已经可以送往${receiver}。`, sendItOnward: "送它继续前行", startHere: "从这里开始", next: "下一字", progressReady: ({ total }) => `${total}/${total} · 这一行已经写好。`, progressContinue: ({ index, total }) => `${index}/${total} · 继续向下。`, progressNextColumn: ({ index, total }) => `${index}/${total} · 请移至左列顶端。`, returnToForm: ({ index }) => `请回到第 ${index} 个字形的淡色区域。`, continueForm: ({ index }) => `请继续描写下方第 ${index} 个字形。`, continueNextColumn: ({ index }) => `请移至左列顶端，继续第 ${index} 个字形。`,
     pressurePace: "笔压 · 行速", touchPressure: "触屏压力", stylusPressure: "触控笔压力", paceSensing: "感知行笔速度", stylusPace: "触控笔 · 行速", touchPace: "触屏 · 行速", pressureDeepens: "你的笔压让墨色渐深。", slowerFuller: "行笔越缓，墨痕越丰。",
     beginBeforeSend: "请先写下第一个字形，再送出这一行。", incompleteLine: ({ index }) => `这一行尚未写完。请继续第 ${index} 个字形，或选择带着未竟的笔迹前行。`, guideRecedes: "淡色字帖缓缓隐去；在它抵达以前，再陪你的笔迹片刻。", partialRecedes: "淡色字帖缓缓隐去；这道未竟的痕迹仍会被如实标明。",
-    surfacePaper: "纸张", surfaceFan: "折扇", surfaceCloth: "织物", archiveKeyboard: "键盘节奏凝神痕迹 · 个人记录", archivePartial: "未竟手写痕迹 · 个人记录", archiveHandwriting: "手写痕迹 · 个人记录", archiveDocumented: "历史虚构 · 文献所载句", archiveProvisional: "历史虚构 · 暂定字形", archiveOpen: "历史虚构 · 开放书写"
+    surfacePaper: "纸张", surfaceFan: "折扇", surfaceCloth: "织物", meaningLabel: "所写之意", hanTranscription: "汉字转写", jiangyongReading: "江永读音", archiveKeyboard: "键盘节奏凝神痕迹 · 个人记录", archivePartial: "未竟手写痕迹 · 个人记录", archiveHandwriting: "手写痕迹 · 个人记录", archiveDocumented: "历史虚构 · 文献所载句", archiveProvisional: "历史虚构 · 暂定字形", archiveOpen: "历史虚构 · 开放书写"
   }
 };
 
@@ -910,6 +914,17 @@ function renderAfterFeedback() {
   els.deliveryTrack.replaceChildren(...deliveryNodes);
 }
 
+function syncWritingInstruction() {
+  if (!state.current || !hasStrokeGuide()) {
+    els.writingInstruction.textContent = tr("openInstruction");
+    return;
+  }
+  const count = Array.from(strokeFor().phrase).length;
+  els.writingInstruction.textContent = state.surface === "fan" && count > 1
+    ? tr("fanGuidedInstruction", { count })
+    : tr("guidedInstruction", { count });
+}
+
 function selectPrompt(prompt, { preserveInteraction = false } = {}) {
   stopActiveAudio();
   const contextWasOpen = els.characterContext.open;
@@ -957,9 +972,7 @@ function selectPrompt(prompt, { preserveInteraction = false } = {}) {
   els.writingTitle.textContent = tr("writingTitle", { sender: narrative.sender, receiver: narrative.receiver });
   els.writingReference.textContent = `${stroke.transcription} · “${stroke.gloss}”`;
   els.writingEvidence.textContent = evidenceBoundaryText(prompt);
-  els.writingInstruction.textContent = verified
-    ? tr("guidedInstruction", { count: Array.from(stroke.phrase).length })
-    : tr("openInstruction");
+  syncWritingInstruction();
   els.writing.setAttribute("aria-label", verified
     ? stroke.status === "verified-digital-reconstruction"
       ? tr("canvasVerified", { line: stroke.transcription })
@@ -970,11 +983,15 @@ function selectPrompt(prompt, { preserveInteraction = false } = {}) {
   els.afterQuote.textContent = narrative.after;
   els.afterEvidenceStatus.textContent = evidenceBoundaryText(prompt);
   renderAfterFeedback();
-  els.cardForm.textContent = narrative.title;
-  els.cardReference.textContent = `${narrative.sender} → ${narrative.receiver} · ${stroke.transcription}`;
+  els.cardForm.textContent = `“${stroke.gloss}”`;
+  els.cardTranscription.textContent = stroke.transcription;
+  els.cardReading.textContent = stroke.phraseReading || tr("readingUnavailable");
   els.cardBackground.textContent = narrative.archiveNote;
-  els.archiveTitle.textContent = tr("archiveTitle", { sender: narrative.sender });
-  els.archiveDescription.textContent = tr("archiveDescription", { sender: narrative.sender });
+  els.archiveTitle.textContent = `“${stroke.gloss}”`;
+  els.archiveDescription.textContent = tr("archiveDescription", {
+    transcription: stroke.transcription,
+    reading: stroke.phraseReading || tr("readingUnavailable")
+  });
   renderContext(prompt.layers.context);
   els.characterContext.open = preserveInteraction ? contextWasOpen : false;
   if (preserveInteraction) state.revealedWritingLines = 0;
@@ -1173,6 +1190,7 @@ function setStage(stage, moveFocus = true) {
   if (stage === "writing") requestAnimationFrame(() => {
     applyInputMode();
     setupWritingCanvases(previousStage === "after");
+    revealWritingNarrative();
     syncCompletionControls();
   });
   if (stage === "after") requestAnimationFrame(drawAfterMark);
@@ -1195,11 +1213,42 @@ function sizeCanvas(canvas, width, height) {
 
 function guideLayout(width, height) {
   if (!state.current || !hasStrokeGuide()) {
-    return { forms: [], fontSize: 0, step: 0, positions: [] };
+    return { forms: [], fontSize: 0, step: 0, positions: [], flow: "single-column" };
   }
   const forms = Array.from(strokeFor().phrase);
   const isPhrase = forms.length > 1;
   const isComfortGuide = state.guideSize === "comfort";
+  if (isPhrase && state.surface === "fan") {
+    const rightColumnCount = Math.ceil(forms.length / 2);
+    const columnCounts = [rightColumnCount, forms.length - rightColumnCount];
+    const maxRows = Math.max(...columnCounts);
+    const safeTop = height * 0.22;
+    const safeBottom = height * 0.84;
+    const usableHeight = safeBottom - safeTop;
+    const fontSize = Math.min(
+      (usableHeight / maxRows) * (isComfortGuide ? 0.92 : 0.8),
+      width * (isComfortGuide ? 0.2 : 0.16),
+      height * (isComfortGuide ? 0.24 : 0.2)
+    );
+    const step = maxRows > 1 ? Math.min(fontSize * 1.16, usableHeight / (maxRows - 1)) : 0;
+    const columnOffset = Math.min(width * 0.18, fontSize * 1.08);
+    const columnXs = [width / 2 + columnOffset, width / 2 - columnOffset];
+    const positions = forms.map((form, index) => {
+      const column = index < rightColumnCount ? 0 : 1;
+      const columnStart = column === 0 ? 0 : rightColumnCount;
+      const row = index - columnStart;
+      const count = columnCounts[column];
+      const firstY = (safeTop + safeBottom) / 2 - ((count - 1) * step) / 2;
+      return {
+        form,
+        x: columnXs[column],
+        y: firstY + row * step,
+        column,
+        statusSide: column === 0 ? 1 : -1
+      };
+    });
+    return { forms, fontSize, step, positions, flow: "fan-columns" };
+  }
   const fontSize = isPhrase
     ? Math.min(
       (height * (isComfortGuide ? 0.9 : 0.84) / forms.length) * (isComfortGuide ? 0.99 : 0.88),
@@ -1208,8 +1257,14 @@ function guideLayout(width, height) {
     : Math.min(height * (isComfortGuide ? 0.82 : 0.76), width * (isComfortGuide ? 0.62 : 0.46));
   const step = isPhrase ? fontSize * (isComfortGuide ? 1.13 : 1.16) : 0;
   const firstY = isPhrase ? height / 2 - ((forms.length - 1) * step) / 2 : height / 2 + fontSize * 0.02;
-  const positions = forms.map((form, index) => ({ form, y: firstY + index * step }));
-  return { forms, fontSize, step, positions };
+  const positions = forms.map((form, index) => ({
+    form,
+    x: width / 2,
+    y: firstY + index * step,
+    column: 0,
+    statusSide: 1
+  }));
+  return { forms, fontSize, step, positions, flow: "single-column" };
 }
 
 function setupWritingCanvases() {
@@ -1231,7 +1286,7 @@ function drawGuide() {
   ctx.clearRect(0, 0, width, height);
   if (!hasStrokeGuide()) return;
   ctx.save();
-  const { forms, fontSize, step, positions } = guideLayout(width, height);
+  const { forms, fontSize, positions } = guideLayout(width, height);
   const isPhrase = forms.length > 1;
   ctx.font = `400 ${fontSize}px "Noto Traditional Nushu"`;
   ctx.textAlign = "center";
@@ -1240,31 +1295,32 @@ function drawGuide() {
   ctx.strokeStyle = "rgba(114, 96, 76, 0.5)";
   ctx.lineWidth = Math.max(1.15, Math.min(width, height) * 0.0031);
   if (isPhrase) {
-    positions.forEach(({ form, y }, index) => {
-      ctx.fillText(form, width / 2, y);
-      ctx.strokeText(form, width / 2, y);
+    positions.forEach(({ form, x, y, column, statusSide }, index) => {
+      ctx.fillText(form, x, y);
+      ctx.strokeText(form, x, y);
       ctx.save();
       ctx.font = "650 10px Segoe UI, Arial, sans-serif";
       ctx.fillStyle = "rgba(94, 82, 67, 0.62)";
-      ctx.textAlign = "left";
-      ctx.fillText(String(index + 1).padStart(2, "0"), width / 2 + Math.max(50, fontSize * 0.68), y + 3);
+      ctx.textAlign = statusSide < 0 ? "right" : "left";
+      ctx.fillText(String(index + 1).padStart(2, "0"), x + statusSide * Math.max(50, fontSize * 0.68), y + 3);
       ctx.restore();
-      if (index < positions.length - 1) {
-        const dividerY = y + step / 2;
+      const next = positions[index + 1];
+      if (next && next.column === column) {
+        const dividerY = (y + next.y) / 2;
         ctx.save();
         ctx.strokeStyle = "rgba(107, 91, 72, 0.16)";
         ctx.lineWidth = 1;
         ctx.setLineDash([2, 7]);
         ctx.beginPath();
-        ctx.moveTo(width * 0.31, dividerY);
-        ctx.lineTo(width * 0.69, dividerY);
+        ctx.moveTo(x - Math.max(42, fontSize * 0.45), dividerY);
+        ctx.lineTo(x + Math.max(42, fontSize * 0.45), dividerY);
         ctx.stroke();
         ctx.restore();
       }
     });
   } else {
-    ctx.fillText(forms[0], width / 2, positions[0].y);
-    ctx.strokeText(forms[0], width / 2, positions[0].y);
+    ctx.fillText(forms[0], positions[0].x, positions[0].y);
+    ctx.strokeText(forms[0], positions[0].x, positions[0].y);
   }
   ctx.restore();
 }
@@ -1281,19 +1337,25 @@ function setupCharacterFeedback() {
   const target = characterTargetDimensions(layout);
   const lineStart = firstPosition.y;
   const lineHeight = Math.max(12, lastPosition.y - firstPosition.y);
-  els.characterFeedbackLayer.style.setProperty("--line-x", `calc(50% + ${statusOffset + 2.5}px)`);
+  els.characterFeedbackLayer.classList.toggle("is-fan-flow", layout.flow === "fan-columns");
+  els.characterFeedbackLayer.style.setProperty("--line-x", `${firstPosition.x + statusOffset + 2.5}px`);
   els.characterFeedbackLayer.style.setProperty("--line-start", `${lineStart}px`);
   els.characterFeedbackLayer.style.setProperty("--line-height", `${lineHeight}px`);
-  const responses = layout.positions.map(({ form, y }, index) => {
+  const responses = layout.positions.map(({ form, x, y, column, statusSide }, index) => {
+    const next = layout.positions[index + 1];
+    const continuesInColumn = Boolean(next && next.column === column);
     const response = document.createElement("span");
     response.className = "character-response";
     response.dataset.characterIndex = String(index);
     response.classList.toggle("is-settled", state.completedCharacters.has(index));
     response.classList.toggle("is-last", index === layout.positions.length - 1);
+    response.classList.toggle("is-column-end", !continuesInColumn);
+    response.classList.toggle("is-status-left", statusSide < 0);
+    response.style.setProperty("--guide-x", `${x}px`);
     response.style.setProperty("--guide-y", `${y}px`);
     response.style.setProperty("--guide-size", `${layout.fontSize}px`);
-    response.style.setProperty("--guide-gap", `${layout.step}px`);
-    response.style.setProperty("--status-offset", `${statusOffset}px`);
+    response.style.setProperty("--guide-gap", `${continuesInColumn ? next.y - y : layout.step}px`);
+    response.style.setProperty("--status-offset", `${statusSide * statusOffset}px`);
     response.style.setProperty("--target-width", `${target.width}px`);
     response.style.setProperty("--target-height", `${target.height}px`);
     response.style.setProperty("--thread-start", `${layout.fontSize * 0.38}px`);
@@ -1324,8 +1386,7 @@ function setSurface(surface) {
     button.classList.toggle("is-selected", isSelected);
     button.setAttribute("aria-pressed", String(isSelected));
   });
-  const narrative = narrativeFor();
-  els.cardReference.textContent = `${narrative.sender} → ${narrative.receiver} · ${strokeFor().transcription}`;
+  syncWritingInstruction();
   if (state.stage === "writing") {
     requestAnimationFrame(setupWritingCanvases);
   }
@@ -1435,8 +1496,8 @@ function characterIndexAtPoint(point) {
   const target = characterTargetDimensions(layout);
   let matchedIndex = null;
   let closestDistance = Infinity;
-  layout.positions.forEach(({ y }, index) => {
-    const normalizedX = Math.abs(point.x - els.writing.clientWidth / 2) / (target.width / 2);
+  layout.positions.forEach(({ x, y }, index) => {
+    const normalizedX = Math.abs(point.x - x) / (target.width / 2);
     const normalizedY = Math.abs(point.y - y) / (target.height / 2);
     const insideTarget = normalizedX ** 4 + normalizedY ** 4 <= 1;
     const distance = normalizedX ** 2 + normalizedY ** 2;
@@ -1472,9 +1533,15 @@ function settleCharacter(index) {
     window.setTimeout(() => response.classList.remove("is-responding"), 2400);
   }
   const total = guideLayout(els.writing.clientWidth, els.writing.clientHeight).positions.length;
+  const layout = guideLayout(els.writing.clientWidth, els.writing.clientHeight);
+  const nextIndex = index + 1;
+  const nextStartsColumn = nextIndex < total
+    && layout.positions[nextIndex].column !== layout.positions[index].column;
   els.inkStatus.textContent = index === total - 1
     ? tr("progressReady", { total })
-    : tr("progressContinue", { index: index + 1, total });
+    : nextStartsColumn
+      ? tr("progressNextColumn", { index: index + 1, total })
+      : tr("progressContinue", { index: index + 1, total });
   state.activeCharacterIndex = null;
   syncCharacterTargets();
   revealWritingNarrative();
@@ -1501,9 +1568,14 @@ function beginCharacterStroke(point) {
   }
   if (index !== expected) {
     state.activeCharacterIndex = null;
+    const layout = guideLayout(els.writing.clientWidth, els.writing.clientHeight);
+    const expectedStartsColumn = expected > 0
+      && layout.positions[expected]?.column !== layout.positions[expected - 1]?.column;
     els.inkStatus.textContent = expected === 0
       ? tr("beginFirstTop")
-      : tr("continueForm", { index: expected + 1 });
+      : expectedStartsColumn
+        ? tr("continueNextColumn", { index: expected + 1 })
+        : tr("continueForm", { index: expected + 1 });
     remindCharacterTarget(expected);
     return;
   }
@@ -1790,6 +1862,9 @@ function startDrawing(event) {
     (event.pointerType === "mouse" && event.button !== 0)
   ) return;
   event.preventDefault();
+  if (event.pointerType === "touch" || event.pointerType === "pen") {
+    window.getSelection?.()?.removeAllRanges();
+  }
   const rect = els.writing.getBoundingClientRect();
   const bounds = { x: 0, y: 0, width: rect.width, height: rect.height };
   const point = pointFromEvent(event, rect);
@@ -2015,7 +2090,7 @@ function drawArchiveCard() {
 }
 
 function archiveImage() {
-  const narrative = narrativeFor();
+  const stroke = strokeFor();
   const archiveSerif = state.language === "zh"
     ? '"Songti SC", "STSong", "Microsoft YaHei", serif'
     : "Georgia, serif";
@@ -2040,6 +2115,7 @@ function archiveImage() {
   ctx.font = `42px ${archiveSerif}`;
   ctx.fillText("女书", cardWidth - 70, 87);
   ctx.textAlign = "left";
+  ctx.letterSpacing = "0px";
   ctx.save();
   ctx.translate(70, 120);
   paintSurface(ctx, cardWidth - 140, 570, state.surface);
@@ -2053,30 +2129,40 @@ function archiveImage() {
     width: recordBounds.width,
     height: recordBounds.height
   }, state.surface);
+  ctx.fillStyle = currentAccent();
+  ctx.font = `650 15px ${archiveSans}`;
+  ctx.fillText(tr("meaningLabel"), 70, 730);
   ctx.fillStyle = "#302d28";
-  ctx.font = `43px ${archiveSerif}`;
-  ctx.fillText(`${narrative.sender} → ${narrative.receiver}`, 70, 755);
+  ctx.font = `36px ${archiveSerif}`;
+  const meaningEnd = wrapText(ctx, `“${stroke.gloss}”`, 70, 770, cardWidth - 140, 42);
+  const detailsTop = Math.min(846, meaningEnd + 34);
+  ctx.fillStyle = "#645d52";
+  ctx.font = `650 14px ${archiveSans}`;
+  ctx.fillText(tr("hanTranscription"), 70, detailsTop);
   ctx.fillStyle = currentAccent();
   ctx.font = `21px ${archiveSerif}`;
-  ctx.fillText(`${strokeFor().transcription} · ${tr(`surface${state.surface[0].toUpperCase()}${state.surface.slice(1)}`)}`, 70, 794);
+  ctx.fillText(stroke.transcription, 70, detailsTop + 25);
   ctx.fillStyle = "#645d52";
-  ctx.font = `22px ${archiveSerif}`;
-  wrapText(ctx, narrative.archiveNote, 70, 830, cardWidth - 140, 29);
+  ctx.font = `650 14px ${archiveSans}`;
+  ctx.fillText(tr("jiangyongReading"), 70, detailsTop + 54);
+  ctx.fillStyle = currentAccent();
+  ctx.font = `21px ${archiveSerif}`;
+  ctx.fillText(stroke.phraseReading || tr("readingUnavailable"), 70, detailsTop + 79);
   ctx.fillStyle = currentAccent();
   ctx.font = `16px ${archiveSans}`;
   ctx.fillText(state.inputMode === "keyboard"
     ? tr("archiveKeyboard")
     : state.partialTrace
       ? tr("archivePartial")
-      : tr("archiveHandwriting"), 70, 944);
+      : tr("archiveHandwriting"), 70, 954);
   ctx.fillStyle = "#645d52";
   ctx.font = `14px ${archiveSans}`;
-  const archiveStatus = strokeFor().status === "verified-digital-reconstruction"
+  const archiveStatus = stroke.status === "verified-digital-reconstruction"
     ? tr("archiveDocumented")
-    : strokeFor().status === "dictionary-derived-reconstruction"
+    : stroke.status === "dictionary-derived-reconstruction"
       ? tr("archiveProvisional")
       : tr("archiveOpen");
-  ctx.fillText(archiveStatus, 70, 971);
+  ctx.fillText(archiveStatus, 70, 979);
   const link = document.createElement("a");
   link.download = `held-in-ink-${state.current.id}.png`;
   link.href = image.toDataURL("image/png");
@@ -2096,6 +2182,7 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
     } else line = next;
   });
   ctx.fillText(line.trimEnd(), x, lineY);
+  return lineY;
 }
 
 function showPicker() {
@@ -2230,6 +2317,8 @@ els.writing.addEventListener("pointerleave", () => { if (!state.drawing) updateB
 els.writing.addEventListener("pointerup", stopDrawing);
 els.writing.addEventListener("pointercancel", cancelDrawing);
 els.writing.addEventListener("lostpointercapture", cancelDrawing);
+els.canvasFrame.addEventListener("selectstart", (event) => event.preventDefault());
+els.canvasFrame.addEventListener("dragstart", (event) => event.preventDefault());
 window.addEventListener("resize", () => {
   if (state.stage !== "writing") return;
   finishActiveStroke({ taper: false, releaseCapture: false });

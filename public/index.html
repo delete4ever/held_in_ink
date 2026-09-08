@@ -275,8 +275,18 @@
               <div class="card-topline"><span>HELD IN INK</span><span>女书</span></div>
               <canvas id="card-canvas" aria-label="Your saved writing card" data-i18n-aria="savedCardAria"></canvas>
               <div class="card-copy">
-                <p class="card-form" id="card-form"></p>
-                <p class="card-reference" id="card-reference"></p>
+                <p class="card-label" data-i18n="meaningLabel">Meaning</p>
+                <h3 class="card-form" id="card-form"></h3>
+                <dl class="card-language">
+                  <div>
+                    <dt data-i18n="hanTranscription">Han transcription</dt>
+                    <dd id="card-transcription"></dd>
+                  </div>
+                  <div>
+                    <dt data-i18n="jiangyongReading">Jiangyong reading</dt>
+                    <dd id="card-reading"></dd>
+                  </div>
+                </dl>
                 <p class="card-background" id="card-background"></p>
               </div>
               <div class="card-footer" id="card-footer">A personal record of encounter · not a heritage object</div>
