@@ -1,11 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  creditedTraceDistance,
   createTaperSamples,
   hasHardwarePressure,
   interpolateStrokeSegment,
+  isCharacterTraceComplete,
   modelBrushSample,
-  seededNoise
+  seededNoise,
+  shouldAcceptCharacterStart
 } from "../public/brush-engine.js";
 
 test("pen pressure produces a wider mark", () => {
@@ -52,4 +55,41 @@ test("taper samples finish in a fine, forward-moving tip", () => {
 test("brush texture noise is deterministic", () => {
   assert.equal(seededNoise(17, 4, 2), seededNoise(17, 4, 2));
   assert.notEqual(seededNoise(17, 4, 2), seededNoise(18, 4, 2));
+});
+
+test("a deliberate touch stroke can complete a compact form", () => {
+  assert.equal(isCharacterTraceComplete({
+    distance: 56,
+    strokes: 1,
+    bounds: { minX: 20, maxX: 45, minY: 20, maxY: 66 },
+    fontSize: 104,
+    targetWidth: 72,
+    targetHeight: 100,
+    pointerType: "touch"
+  }), true);
+});
+
+test("a tap or tiny scribble cannot complete a form", () => {
+  assert.equal(isCharacterTraceComplete({
+    distance: 24,
+    strokes: 3,
+    bounds: { minX: 30, maxX: 38, minY: 30, maxY: 39 },
+    fontSize: 104,
+    targetWidth: 72,
+    targetHeight: 100,
+    pointerType: "touch"
+  }), false);
+});
+
+test("sparse touch events receive useful but bounded distance credit", () => {
+  const credited = creditedTraceDistance({ distance: 90, fontSize: 104, insideSamples: 3 });
+  assert.ok(credited > 50);
+  assert.ok(credited < 90);
+  assert.ok(creditedTraceDistance({ distance: 90, fontSize: 104, insideSamples: 1 }) < credited);
+});
+
+test("guided writing accepts only the next expected form", () => {
+  assert.equal(shouldAcceptCharacterStart({ guided: true, hitIndex: 1, expectedIndex: 0 }), false);
+  assert.equal(shouldAcceptCharacterStart({ guided: true, hitIndex: 0, expectedIndex: 0 }), true);
+  assert.equal(shouldAcceptCharacterStart({ guided: false, hitIndex: null, expectedIndex: null }), true);
 });
