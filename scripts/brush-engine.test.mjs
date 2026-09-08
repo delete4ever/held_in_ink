@@ -1,14 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  characterStartMode,
   creditedTraceDistance,
   createTaperSamples,
   hasHardwarePressure,
   interpolateStrokeSegment,
   isCharacterTraceComplete,
   modelBrushSample,
-  seededNoise,
-  shouldAcceptCharacterStart
+  seededNoise
 } from "../public/brush-engine.js";
 
 test("pen pressure produces a wider mark", () => {
@@ -57,7 +57,7 @@ test("brush texture noise is deterministic", () => {
   assert.notEqual(seededNoise(17, 4, 2), seededNoise(18, 4, 2));
 });
 
-test("a deliberate touch stroke can complete a compact form", () => {
+test("one long touch stroke cannot complete a form prematurely", () => {
   assert.equal(isCharacterTraceComplete({
     distance: 56,
     strokes: 1,
@@ -65,6 +65,18 @@ test("a deliberate touch stroke can complete a compact form", () => {
     fontSize: 104,
     targetWidth: 72,
     targetHeight: 100,
+    pointerType: "touch"
+  }), false);
+});
+
+test("two deliberate touch strokes can complete a compact form", () => {
+  assert.equal(isCharacterTraceComplete({
+    distance: 56,
+    strokes: 2,
+    bounds: { minX: 20, maxX: 45, minY: 20, maxY: 66 },
+    fontSize: 104,
+    targetWidth: 84,
+    targetHeight: 106,
     pointerType: "touch"
   }), true);
 });
@@ -88,8 +100,9 @@ test("sparse touch events receive useful but bounded distance credit", () => {
   assert.ok(creditedTraceDistance({ distance: 90, fontSize: 104, insideSamples: 1 }) < credited);
 });
 
-test("guided writing accepts only the next expected form", () => {
-  assert.equal(shouldAcceptCharacterStart({ guided: true, hitIndex: 1, expectedIndex: 0 }), false);
-  assert.equal(shouldAcceptCharacterStart({ guided: true, hitIndex: 0, expectedIndex: 0 }), true);
-  assert.equal(shouldAcceptCharacterStart({ guided: false, hitIndex: null, expectedIndex: null }), true);
+test("guided writing blocks future forms but permits revisions to completed forms", () => {
+  assert.equal(characterStartMode({ guided: true, hitIndex: 1, expectedIndex: 0 }), "blocked");
+  assert.equal(characterStartMode({ guided: true, hitIndex: 0, expectedIndex: 0 }), "expected");
+  assert.equal(characterStartMode({ guided: true, hitIndex: 0, expectedIndex: 1, hitCompleted: true }), "revision");
+  assert.equal(characterStartMode({ guided: false, hitIndex: null, expectedIndex: null }), "open");
 });
