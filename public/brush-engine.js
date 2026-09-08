@@ -40,10 +40,10 @@ export function characterCompletionThresholds({
   const directTouch = pointerType === "touch" || pointerType === "pen";
   const shortTargetSide = Math.min(targetWidth, targetHeight);
   return {
-    minimumDistance: Math.max(directTouch ? 32 : 38, fontSize * (directTouch ? 0.44 : 0.5)),
-    minimumSpan: Math.max(directTouch ? 18 : 22, shortTargetSide * (directTouch ? 0.27 : 0.3)),
-    minimumCoverage: directTouch ? 0.56 : 0.62,
-    minimumOnGuideRatio: directTouch ? 0.6 : 0.66
+    minimumDistance: Math.max(directTouch ? 28 : 32, fontSize * (directTouch ? 0.37 : 0.42)),
+    minimumSpan: Math.max(directTouch ? 15 : 18, shortTargetSide * (directTouch ? 0.22 : 0.25)),
+    minimumCoverage: directTouch ? 0.44 : 0.5,
+    minimumOnGuideRatio: directTouch ? 0.5 : 0.56
   };
 }
 

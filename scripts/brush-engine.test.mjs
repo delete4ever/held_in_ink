@@ -85,6 +85,20 @@ test("two deliberate touch strokes can complete a compact form", () => {
   }), true);
 });
 
+test("an imperfect but recognizable mouse trace can complete", () => {
+  assert.equal(isCharacterTraceComplete({
+    distance: 48,
+    strokes: 2,
+    bounds: { minX: 20, maxX: 46, minY: 18, maxY: 60 },
+    fontSize: 104,
+    targetWidth: 112,
+    targetHeight: 116,
+    pointerType: "mouse",
+    coverageRatio: 0.52,
+    onGuideRatio: 0.58
+  }), true);
+});
+
 test("a tap or tiny scribble cannot complete a form", () => {
   assert.equal(isCharacterTraceComplete({
     distance: 24,
