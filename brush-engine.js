@@ -31,6 +31,56 @@ export function brushSurface(name) {
   return SURFACES[name] || SURFACES.paper;
 }
 
+export function characterCompletionThresholds({
+  fontSize = 0,
+  targetWidth = 0,
+  targetHeight = 0,
+  pointerType = "mouse"
+} = {}) {
+  const directTouch = pointerType === "touch" || pointerType === "pen";
+  const shortTargetSide = Math.min(targetWidth, targetHeight);
+  return {
+    minimumDistance: Math.max(directTouch ? 32 : 38, fontSize * (directTouch ? 0.44 : 0.5)),
+    minimumSpan: Math.max(directTouch ? 18 : 22, shortTargetSide * (directTouch ? 0.27 : 0.3)),
+    singleStrokeDistance: Math.max(directTouch ? 52 : 60, fontSize * (directTouch ? 0.7 : 0.8))
+  };
+}
+
+export function isCharacterTraceComplete({
+  distance = 0,
+  strokes = 0,
+  bounds = null,
+  fontSize = 0,
+  targetWidth = 0,
+  targetHeight = 0,
+  pointerType = "mouse"
+} = {}) {
+  const thresholds = characterCompletionThresholds({ fontSize, targetWidth, targetHeight, pointerType });
+  const horizontalSpan = bounds ? Math.max(0, bounds.maxX - bounds.minX) : 0;
+  const verticalSpan = bounds ? Math.max(0, bounds.maxY - bounds.minY) : 0;
+  const spatialSpan = Math.hypot(horizontalSpan, verticalSpan);
+  const deliberateSingleStroke = distance >= thresholds.singleStrokeDistance
+    || spatialSpan >= thresholds.minimumSpan * 2.1;
+  return distance >= thresholds.minimumDistance
+    && spatialSpan >= thresholds.minimumSpan
+    && (strokes >= 2 || deliberateSingleStroke);
+}
+
+export function creditedTraceDistance({
+  distance = 0,
+  fontSize = 0,
+  insideSamples = 0,
+  totalSamples = 3
+} = {}) {
+  const insideRatio = clamp(insideSamples / Math.max(1, totalSamples), 0, 1);
+  const sparseEventCap = Math.max(28, fontSize * 0.55);
+  return Math.min(Math.max(0, distance), sparseEventCap) * insideRatio;
+}
+
+export function shouldAcceptCharacterStart({ guided = true, hitIndex = null, expectedIndex = null } = {}) {
+  return !guided || (expectedIndex !== null && hitIndex === expectedIndex);
+}
+
 export function hasHardwarePressure(pointerType, pressure) {
   const safePressure = clamp(pressure, 0, 1);
   if (pointerType === "pen") return safePressure > 0.005;

@@ -1,10 +1,13 @@
 import {
   brushSurface,
+  creditedTraceDistance,
   clamp,
   createTaperSamples,
   interpolateStrokeSegment,
+  isCharacterTraceComplete,
   modelBrushSample,
-  seededNoise
+  seededNoise,
+  shouldAcceptCharacterStart
 } from "./brush-engine.js";
 
 const languagePreferenceKey = "held-in-ink-language-v1";
@@ -40,8 +43,9 @@ const state = {
   characterInkDistances: [],
   characterStrokeCounts: [],
   characterInkBounds: [],
+  characterInputTypes: [],
   completedCharacters: new Set(),
-  characterPauseTimer: null,
+  strokeBlocked: false,
   lineResponsePlayed: false,
   lineResponsePreserved: false,
   lineResponseTimer: null,
@@ -269,7 +273,7 @@ const dynamicCopy = {
     keyboardTrace: "keyboard-paced attention trace", partialTraceLabel: "partial handwriting trace", handwritingTrace: "handwriting trace", traceCaption: ({ trace }) => `Your ${trace}, before interpretation`, traceAria: ({ trace }) => `Your ${trace} from the writing stage`, savedTraceAria: ({ trace }) => `Your saved ${trace} record`, traceFooter: ({ trace }) => `${trace[0].toUpperCase()}${trace.slice(1)} · personal record, not a heritage object`,
     allForms: ({ count }) => `All ${count} forms have been attended to. The line is ready to send.`, lineReady: "Line ready", formStatus: ({ index, count, reading }) => `Form ${index} of ${count}${reading ? `, read ${reading}` : ""}. Pause, then activate the button when you are ready.`, attendForm: ({ index }) => `Attend to form ${index}`,
     keyboardProgressReady: ({ total }) => `${total} of ${total} · the line is ready.`, keyboardProgress: ({ index, total }) => `${index} of ${total} · pause before the next form.`,
-    pageOpen: "The page is open.", beginFirstTop: "Begin with the first form at the top.", clearBeforeGuide: "Clear the page to change the guide size", lineReadyFor: ({ sender, receiver }) => `${sender}’s line is ready for ${receiver}.`, sendItOnward: "Send it onward", startHere: "start here", next: "next", progressReady: ({ total }) => `${total} of ${total} · the line is ready.`, progressContinue: ({ index, total }) => `${index} of ${total} · continue downward.`, progressNextColumn: ({ index, total }) => `${index} of ${total} · move to the top of the left column.`, returnToForm: ({ index }) => `Return to the pale area for form ${index}.`, continueForm: ({ index }) => `Continue with form ${index} below.`, continueNextColumn: ({ index }) => `Continue with form ${index} at the top of the left column.`,
+    pageOpen: "The page is open.", beginFirstTop: "Begin with the first form at the top.", clearBeforeGuide: "Clear the page to change the guide size", lineReadyFor: ({ sender, receiver }) => `${sender}’s line is ready for ${receiver}.`, sendItOnward: "Send it onward", startHere: "start here", next: "next", progressReady: ({ total }) => `${total} of ${total} · the line is ready.`, progressContinue: ({ index, total }) => `${index} of ${total} · continue downward.`, progressNextColumn: ({ index, total }) => `${index} of ${total} · move to the top of the left column.`, returnToForm: ({ index }) => `Return to the pale area for form ${index}.`, traceMore: ({ index }) => `Add one more deliberate stroke to form ${index}.`, finishCurrentFirst: ({ index }) => `Finish form ${index} before moving to the forms below.`, continueForm: ({ index }) => `Continue with form ${index} below.`, continueNextColumn: ({ index }) => `Continue with form ${index} at the top of the left column.`,
     pressurePace: "pressure · pace", touchPressure: "touch pressure", stylusPressure: "stylus pressure", paceSensing: "pace sensing", stylusPace: "stylus · pace", touchPace: "touch · pace", pressureDeepens: "Your pressure deepens the ink.", slowerFuller: "A slower movement leaves a fuller stroke.",
     beginBeforeSend: "Begin the first form before sending the line.", incompleteLine: ({ index }) => `The line is not complete yet. Continue with form ${index}, or choose the partial-trace path.`, guideRecedes: "The guide recedes. Stay with your trace before it arrives.", partialRecedes: "The guide recedes. This partial trace will remain named as partial.",
     surfacePaper: "paper", surfaceFan: "paper fan", surfaceCloth: "woven cloth", meaningLabel: "MEANING", hanTranscription: "HAN TRANSCRIPTION", jiangyongReading: "JIANGYONG READING", archiveKeyboard: "KEYBOARD-PACED ATTENTION TRACE · PERSONAL RECORD", archivePartial: "PARTIAL HANDWRITING TRACE · PERSONAL RECORD", archiveHandwriting: "HANDWRITING TRACE · PERSONAL RECORD", archiveDocumented: "HISTORICAL FICTION · DOCUMENTED LINE", archiveProvisional: "HISTORICAL FICTION · PROVISIONAL FORMS", archiveOpen: "HISTORICAL FICTION · OPEN RESPONSE"
@@ -292,7 +296,7 @@ const dynamicCopy = {
     keyboardTrace: "键盘节奏留下的凝神痕迹", partialTraceLabel: "未竟的手写痕迹", handwritingTrace: "手写痕迹", traceCaption: ({ trace }) => `解释以前，你留下的${trace}`, traceAria: ({ trace }) => `你在书写阶段留下的${trace}`, savedTraceAria: ({ trace }) => `你保存的${trace}记录`, traceFooter: ({ trace }) => `${trace} · 个人相遇记录，并非文化遗产物件`,
     allForms: ({ count }) => `${count} 个字形均已凝神看过，这一行可以送出了。`, lineReady: "这一行已经写好", formStatus: ({ index, count, reading }) => `第 ${index} 个，共 ${count} 个${reading ? `，读作 ${reading}` : ""}。停一停，准备好后再按下按钮。`, attendForm: ({ index }) => `凝神看第 ${index} 个字形`,
     keyboardProgressReady: ({ total }) => `${total}/${total} · 这一行已经写好。`, keyboardProgress: ({ index, total }) => `${index}/${total} · 写下一字以前，请先停一停。`,
-    pageOpen: "纸页已经展开。", beginFirstTop: "请从最上方的第一个字形开始。", clearBeforeGuide: "请先清去笔迹，再调整字帖大小", lineReadyFor: ({ sender, receiver }) => `${sender}的这一行，已经可以送往${receiver}。`, sendItOnward: "送它继续前行", startHere: "从这里开始", next: "下一字", progressReady: ({ total }) => `${total}/${total} · 这一行已经写好。`, progressContinue: ({ index, total }) => `${index}/${total} · 继续向下。`, progressNextColumn: ({ index, total }) => `${index}/${total} · 请移至左列顶端。`, returnToForm: ({ index }) => `请回到第 ${index} 个字形的淡色区域。`, continueForm: ({ index }) => `请继续描写下方第 ${index} 个字形。`, continueNextColumn: ({ index }) => `请移至左列顶端，继续第 ${index} 个字形。`,
+    pageOpen: "纸页已经展开。", beginFirstTop: "请从最上方的第一个字形开始。", clearBeforeGuide: "请先清去笔迹，再调整字帖大小", lineReadyFor: ({ sender, receiver }) => `${sender}的这一行，已经可以送往${receiver}。`, sendItOnward: "送它继续前行", startHere: "从这里开始", next: "下一字", progressReady: ({ total }) => `${total}/${total} · 这一行已经写好。`, progressContinue: ({ index, total }) => `${index}/${total} · 继续向下。`, progressNextColumn: ({ index, total }) => `${index}/${total} · 请移至左列顶端。`, returnToForm: ({ index }) => `请回到第 ${index} 个字形的淡色区域。`, traceMore: ({ index }) => `请为第 ${index} 个字形再添一笔。`, finishCurrentFirst: ({ index }) => `请先写完第 ${index} 个字形，再继续后面的字。`, continueForm: ({ index }) => `请继续描写下方第 ${index} 个字形。`, continueNextColumn: ({ index }) => `请移至左列顶端，继续第 ${index} 个字形。`,
     pressurePace: "笔压 · 行速", touchPressure: "触屏压力", stylusPressure: "触控笔压力", paceSensing: "感知行笔速度", stylusPace: "触控笔 · 行速", touchPace: "触屏 · 行速", pressureDeepens: "你的笔压让墨色渐深。", slowerFuller: "行笔越缓，墨痕越丰。",
     beginBeforeSend: "请先写下第一个字形，再送出这一行。", incompleteLine: ({ index }) => `这一行尚未写完。请继续第 ${index} 个字形，或选择带着未竟的笔迹前行。`, guideRecedes: "淡色字帖缓缓隐去；在它抵达以前，再陪你的笔迹片刻。", partialRecedes: "淡色字帖缓缓隐去；这道未竟的痕迹仍会被如实标明。",
     surfacePaper: "纸张", surfaceFan: "折扇", surfaceCloth: "织物", meaningLabel: "所写之意", hanTranscription: "汉字转写", jiangyongReading: "江永读音", archiveKeyboard: "键盘节奏凝神痕迹 · 个人记录", archivePartial: "未竟手写痕迹 · 个人记录", archiveHandwriting: "手写痕迹 · 个人记录", archiveDocumented: "历史虚构 · 文献所载句", archiveProvisional: "历史虚构 · 暂定字形", archiveOpen: "历史虚构 · 开放书写"
@@ -1165,7 +1169,6 @@ function setStage(stage, moveFocus = true) {
   if (stage !== "entering") stopActiveAudio();
   if (stage !== "writing") {
     updateBrushCursor();
-    clearCharacterPause();
   }
   state.stage = stage;
   if (stage !== "writing") state.sending = false;
@@ -1412,11 +1415,6 @@ function syncGuideSizeControls() {
   });
 }
 
-function clearCharacterPause() {
-  if (state.characterPauseTimer !== null) window.clearTimeout(state.characterPauseTimer);
-  state.characterPauseTimer = null;
-}
-
 function clearLineResponse() {
   if (state.lineResponseTimer !== null) window.clearTimeout(state.lineResponseTimer);
   state.lineResponseTimer = null;
@@ -1454,8 +1452,8 @@ function scheduleLineResponse(total) {
 function characterTargetDimensions(layout) {
   const isPhrase = layout.positions.length > 1;
   return {
-    width: Math.max(72, layout.fontSize * 0.56),
-    height: isPhrase ? Math.min(layout.step * 0.86, layout.fontSize * 0.96) : layout.fontSize * 0.96
+    width: Math.max(84, layout.fontSize * 0.66),
+    height: isPhrase ? Math.min(layout.step * 0.9, layout.fontSize * 1.02) : layout.fontSize * 1.02
   };
 }
 
@@ -1515,14 +1513,20 @@ function characterIsReady(index) {
   const distance = state.characterInkDistances[index] || 0;
   const strokes = state.characterStrokeCounts[index] || 0;
   const bounds = state.characterInkBounds[index];
-  const verticalSpan = bounds ? bounds.maxY - bounds.minY : 0;
-  return distance >= Math.max(48, layout.fontSize * 0.65)
-    && verticalSpan >= Math.max(32, layout.fontSize * 0.38)
-    && (strokes >= 2 || distance >= layout.fontSize * 1.15);
+  const target = characterTargetDimensions(layout);
+  return isCharacterTraceComplete({
+    distance,
+    strokes,
+    bounds,
+    fontSize: layout.fontSize,
+    targetWidth: target.width,
+    targetHeight: target.height,
+    pointerType: state.characterInputTypes[index] || "mouse"
+  });
 }
 
 function settleCharacter(index) {
-  if (index !== expectedCharacterIndex() || !characterIsReady(index) || state.completedCharacters.has(index)) return;
+  if (index !== expectedCharacterIndex() || !characterIsReady(index) || state.completedCharacters.has(index)) return false;
   state.completedCharacters.add(index);
   const response = els.characterFeedbackLayer.querySelector(`[data-character-index="${index}"]`);
   if (response) {
@@ -1547,10 +1551,14 @@ function settleCharacter(index) {
   revealWritingNarrative();
   syncCompletionControls();
   scheduleLineResponse(total);
+  return true;
 }
 
-function beginCharacterStroke(point) {
-  clearCharacterPause();
+function beginCharacterStroke(point, pointerType) {
+  if (!state.current || !hasStrokeGuide()) {
+    state.activeCharacterIndex = null;
+    return true;
+  }
   const index = characterIndexAtPoint(point);
   if (state.activeCharacterIndex !== null && state.activeCharacterIndex !== index) {
     settleCharacter(state.activeCharacterIndex);
@@ -1558,56 +1566,46 @@ function beginCharacterStroke(point) {
   const expected = expectedCharacterIndex();
   if (expected === null) {
     state.activeCharacterIndex = null;
-    return;
+    return false;
   }
-  if (index === null) {
+  if (!shouldAcceptCharacterStart({ guided: true, hitIndex: index, expectedIndex: expected })) {
     state.activeCharacterIndex = null;
-    els.inkStatus.textContent = tr("returnToForm", { index: expected + 1 });
+    els.inkStatus.textContent = index === null
+      ? tr("returnToForm", { index: expected + 1 })
+      : tr("finishCurrentFirst", { index: expected + 1 });
     remindCharacterTarget(expected);
-    return;
-  }
-  if (index !== expected) {
-    state.activeCharacterIndex = null;
-    const layout = guideLayout(els.writing.clientWidth, els.writing.clientHeight);
-    const expectedStartsColumn = expected > 0
-      && layout.positions[expected]?.column !== layout.positions[expected - 1]?.column;
-    els.inkStatus.textContent = expected === 0
-      ? tr("beginFirstTop")
-      : expectedStartsColumn
-        ? tr("continueNextColumn", { index: expected + 1 })
-        : tr("continueForm", { index: expected + 1 });
-    remindCharacterTarget(expected);
-    return;
+    return false;
   }
   state.activeCharacterIndex = index;
+  state.characterInputTypes[index] = pointerType || "mouse";
   state.characterStrokeCounts[index] = (state.characterStrokeCounts[index] || 0) + 1;
+  return true;
 }
 
 function trackCharacterInk(from, to, distance) {
   if (!state.current || !hasStrokeGuide()) return;
   const midpoint = { x: (from.x + to.x) / 2, y: (from.y + to.y) / 2 };
-  const index = characterIndexAtPoint(midpoint);
-  const endIndex = characterIndexAtPoint(to);
-  if (index === null || index !== endIndex || index !== state.activeCharacterIndex || index !== expectedCharacterIndex()) return;
+  const index = state.activeCharacterIndex;
+  if (index === null || index !== expectedCharacterIndex()) return;
+  const insidePoints = [from, midpoint, to]
+    .filter((point) => characterIndexAtPoint(point) === index);
+  if (!insidePoints.length) return;
   const layout = guideLayout(els.writing.clientWidth, els.writing.clientHeight);
-  const countedDistance = Math.min(distance, Math.max(10, layout.fontSize * 0.12));
+  const countedDistance = creditedTraceDistance({
+    distance,
+    fontSize: layout.fontSize,
+    insideSamples: insidePoints.length,
+    totalSamples: 3
+  });
   state.characterInkDistances[index] = (state.characterInkDistances[index] || 0) + countedDistance;
   const bounds = state.characterInkBounds[index] || { minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity };
-  bounds.minX = Math.min(bounds.minX, midpoint.x, to.x);
-  bounds.maxX = Math.max(bounds.maxX, midpoint.x, to.x);
-  bounds.minY = Math.min(bounds.minY, midpoint.y, to.y);
-  bounds.maxY = Math.max(bounds.maxY, midpoint.y, to.y);
+  insidePoints.forEach((point) => {
+    bounds.minX = Math.min(bounds.minX, point.x);
+    bounds.maxX = Math.max(bounds.maxX, point.x);
+    bounds.minY = Math.min(bounds.minY, point.y);
+    bounds.maxY = Math.max(bounds.maxY, point.y);
+  });
   state.characterInkBounds[index] = bounds;
-}
-
-function scheduleCharacterResponse() {
-  clearCharacterPause();
-  const index = state.activeCharacterIndex;
-  if (!characterIsReady(index) || state.completedCharacters.has(index)) return;
-  state.characterPauseTimer = window.setTimeout(() => {
-    state.characterPauseTimer = null;
-    if (!state.drawing && state.stage === "writing") settleCharacter(index);
-  }, 900);
 }
 
 function pointFromEvent(event, rect, previousPoint = null) {
@@ -1835,6 +1833,33 @@ function drawEventSamples(event) {
     updateBrushReadout(nextPoint);
     updateBrushCursor(nextPoint);
     state.strokeDistance = nextPoint.strokeDistance;
+    const crossedCharacter = hasStrokeGuide() ? characterIndexAtPoint(nextPoint) : null;
+    if (crossedCharacter !== null && crossedCharacter !== state.activeCharacterIndex) {
+      if (!state.strokeBlocked) {
+        const expected = expectedCharacterIndex();
+        if (expected !== null) {
+          els.inkStatus.textContent = tr("finishCurrentFirst", { index: expected + 1 });
+          remindCharacterTarget(expected);
+        }
+      }
+      state.strokeBlocked = true;
+      state.lastPoint = nextPoint;
+      return;
+    }
+    if (state.strokeBlocked) {
+      if (crossedCharacter !== state.activeCharacterIndex) {
+        state.lastPoint = nextPoint;
+        return;
+      }
+      state.strokeBlocked = false;
+      const resumedSeed = (state.strokeCounter + 1) * 7919;
+      state.strokeCounter += 1;
+      state.activeStroke = { seed: resumedSeed, points: [recordedPoint(nextPoint, bounds)] };
+      state.strokes.push(state.activeStroke);
+      state.brushSampleIndex = paintBrushDab(ctx, nextPoint, state.lastDirection, state.surface, resumedSeed);
+      state.lastPoint = nextPoint;
+      return;
+    }
     state.writingDistance += distance;
     trackCharacterInk(state.lastPoint, nextPoint, distance);
     const result = paintBrushSegment(
@@ -1868,17 +1893,22 @@ function startDrawing(event) {
   const rect = els.writing.getBoundingClientRect();
   const bounds = { x: 0, y: 0, width: rect.width, height: rect.height };
   const point = pointFromEvent(event, rect);
+  if (!beginCharacterStroke(point, event.pointerType)) {
+    updateBrushReadout(point);
+    updateBrushCursor(point);
+    return;
+  }
   const seed = (state.strokeCounter + 1) * 7919;
   state.strokeCounter += 1;
   state.drawing = true;
   state.activePointerId = event.pointerId;
   state.strokeDistance = 0;
+  state.strokeBlocked = false;
   state.brushSampleIndex = 0;
   state.lastDirection = { x: 0, y: 1 };
   state.lastPoint = point;
   state.activeStroke = { seed, points: [recordedPoint(point, bounds)] };
   state.strokes.push(state.activeStroke);
-  beginCharacterStroke(point);
   state.brushSampleIndex = paintBrushDab(
     els.writing.getContext("2d"),
     point,
@@ -1912,7 +1942,7 @@ function handlePointerMove(event) {
 
 function finishActiveStroke({ taper = true, releaseCapture = true } = {}) {
   if (!state.drawing) return;
-  if (taper && state.lastPoint && state.activeStroke) {
+  if (taper && !state.strokeBlocked && state.lastPoint && state.activeStroke) {
     const rect = els.writing.getBoundingClientRect();
     const bounds = { x: 0, y: 0, width: rect.width, height: rect.height };
     const ctx = els.writing.getContext("2d");
@@ -1944,6 +1974,7 @@ function finishActiveStroke({ taper = true, releaseCapture = true } = {}) {
   state.activeStroke = null;
   state.lastPoint = null;
   state.strokeDistance = 0;
+  state.strokeBlocked = false;
   syncCanvasFrameState();
   if (releaseCapture && pointerId !== null && els.writing.hasPointerCapture?.(pointerId)) {
     els.writing.releasePointerCapture(pointerId);
@@ -1954,8 +1985,13 @@ function stopDrawing(event) {
   if (!state.drawing || event.pointerId !== state.activePointerId) return;
   event.preventDefault();
   drawEventSamples(event);
+  const characterIndex = state.activeCharacterIndex;
   finishActiveStroke();
-  scheduleCharacterResponse();
+  const completed = settleCharacter(characterIndex);
+  if (hasStrokeGuide() && characterIndex !== null && !completed) {
+    els.inkStatus.textContent = tr("traceMore", { index: characterIndex + 1 });
+    remindCharacterTarget(characterIndex);
+  }
 }
 
 function cancelDrawing(event) {
@@ -1980,12 +2016,13 @@ function clearWriting({ resetInputMode = false } = {}) {
   state.strokeCounter = 0;
   state.strokeDistance = 0;
   state.brushSampleIndex = 0;
+  state.strokeBlocked = false;
   state.activeCharacterIndex = null;
   state.characterInkDistances = [];
   state.characterStrokeCounts = [];
   state.characterInkBounds = [];
+  state.characterInputTypes = [];
   state.completedCharacters = new Set();
-  clearCharacterPause();
   clearLineResponse();
   state.writingDistance = 0;
   state.revealedWritingLines = 0;
@@ -2237,7 +2274,6 @@ function pauseWithMark({ allowPartial = false } = {}) {
     remindCharacterTarget(Math.min(next - 1, Math.max(0, totalForms() - 1)));
     return;
   }
-  clearCharacterPause();
   clearLineResponse();
   captureWritingGeometry();
   state.partialTrace = !complete;
