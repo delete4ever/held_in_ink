@@ -41,7 +41,9 @@ export function characterCompletionThresholds({
   const shortTargetSide = Math.min(targetWidth, targetHeight);
   return {
     minimumDistance: Math.max(directTouch ? 32 : 38, fontSize * (directTouch ? 0.44 : 0.5)),
-    minimumSpan: Math.max(directTouch ? 18 : 22, shortTargetSide * (directTouch ? 0.27 : 0.3))
+    minimumSpan: Math.max(directTouch ? 18 : 22, shortTargetSide * (directTouch ? 0.27 : 0.3)),
+    minimumCoverage: directTouch ? 0.56 : 0.62,
+    minimumOnGuideRatio: directTouch ? 0.6 : 0.66
   };
 }
 
@@ -52,7 +54,9 @@ export function isCharacterTraceComplete({
   fontSize = 0,
   targetWidth = 0,
   targetHeight = 0,
-  pointerType = "mouse"
+  pointerType = "mouse",
+  coverageRatio = 0,
+  onGuideRatio = 0
 } = {}) {
   const thresholds = characterCompletionThresholds({ fontSize, targetWidth, targetHeight, pointerType });
   const horizontalSpan = bounds ? Math.max(0, bounds.maxX - bounds.minX) : 0;
@@ -60,6 +64,8 @@ export function isCharacterTraceComplete({
   const spatialSpan = Math.hypot(horizontalSpan, verticalSpan);
   return distance >= thresholds.minimumDistance
     && spatialSpan >= thresholds.minimumSpan
+    && coverageRatio >= thresholds.minimumCoverage
+    && onGuideRatio >= thresholds.minimumOnGuideRatio
     && strokes >= 2;
 }
 

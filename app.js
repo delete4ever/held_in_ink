@@ -44,6 +44,8 @@ const state = {
   characterStrokeCounts: [],
   characterInkBounds: [],
   characterInputTypes: [],
+  characterCoveredCells: [],
+  characterGuideSamples: [],
   completedCharacters: new Set(),
   revisingCompletedCharacter: false,
   strokeBlocked: false,
@@ -274,7 +276,7 @@ const dynamicCopy = {
     keyboardTrace: "keyboard-paced attention trace", partialTraceLabel: "partial handwriting trace", handwritingTrace: "handwriting trace", traceCaption: ({ trace }) => `Your ${trace}, before interpretation`, traceAria: ({ trace }) => `Your ${trace} from the writing stage`, savedTraceAria: ({ trace }) => `Your saved ${trace} record`, traceFooter: ({ trace }) => `${trace[0].toUpperCase()}${trace.slice(1)} · personal record, not a heritage object`,
     allForms: ({ count }) => `All ${count} forms have been attended to. The line is ready to send.`, lineReady: "Line ready", formStatus: ({ index, count, reading }) => `Form ${index} of ${count}${reading ? `, read ${reading}` : ""}. Pause, then activate the button when you are ready.`, attendForm: ({ index }) => `Attend to form ${index}`,
     keyboardProgressReady: ({ total }) => `${total} of ${total} · the line is ready.`, keyboardProgress: ({ index, total }) => `${index} of ${total} · pause before the next form.`,
-    pageOpen: "The page is open.", beginFirstTop: "Begin with the first form at the top.", clearBeforeGuide: "Clear the page to change the guide size", lineReadyFor: ({ sender, receiver }) => `${sender}’s line is ready for ${receiver}.`, sendItOnward: "Send it onward", startHere: "start here", next: "next", progressReady: ({ total }) => `${total} of ${total} · the line is ready.`, progressContinue: ({ index, total }) => `${index} of ${total} · continue downward.`, progressNextColumn: ({ index, total }) => `${index} of ${total} · move to the top of the left column.`, returnToForm: ({ index }) => `Return to the pale area for form ${index}.`, traceMore: ({ index }) => `Add one more deliberate stroke to form ${index}.`, revisionKept: ({ index }) => `Your added stroke remains. Continue with form ${index}.`, finishCurrentFirst: ({ index }) => `Finish form ${index} before moving to the forms below.`, continueForm: ({ index }) => `Continue with form ${index} below.`, continueNextColumn: ({ index }) => `Continue with form ${index} at the top of the left column.`,
+    pageOpen: "The page is open.", beginFirstTop: "Begin with the first form at the top.", clearBeforeGuide: "Clear the page to change the guide size", lineReadyFor: ({ sender, receiver }) => `${sender}’s line is ready for ${receiver}.`, sendItOnward: "Send it onward", startHere: "start here", next: "next", progressReady: ({ total }) => `${total} of ${total} · the line is ready.`, progressContinue: ({ index, total }) => `${index} of ${total} · continue downward.`, progressNextColumn: ({ index, total }) => `${index} of ${total} · move to the top of the left column.`, returnToForm: ({ index }) => `Return to the pale area for form ${index}.`, traceMore: ({ index }) => `Follow more of the pale structure in form ${index}.`, revisionKept: ({ index }) => `Your added stroke remains. Continue with form ${index}.`, finishCurrentFirst: ({ index }) => `Finish form ${index} before moving to the forms below.`, continueForm: ({ index }) => `Continue with form ${index} below.`, continueNextColumn: ({ index }) => `Continue with form ${index} at the top of the left column.`,
     pressurePace: "pressure · pace", touchPressure: "touch pressure", stylusPressure: "stylus pressure", paceSensing: "pace sensing", stylusPace: "stylus · pace", touchPace: "touch · pace", pressureDeepens: "Your pressure deepens the ink.", slowerFuller: "A slower movement leaves a fuller stroke.",
     beginBeforeSend: "Begin the first form before sending the line.", incompleteLine: ({ index }) => `The line is not complete yet. Continue with form ${index}, or choose the partial-trace path.`, guideRecedes: "The guide recedes. Stay with your trace before it arrives.", partialRecedes: "The guide recedes. This partial trace will remain named as partial.",
     surfacePaper: "paper", surfaceFan: "paper fan", surfaceCloth: "woven cloth", meaningLabel: "MEANING", hanTranscription: "HAN TRANSCRIPTION", jiangyongReading: "JIANGYONG READING", archiveKeyboard: "KEYBOARD-PACED ATTENTION TRACE · PERSONAL RECORD", archivePartial: "PARTIAL HANDWRITING TRACE · PERSONAL RECORD", archiveHandwriting: "HANDWRITING TRACE · PERSONAL RECORD", archiveDocumented: "HISTORICAL FICTION · DOCUMENTED LINE", archiveProvisional: "HISTORICAL FICTION · PROVISIONAL FORMS", archiveOpen: "HISTORICAL FICTION · OPEN RESPONSE"
@@ -297,7 +299,7 @@ const dynamicCopy = {
     keyboardTrace: "键盘节奏留下的凝神痕迹", partialTraceLabel: "未竟的手写痕迹", handwritingTrace: "手写痕迹", traceCaption: ({ trace }) => `解释以前，你留下的${trace}`, traceAria: ({ trace }) => `你在书写阶段留下的${trace}`, savedTraceAria: ({ trace }) => `你保存的${trace}记录`, traceFooter: ({ trace }) => `${trace} · 个人相遇记录，并非文化遗产物件`,
     allForms: ({ count }) => `${count} 个字形均已凝神看过，这一行可以送出了。`, lineReady: "这一行已经写好", formStatus: ({ index, count, reading }) => `第 ${index} 个，共 ${count} 个${reading ? `，读作 ${reading}` : ""}。停一停，准备好后再按下按钮。`, attendForm: ({ index }) => `凝神看第 ${index} 个字形`,
     keyboardProgressReady: ({ total }) => `${total}/${total} · 这一行已经写好。`, keyboardProgress: ({ index, total }) => `${index}/${total} · 写下一字以前，请先停一停。`,
-    pageOpen: "纸页已经展开。", beginFirstTop: "请从最上方的第一个字形开始。", clearBeforeGuide: "请先清去笔迹，再调整字帖大小", lineReadyFor: ({ sender, receiver }) => `${sender}的这一行，已经可以送往${receiver}。`, sendItOnward: "送它继续前行", startHere: "从这里开始", next: "下一字", progressReady: ({ total }) => `${total}/${total} · 这一行已经写好。`, progressContinue: ({ index, total }) => `${index}/${total} · 继续向下。`, progressNextColumn: ({ index, total }) => `${index}/${total} · 请移至左列顶端。`, returnToForm: ({ index }) => `请回到第 ${index} 个字形的淡色区域。`, traceMore: ({ index }) => `请为第 ${index} 个字形再添一笔。`, revisionKept: ({ index }) => `补写的墨迹已留下，请继续第 ${index} 个字形。`, finishCurrentFirst: ({ index }) => `请先写完第 ${index} 个字形，再继续后面的字。`, continueForm: ({ index }) => `请继续描写下方第 ${index} 个字形。`, continueNextColumn: ({ index }) => `请移至左列顶端，继续第 ${index} 个字形。`,
+    pageOpen: "纸页已经展开。", beginFirstTop: "请从最上方的第一个字形开始。", clearBeforeGuide: "请先清去笔迹，再调整字帖大小", lineReadyFor: ({ sender, receiver }) => `${sender}的这一行，已经可以送往${receiver}。`, sendItOnward: "送它继续前行", startHere: "从这里开始", next: "下一字", progressReady: ({ total }) => `${total}/${total} · 这一行已经写好。`, progressContinue: ({ index, total }) => `${index}/${total} · 继续向下。`, progressNextColumn: ({ index, total }) => `${index}/${total} · 请移至左列顶端。`, returnToForm: ({ index }) => `请回到第 ${index} 个字形的淡色区域。`, traceMore: ({ index }) => `请沿着第 ${index} 个淡色字形继续描摹。`, revisionKept: ({ index }) => `补写的墨迹已留下，请继续第 ${index} 个字形。`, finishCurrentFirst: ({ index }) => `请先写完第 ${index} 个字形，再继续后面的字。`, continueForm: ({ index }) => `请继续描写下方第 ${index} 个字形。`, continueNextColumn: ({ index }) => `请移至左列顶端，继续第 ${index} 个字形。`,
     pressurePace: "笔压 · 行速", touchPressure: "触屏压力", stylusPressure: "触控笔压力", paceSensing: "感知行笔速度", stylusPace: "触控笔 · 行速", touchPace: "触屏 · 行速", pressureDeepens: "你的笔压让墨色渐深。", slowerFuller: "行笔越缓，墨痕越丰。",
     beginBeforeSend: "请先写下第一个字形，再送出这一行。", incompleteLine: ({ index }) => `这一行尚未写完。请继续第 ${index} 个字形，或选择带着未竟的笔迹前行。`, guideRecedes: "淡色字帖缓缓隐去；在它抵达以前，再陪你的笔迹片刻。", partialRecedes: "淡色字帖缓缓隐去；这道未竟的痕迹仍会被如实标明。",
     surfacePaper: "纸张", surfaceFan: "折扇", surfaceCloth: "织物", meaningLabel: "所写之意", hanTranscription: "汉字转写", jiangyongReading: "江永读音", archiveKeyboard: "键盘节奏凝神痕迹 · 个人记录", archivePartial: "未竟手写痕迹 · 个人记录", archiveHandwriting: "手写痕迹 · 个人记录", archiveDocumented: "历史虚构 · 文献所载句", archiveProvisional: "历史虚构 · 暂定字形", archiveOpen: "历史虚构 · 开放书写"
@@ -372,6 +374,9 @@ const brushPalette = {
   ink: rootStyles.getPropertyValue("--brush-ink").trim() || "#211f1a",
   edge: rootStyles.getPropertyValue("--brush-edge").trim() || "#40362b"
 };
+const glyphAnalysisCanvas = document.createElement("canvas");
+const glyphAnalysisCache = new Map();
+const glyphGrid = Object.freeze({ columns: 7, rows: 11 });
 
 function currentAccent() {
   return sceneAccents[state.current?.scene?.theme] || sceneAccents.message;
@@ -412,6 +417,8 @@ async function loadPrompts() {
     try {
       const symbols = state.prompts.map((prompt) => strokeFor(prompt).phrase || "").join("");
       if (symbols) await document.fonts.load("400 160px 'Noto Traditional Nushu'", symbols);
+      glyphAnalysisCache.clear();
+      if (state.stage === "writing") requestAnimationFrame(setupWritingCanvases);
     } catch (error) {
       console.warn("The local Nüshu font did not load; a system fallback will be used.", error);
     }
@@ -1453,9 +1460,91 @@ function scheduleLineResponse(total) {
 function characterTargetDimensions(layout) {
   const isPhrase = layout.positions.length > 1;
   return {
-    width: Math.max(84, layout.fontSize * 0.66),
-    height: isPhrase ? Math.min(layout.step * 0.9, layout.fontSize * 1.02) : layout.fontSize * 1.02
+    width: Math.max(112, layout.fontSize * 1.02),
+    height: isPhrase
+      ? Math.max(layout.fontSize * 0.92, Math.min(layout.step * 0.98, layout.fontSize * 1.14))
+      : layout.fontSize * 1.14
   };
+}
+
+function pointInsideCharacterTarget(point, layout, index) {
+  const position = layout.positions[index];
+  if (!position) return false;
+  const target = characterTargetDimensions(layout);
+  const normalizedX = Math.abs(point.x - position.x) / (target.width / 2);
+  const normalizedY = Math.abs(point.y - position.y) / (target.height / 2);
+  return normalizedX ** 4 + normalizedY ** 4 <= 1;
+}
+
+function glyphAnalysisFor(layout, index) {
+  const position = layout.positions[index];
+  const target = characterTargetDimensions(layout);
+  const width = Math.max(1, Math.ceil(target.width));
+  const height = Math.max(1, Math.ceil(target.height));
+  const cacheKey = `${position?.form || ""}:${Math.round(layout.fontSize)}:${width}:${height}`;
+  if (glyphAnalysisCache.has(cacheKey)) {
+    return { ...glyphAnalysisCache.get(cacheKey), position };
+  }
+
+  glyphAnalysisCanvas.width = width;
+  glyphAnalysisCanvas.height = height;
+  const ctx = glyphAnalysisCanvas.getContext("2d", { willReadFrequently: true });
+  ctx.clearRect(0, 0, width, height);
+  ctx.fillStyle = "#000";
+  ctx.font = `400 ${layout.fontSize}px "Noto Traditional Nushu"`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(position?.form || "", width / 2, height / 2);
+  const pixels = ctx.getImageData(0, 0, width, height).data;
+  const cellWidth = width / glyphGrid.columns;
+  const cellHeight = height / glyphGrid.rows;
+  const templateCells = [];
+
+  for (let row = 0; row < glyphGrid.rows; row += 1) {
+    for (let column = 0; column < glyphGrid.columns; column += 1) {
+      const startX = Math.floor(column * cellWidth);
+      const endX = Math.min(width, Math.ceil((column + 1) * cellWidth));
+      const startY = Math.floor(row * cellHeight);
+      const endY = Math.min(height, Math.ceil((row + 1) * cellHeight));
+      let inkPixels = 0;
+      for (let y = startY; y < endY; y += 1) {
+        for (let x = startX; x < endX; x += 1) {
+          if (pixels[(y * width + x) * 4 + 3] > 24) inkPixels += 1;
+        }
+      }
+      if (inkPixels >= 2) {
+        templateCells.push({
+          key: `${column}:${row}`,
+          x: (column + 0.5) * cellWidth,
+          y: (row + 0.5) * cellHeight
+        });
+      }
+    }
+  }
+
+  const analysis = {
+    target,
+    templateCells,
+    tolerance: Math.max(14, layout.fontSize * 0.13)
+  };
+  glyphAnalysisCache.set(cacheKey, analysis);
+  return { ...analysis, position };
+}
+
+function nearestGuideCell(point, analysis) {
+  if (!analysis.templateCells.length) return null;
+  const localX = point.x - (analysis.position.x - analysis.target.width / 2);
+  const localY = point.y - (analysis.position.y - analysis.target.height / 2);
+  let nearest = null;
+  let nearestDistance = Infinity;
+  analysis.templateCells.forEach((cell) => {
+    const distance = Math.hypot(localX - cell.x, localY - cell.y);
+    if (distance < nearestDistance) {
+      nearest = cell;
+      nearestDistance = distance;
+    }
+  });
+  return nearestDistance <= analysis.tolerance ? nearest : null;
 }
 
 function expectedCharacterIndex() {
@@ -1496,11 +1585,11 @@ function characterIndexAtPoint(point) {
   let matchedIndex = null;
   let closestDistance = Infinity;
   layout.positions.forEach(({ x, y }, index) => {
+    if (!pointInsideCharacterTarget(point, layout, index)) return;
     const normalizedX = Math.abs(point.x - x) / (target.width / 2);
     const normalizedY = Math.abs(point.y - y) / (target.height / 2);
-    const insideTarget = normalizedX ** 4 + normalizedY ** 4 <= 1;
     const distance = normalizedX ** 2 + normalizedY ** 2;
-    if (insideTarget && distance < closestDistance) {
+    if (distance < closestDistance) {
       closestDistance = distance;
       matchedIndex = index;
     }
@@ -1515,6 +1604,14 @@ function characterIsReady(index) {
   const strokes = state.characterStrokeCounts[index] || 0;
   const bounds = state.characterInkBounds[index];
   const target = characterTargetDimensions(layout);
+  const analysis = glyphAnalysisFor(layout, index);
+  const coveredCells = state.characterCoveredCells[index] || new Set();
+  const coveredTemplateCells = analysis.templateCells.filter((cell) => coveredCells.has(cell.key)).length;
+  const coverageRatio = analysis.templateCells.length
+    ? coveredTemplateCells / analysis.templateCells.length
+    : 1;
+  const guideSamples = state.characterGuideSamples[index] || { onGuide: 0, total: 0 };
+  const onGuideRatio = guideSamples.total ? guideSamples.onGuide / guideSamples.total : 0;
   return isCharacterTraceComplete({
     distance,
     strokes,
@@ -1522,7 +1619,9 @@ function characterIsReady(index) {
     fontSize: layout.fontSize,
     targetWidth: target.width,
     targetHeight: target.height,
-    pointerType: state.characterInputTypes[index] || "mouse"
+    pointerType: state.characterInputTypes[index] || "mouse",
+    coverageRatio,
+    onGuideRatio
   });
 }
 
@@ -1597,6 +1696,32 @@ function beginCharacterStroke(point, pointerType) {
   return true;
 }
 
+function recordCharacterGuideCoverage(index, from, to, distance, layout) {
+  const analysis = glyphAnalysisFor(layout, index);
+  if (!analysis.templateCells.length || distance < 0.01) return;
+  const coveredCells = state.characterCoveredCells[index] || new Set();
+  const guideSamples = state.characterGuideSamples[index] || { onGuide: 0, total: 0 };
+  const sampleSpacing = Math.max(3, layout.fontSize * 0.035);
+  const steps = Math.max(1, Math.ceil(distance / sampleSpacing));
+
+  for (let step = 0; step <= steps; step += 1) {
+    const progress = step / steps;
+    const point = {
+      x: from.x + (to.x - from.x) * progress,
+      y: from.y + (to.y - from.y) * progress
+    };
+    if (!pointInsideCharacterTarget(point, layout, index)) continue;
+    guideSamples.total += 1;
+    const guideCell = nearestGuideCell(point, analysis);
+    if (!guideCell) continue;
+    guideSamples.onGuide += 1;
+    coveredCells.add(guideCell.key);
+  }
+
+  state.characterCoveredCells[index] = coveredCells;
+  state.characterGuideSamples[index] = guideSamples;
+}
+
 function trackCharacterInk(from, to, distance) {
   if (!state.current || !hasStrokeGuide()) return;
   const midpoint = { x: (from.x + to.x) / 2, y: (from.y + to.y) / 2 };
@@ -1606,6 +1731,7 @@ function trackCharacterInk(from, to, distance) {
     .filter((point) => characterIndexAtPoint(point) === index);
   if (!insidePoints.length) return;
   const layout = guideLayout(els.writing.clientWidth, els.writing.clientHeight);
+  recordCharacterGuideCoverage(index, from, to, distance, layout);
   const countedDistance = creditedTraceDistance({
     distance,
     fontSize: layout.fontSize,
@@ -2048,6 +2174,8 @@ function clearWriting({ resetInputMode = false } = {}) {
   state.characterStrokeCounts = [];
   state.characterInkBounds = [];
   state.characterInputTypes = [];
+  state.characterCoveredCells = [];
+  state.characterGuideSamples = [];
   state.completedCharacters = new Set();
   clearLineResponse();
   state.writingDistance = 0;
