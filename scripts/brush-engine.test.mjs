@@ -63,9 +63,11 @@ test("one long touch stroke cannot complete a form prematurely", () => {
     strokes: 1,
     bounds: { minX: 20, maxX: 45, minY: 20, maxY: 66 },
     fontSize: 104,
-    targetWidth: 72,
-    targetHeight: 100,
-    pointerType: "touch"
+    targetWidth: 112,
+    targetHeight: 116,
+    pointerType: "touch",
+    coverageRatio: 0.82,
+    onGuideRatio: 0.9
   }), false);
 });
 
@@ -75,9 +77,11 @@ test("two deliberate touch strokes can complete a compact form", () => {
     strokes: 2,
     bounds: { minX: 20, maxX: 45, minY: 20, maxY: 66 },
     fontSize: 104,
-    targetWidth: 84,
-    targetHeight: 106,
-    pointerType: "touch"
+    targetWidth: 112,
+    targetHeight: 116,
+    pointerType: "touch",
+    coverageRatio: 0.7,
+    onGuideRatio: 0.78
   }), true);
 });
 
@@ -89,7 +93,23 @@ test("a tap or tiny scribble cannot complete a form", () => {
     fontSize: 104,
     targetWidth: 72,
     targetHeight: 100,
-    pointerType: "touch"
+    pointerType: "touch",
+    coverageRatio: 0.2,
+    onGuideRatio: 0.3
+  }), false);
+});
+
+test("two broad strokes away from the guide do not complete a form", () => {
+  assert.equal(isCharacterTraceComplete({
+    distance: 110,
+    strokes: 2,
+    bounds: { minX: 8, maxX: 100, minY: 8, maxY: 108 },
+    fontSize: 104,
+    targetWidth: 112,
+    targetHeight: 116,
+    pointerType: "touch",
+    coverageRatio: 0.28,
+    onGuideRatio: 0.36
   }), false);
 });
 
