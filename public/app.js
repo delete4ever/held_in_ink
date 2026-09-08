@@ -48,7 +48,6 @@ const state = {
   characterGuideSamples: [],
   completedCharacters: new Set(),
   revisingCompletedCharacter: false,
-  strokeBlocked: false,
   lineResponsePlayed: false,
   lineResponsePreserved: false,
   lineResponseTimer: null,
@@ -1727,10 +1726,10 @@ function trackCharacterInk(from, to, distance) {
   const midpoint = { x: (from.x + to.x) / 2, y: (from.y + to.y) / 2 };
   const index = state.activeCharacterIndex;
   if (index === null || index !== expectedCharacterIndex()) return;
-  const insidePoints = [from, midpoint, to]
-    .filter((point) => characterIndexAtPoint(point) === index);
-  if (!insidePoints.length) return;
   const layout = guideLayout(els.writing.clientWidth, els.writing.clientHeight);
+  const insidePoints = [from, midpoint, to]
+    .filter((point) => pointInsideCharacterTarget(point, layout, index));
+  if (!insidePoints.length) return;
   recordCharacterGuideCoverage(index, from, to, distance, layout);
   const countedDistance = creditedTraceDistance({
     distance,
@@ -1974,33 +1973,6 @@ function drawEventSamples(event) {
     updateBrushReadout(nextPoint);
     updateBrushCursor(nextPoint);
     state.strokeDistance = nextPoint.strokeDistance;
-    const crossedCharacter = hasStrokeGuide() ? characterIndexAtPoint(nextPoint) : null;
-    if (crossedCharacter !== null && crossedCharacter !== state.activeCharacterIndex) {
-      if (!state.strokeBlocked) {
-        const expected = expectedCharacterIndex();
-        if (expected !== null) {
-          els.inkStatus.textContent = tr("finishCurrentFirst", { index: expected + 1 });
-          remindCharacterTarget(expected);
-        }
-      }
-      state.strokeBlocked = true;
-      state.lastPoint = nextPoint;
-      return;
-    }
-    if (state.strokeBlocked) {
-      if (crossedCharacter !== state.activeCharacterIndex) {
-        state.lastPoint = nextPoint;
-        return;
-      }
-      state.strokeBlocked = false;
-      const resumedSeed = (state.strokeCounter + 1) * 7919;
-      state.strokeCounter += 1;
-      state.activeStroke = { seed: resumedSeed, points: [recordedPoint(nextPoint, bounds)] };
-      state.strokes.push(state.activeStroke);
-      state.brushSampleIndex = paintBrushDab(ctx, nextPoint, state.lastDirection, state.surface, resumedSeed);
-      state.lastPoint = nextPoint;
-      return;
-    }
     state.writingDistance += distance;
     trackCharacterInk(state.lastPoint, nextPoint, distance);
     const result = paintBrushSegment(
@@ -2044,7 +2016,6 @@ function startDrawing(event) {
   state.drawing = true;
   state.activePointerId = event.pointerId;
   state.strokeDistance = 0;
-  state.strokeBlocked = false;
   state.brushSampleIndex = 0;
   state.lastDirection = { x: 0, y: 1 };
   state.lastPoint = point;
@@ -2083,7 +2054,7 @@ function handlePointerMove(event) {
 
 function finishActiveStroke({ taper = true, releaseCapture = true } = {}) {
   if (!state.drawing) return;
-  if (taper && !state.strokeBlocked && state.lastPoint && state.activeStroke) {
+  if (taper && state.lastPoint && state.activeStroke) {
     const rect = els.writing.getBoundingClientRect();
     const bounds = { x: 0, y: 0, width: rect.width, height: rect.height };
     const ctx = els.writing.getContext("2d");
@@ -2115,7 +2086,6 @@ function finishActiveStroke({ taper = true, releaseCapture = true } = {}) {
   state.activeStroke = null;
   state.lastPoint = null;
   state.strokeDistance = 0;
-  state.strokeBlocked = false;
   state.revisingCompletedCharacter = false;
   syncCanvasFrameState();
   if (releaseCapture && pointerId !== null && els.writing.hasPointerCapture?.(pointerId)) {
@@ -2167,7 +2137,6 @@ function clearWriting({ resetInputMode = false } = {}) {
   state.strokeCounter = 0;
   state.strokeDistance = 0;
   state.brushSampleIndex = 0;
-  state.strokeBlocked = false;
   state.activeCharacterIndex = null;
   state.revisingCompletedCharacter = false;
   state.characterInkDistances = [];
