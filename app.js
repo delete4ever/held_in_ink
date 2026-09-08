@@ -1,13 +1,13 @@
 import {
   brushSurface,
+  characterStartMode,
   creditedTraceDistance,
   clamp,
   createTaperSamples,
   interpolateStrokeSegment,
   isCharacterTraceComplete,
   modelBrushSample,
-  seededNoise,
-  shouldAcceptCharacterStart
+  seededNoise
 } from "./brush-engine.js";
 
 const languagePreferenceKey = "held-in-ink-language-v1";
@@ -45,6 +45,7 @@ const state = {
   characterInkBounds: [],
   characterInputTypes: [],
   completedCharacters: new Set(),
+  revisingCompletedCharacter: false,
   strokeBlocked: false,
   lineResponsePlayed: false,
   lineResponsePreserved: false,
@@ -273,7 +274,7 @@ const dynamicCopy = {
     keyboardTrace: "keyboard-paced attention trace", partialTraceLabel: "partial handwriting trace", handwritingTrace: "handwriting trace", traceCaption: ({ trace }) => `Your ${trace}, before interpretation`, traceAria: ({ trace }) => `Your ${trace} from the writing stage`, savedTraceAria: ({ trace }) => `Your saved ${trace} record`, traceFooter: ({ trace }) => `${trace[0].toUpperCase()}${trace.slice(1)} · personal record, not a heritage object`,
     allForms: ({ count }) => `All ${count} forms have been attended to. The line is ready to send.`, lineReady: "Line ready", formStatus: ({ index, count, reading }) => `Form ${index} of ${count}${reading ? `, read ${reading}` : ""}. Pause, then activate the button when you are ready.`, attendForm: ({ index }) => `Attend to form ${index}`,
     keyboardProgressReady: ({ total }) => `${total} of ${total} · the line is ready.`, keyboardProgress: ({ index, total }) => `${index} of ${total} · pause before the next form.`,
-    pageOpen: "The page is open.", beginFirstTop: "Begin with the first form at the top.", clearBeforeGuide: "Clear the page to change the guide size", lineReadyFor: ({ sender, receiver }) => `${sender}’s line is ready for ${receiver}.`, sendItOnward: "Send it onward", startHere: "start here", next: "next", progressReady: ({ total }) => `${total} of ${total} · the line is ready.`, progressContinue: ({ index, total }) => `${index} of ${total} · continue downward.`, progressNextColumn: ({ index, total }) => `${index} of ${total} · move to the top of the left column.`, returnToForm: ({ index }) => `Return to the pale area for form ${index}.`, traceMore: ({ index }) => `Add one more deliberate stroke to form ${index}.`, finishCurrentFirst: ({ index }) => `Finish form ${index} before moving to the forms below.`, continueForm: ({ index }) => `Continue with form ${index} below.`, continueNextColumn: ({ index }) => `Continue with form ${index} at the top of the left column.`,
+    pageOpen: "The page is open.", beginFirstTop: "Begin with the first form at the top.", clearBeforeGuide: "Clear the page to change the guide size", lineReadyFor: ({ sender, receiver }) => `${sender}’s line is ready for ${receiver}.`, sendItOnward: "Send it onward", startHere: "start here", next: "next", progressReady: ({ total }) => `${total} of ${total} · the line is ready.`, progressContinue: ({ index, total }) => `${index} of ${total} · continue downward.`, progressNextColumn: ({ index, total }) => `${index} of ${total} · move to the top of the left column.`, returnToForm: ({ index }) => `Return to the pale area for form ${index}.`, traceMore: ({ index }) => `Add one more deliberate stroke to form ${index}.`, revisionKept: ({ index }) => `Your added stroke remains. Continue with form ${index}.`, finishCurrentFirst: ({ index }) => `Finish form ${index} before moving to the forms below.`, continueForm: ({ index }) => `Continue with form ${index} below.`, continueNextColumn: ({ index }) => `Continue with form ${index} at the top of the left column.`,
     pressurePace: "pressure · pace", touchPressure: "touch pressure", stylusPressure: "stylus pressure", paceSensing: "pace sensing", stylusPace: "stylus · pace", touchPace: "touch · pace", pressureDeepens: "Your pressure deepens the ink.", slowerFuller: "A slower movement leaves a fuller stroke.",
     beginBeforeSend: "Begin the first form before sending the line.", incompleteLine: ({ index }) => `The line is not complete yet. Continue with form ${index}, or choose the partial-trace path.`, guideRecedes: "The guide recedes. Stay with your trace before it arrives.", partialRecedes: "The guide recedes. This partial trace will remain named as partial.",
     surfacePaper: "paper", surfaceFan: "paper fan", surfaceCloth: "woven cloth", meaningLabel: "MEANING", hanTranscription: "HAN TRANSCRIPTION", jiangyongReading: "JIANGYONG READING", archiveKeyboard: "KEYBOARD-PACED ATTENTION TRACE · PERSONAL RECORD", archivePartial: "PARTIAL HANDWRITING TRACE · PERSONAL RECORD", archiveHandwriting: "HANDWRITING TRACE · PERSONAL RECORD", archiveDocumented: "HISTORICAL FICTION · DOCUMENTED LINE", archiveProvisional: "HISTORICAL FICTION · PROVISIONAL FORMS", archiveOpen: "HISTORICAL FICTION · OPEN RESPONSE"
@@ -296,7 +297,7 @@ const dynamicCopy = {
     keyboardTrace: "键盘节奏留下的凝神痕迹", partialTraceLabel: "未竟的手写痕迹", handwritingTrace: "手写痕迹", traceCaption: ({ trace }) => `解释以前，你留下的${trace}`, traceAria: ({ trace }) => `你在书写阶段留下的${trace}`, savedTraceAria: ({ trace }) => `你保存的${trace}记录`, traceFooter: ({ trace }) => `${trace} · 个人相遇记录，并非文化遗产物件`,
     allForms: ({ count }) => `${count} 个字形均已凝神看过，这一行可以送出了。`, lineReady: "这一行已经写好", formStatus: ({ index, count, reading }) => `第 ${index} 个，共 ${count} 个${reading ? `，读作 ${reading}` : ""}。停一停，准备好后再按下按钮。`, attendForm: ({ index }) => `凝神看第 ${index} 个字形`,
     keyboardProgressReady: ({ total }) => `${total}/${total} · 这一行已经写好。`, keyboardProgress: ({ index, total }) => `${index}/${total} · 写下一字以前，请先停一停。`,
-    pageOpen: "纸页已经展开。", beginFirstTop: "请从最上方的第一个字形开始。", clearBeforeGuide: "请先清去笔迹，再调整字帖大小", lineReadyFor: ({ sender, receiver }) => `${sender}的这一行，已经可以送往${receiver}。`, sendItOnward: "送它继续前行", startHere: "从这里开始", next: "下一字", progressReady: ({ total }) => `${total}/${total} · 这一行已经写好。`, progressContinue: ({ index, total }) => `${index}/${total} · 继续向下。`, progressNextColumn: ({ index, total }) => `${index}/${total} · 请移至左列顶端。`, returnToForm: ({ index }) => `请回到第 ${index} 个字形的淡色区域。`, traceMore: ({ index }) => `请为第 ${index} 个字形再添一笔。`, finishCurrentFirst: ({ index }) => `请先写完第 ${index} 个字形，再继续后面的字。`, continueForm: ({ index }) => `请继续描写下方第 ${index} 个字形。`, continueNextColumn: ({ index }) => `请移至左列顶端，继续第 ${index} 个字形。`,
+    pageOpen: "纸页已经展开。", beginFirstTop: "请从最上方的第一个字形开始。", clearBeforeGuide: "请先清去笔迹，再调整字帖大小", lineReadyFor: ({ sender, receiver }) => `${sender}的这一行，已经可以送往${receiver}。`, sendItOnward: "送它继续前行", startHere: "从这里开始", next: "下一字", progressReady: ({ total }) => `${total}/${total} · 这一行已经写好。`, progressContinue: ({ index, total }) => `${index}/${total} · 继续向下。`, progressNextColumn: ({ index, total }) => `${index}/${total} · 请移至左列顶端。`, returnToForm: ({ index }) => `请回到第 ${index} 个字形的淡色区域。`, traceMore: ({ index }) => `请为第 ${index} 个字形再添一笔。`, revisionKept: ({ index }) => `补写的墨迹已留下，请继续第 ${index} 个字形。`, finishCurrentFirst: ({ index }) => `请先写完第 ${index} 个字形，再继续后面的字。`, continueForm: ({ index }) => `请继续描写下方第 ${index} 个字形。`, continueNextColumn: ({ index }) => `请移至左列顶端，继续第 ${index} 个字形。`,
     pressurePace: "笔压 · 行速", touchPressure: "触屏压力", stylusPressure: "触控笔压力", paceSensing: "感知行笔速度", stylusPace: "触控笔 · 行速", touchPace: "触屏 · 行速", pressureDeepens: "你的笔压让墨色渐深。", slowerFuller: "行笔越缓，墨痕越丰。",
     beginBeforeSend: "请先写下第一个字形，再送出这一行。", incompleteLine: ({ index }) => `这一行尚未写完。请继续第 ${index} 个字形，或选择带着未竟的笔迹前行。`, guideRecedes: "淡色字帖缓缓隐去；在它抵达以前，再陪你的笔迹片刻。", partialRecedes: "淡色字帖缓缓隐去；这道未竟的痕迹仍会被如实标明。",
     surfacePaper: "纸张", surfaceFan: "折扇", surfaceCloth: "织物", meaningLabel: "所写之意", hanTranscription: "汉字转写", jiangyongReading: "江永读音", archiveKeyboard: "键盘节奏凝神痕迹 · 个人记录", archivePartial: "未竟手写痕迹 · 个人记录", archiveHandwriting: "手写痕迹 · 个人记录", archiveDocumented: "历史虚构 · 文献所载句", archiveProvisional: "历史虚构 · 暂定字形", archiveOpen: "历史虚构 · 开放书写"
@@ -1557,26 +1558,40 @@ function settleCharacter(index) {
 function beginCharacterStroke(point, pointerType) {
   if (!state.current || !hasStrokeGuide()) {
     state.activeCharacterIndex = null;
+    state.revisingCompletedCharacter = false;
     return true;
   }
   const index = characterIndexAtPoint(point);
-  if (state.activeCharacterIndex !== null && state.activeCharacterIndex !== index) {
+  if (!state.revisingCompletedCharacter && state.activeCharacterIndex !== null && state.activeCharacterIndex !== index) {
     settleCharacter(state.activeCharacterIndex);
   }
   const expected = expectedCharacterIndex();
-  if (expected === null) {
-    state.activeCharacterIndex = null;
-    return false;
+  const startMode = characterStartMode({
+    guided: true,
+    hitIndex: index,
+    expectedIndex: expected,
+    hitCompleted: index !== null && state.completedCharacters.has(index)
+  });
+  if (startMode === "revision") {
+    state.activeCharacterIndex = index;
+    state.revisingCompletedCharacter = true;
+    return true;
   }
-  if (!shouldAcceptCharacterStart({ guided: true, hitIndex: index, expectedIndex: expected })) {
+  if (startMode === "blocked") {
     state.activeCharacterIndex = null;
-    els.inkStatus.textContent = index === null
-      ? tr("returnToForm", { index: expected + 1 })
-      : tr("finishCurrentFirst", { index: expected + 1 });
-    remindCharacterTarget(expected);
+    state.revisingCompletedCharacter = false;
+    if (expected === null) {
+      els.inkStatus.textContent = tr("progressReady", { total: totalForms() });
+    } else {
+      els.inkStatus.textContent = index === null
+        ? tr("returnToForm", { index: expected + 1 })
+        : tr("finishCurrentFirst", { index: expected + 1 });
+      remindCharacterTarget(expected);
+    }
     return false;
   }
   state.activeCharacterIndex = index;
+  state.revisingCompletedCharacter = false;
   state.characterInputTypes[index] = pointerType || "mouse";
   state.characterStrokeCounts[index] = (state.characterStrokeCounts[index] || 0) + 1;
   return true;
@@ -1975,6 +1990,7 @@ function finishActiveStroke({ taper = true, releaseCapture = true } = {}) {
   state.lastPoint = null;
   state.strokeDistance = 0;
   state.strokeBlocked = false;
+  state.revisingCompletedCharacter = false;
   syncCanvasFrameState();
   if (releaseCapture && pointerId !== null && els.writing.hasPointerCapture?.(pointerId)) {
     els.writing.releasePointerCapture(pointerId);
@@ -1986,7 +2002,16 @@ function stopDrawing(event) {
   event.preventDefault();
   drawEventSamples(event);
   const characterIndex = state.activeCharacterIndex;
+  const wasRevision = state.revisingCompletedCharacter;
   finishActiveStroke();
+  if (wasRevision) {
+    state.activeCharacterIndex = null;
+    const expected = expectedCharacterIndex();
+    els.inkStatus.textContent = expected === null
+      ? tr("progressReady", { total: totalForms() })
+      : tr("revisionKept", { index: expected + 1 });
+    return;
+  }
   const completed = settleCharacter(characterIndex);
   if (hasStrokeGuide() && characterIndex !== null && !completed) {
     els.inkStatus.textContent = tr("traceMore", { index: characterIndex + 1 });
@@ -2018,6 +2043,7 @@ function clearWriting({ resetInputMode = false } = {}) {
   state.brushSampleIndex = 0;
   state.strokeBlocked = false;
   state.activeCharacterIndex = null;
+  state.revisingCompletedCharacter = false;
   state.characterInkDistances = [];
   state.characterStrokeCounts = [];
   state.characterInkBounds = [];

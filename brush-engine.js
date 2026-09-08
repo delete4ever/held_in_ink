@@ -41,8 +41,7 @@ export function characterCompletionThresholds({
   const shortTargetSide = Math.min(targetWidth, targetHeight);
   return {
     minimumDistance: Math.max(directTouch ? 32 : 38, fontSize * (directTouch ? 0.44 : 0.5)),
-    minimumSpan: Math.max(directTouch ? 18 : 22, shortTargetSide * (directTouch ? 0.27 : 0.3)),
-    singleStrokeDistance: Math.max(directTouch ? 52 : 60, fontSize * (directTouch ? 0.7 : 0.8))
+    minimumSpan: Math.max(directTouch ? 18 : 22, shortTargetSide * (directTouch ? 0.27 : 0.3))
   };
 }
 
@@ -59,11 +58,9 @@ export function isCharacterTraceComplete({
   const horizontalSpan = bounds ? Math.max(0, bounds.maxX - bounds.minX) : 0;
   const verticalSpan = bounds ? Math.max(0, bounds.maxY - bounds.minY) : 0;
   const spatialSpan = Math.hypot(horizontalSpan, verticalSpan);
-  const deliberateSingleStroke = distance >= thresholds.singleStrokeDistance
-    || spatialSpan >= thresholds.minimumSpan * 2.1;
   return distance >= thresholds.minimumDistance
     && spatialSpan >= thresholds.minimumSpan
-    && (strokes >= 2 || deliberateSingleStroke);
+    && strokes >= 2;
 }
 
 export function creditedTraceDistance({
@@ -77,8 +74,16 @@ export function creditedTraceDistance({
   return Math.min(Math.max(0, distance), sparseEventCap) * insideRatio;
 }
 
-export function shouldAcceptCharacterStart({ guided = true, hitIndex = null, expectedIndex = null } = {}) {
-  return !guided || (expectedIndex !== null && hitIndex === expectedIndex);
+export function characterStartMode({
+  guided = true,
+  hitIndex = null,
+  expectedIndex = null,
+  hitCompleted = false
+} = {}) {
+  if (!guided) return "open";
+  if (expectedIndex !== null && hitIndex === expectedIndex) return "expected";
+  if (hitIndex !== null && hitCompleted && (expectedIndex === null || hitIndex < expectedIndex)) return "revision";
+  return "blocked";
 }
 
 export function hasHardwarePressure(pointerType, pressure) {
