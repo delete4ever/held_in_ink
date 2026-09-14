@@ -13,6 +13,9 @@
   <body>
     <a class="skip-link" href="#top" data-i18n="skipLink">Skip to the experience</a>
     <div class="paper-grain" aria-hidden="true"></div>
+    <div class="heritage-field" aria-hidden="true"></div>
+    <div class="page-ink-transition" aria-hidden="true"></div>
+    <span class="site-ink-cursor" id="site-ink-cursor" aria-hidden="true"></span>
     <main class="site-shell">
       <header class="site-header">
         <a class="wordmark" href="#top" data-action="home" aria-label="Return to the context choices" data-i18n-aria="wordmarkAria">
@@ -48,10 +51,10 @@
               </div>
             </div>
             <ol class="care-route" aria-label="The path of the encounter" data-i18n-aria="careRouteAria">
-              <li><span>01</span><strong data-i18n="receive">Receive</strong><small data-i18n="receiveNote">Listen before interpreting</small></li>
-              <li><span>02</span><strong data-i18n="attend">Attend</strong><small data-i18n="attendNote">Let rhythm shape the mark</small></li>
-              <li><span>03</span><strong data-i18n="carry">Carry</strong><small data-i18n="carryNote">Keep the source boundary visible</small></li>
-              <li><span>04</span><strong data-i18n="return">Return</strong><small data-i18n="returnNote">Bring attention back to context</small></li>
+              <li><span>01</span><strong data-i18n="receive">Receive</strong><small data-i18n="receiveNote">Enter one story and receive its line</small></li>
+              <li><span>02</span><strong data-i18n="attend">Attend</strong><small data-i18n="attendNote">Trace each form, one by one</small></li>
+              <li><span>03</span><strong data-i18n="carry">Carry</strong><small data-i18n="carryNote">Send the completed line onward</small></li>
+              <li><span>04</span><strong data-i18n="return">Return</strong><small data-i18n="returnNote">Revisit what is imagined and documented</small></li>
             </ol>
           </div>
         </section>
@@ -65,7 +68,7 @@
           <div class="context-choice-grid" id="home-context-list" aria-label="Choose one of four Nüshu contexts" data-i18n-aria="homeChoicesAria">
             <p class="context-loading" data-i18n="loadingContexts">Loading the four contexts…</p>
           </div>
-          <p class="home-method-note" data-i18n="homeMethod">Each encounter is a fictional composite. Its documentary status is named before you enter, and the sources remain available inside the story.</p>
+          <p class="home-method-note" data-i18n="homeMethod">Each encounter is a fictional composite. Its evidence status is named before you take part; the full sources return after the line arrives.</p>
           <button class="text-button revisit-threshold" type="button" data-action="revisit-threshold" data-i18n="readOpening">Read the opening again</button>
         </section>
 
@@ -83,7 +86,6 @@
                 <span class="reference-symbol nushu-glyph" id="reference-symbol">𛉡</span>
                 <div>
                   <p class="reference-label" id="story-reference">A third-day-letter line: 薄文傳聲信</p>
-                  <p class="reference-note" id="reference-note"></p>
                 </div>
               </div>
               <div id="story-body"></div>
@@ -100,33 +102,18 @@
             </div>
           </div>
 
-          <details class="context-layer" id="character-context">
+          <details class="disclosure-layer" id="pre-writing-disclosure">
             <summary>
-              <span class="context-summary-copy">
-                <span class="context-layer-label" data-i18n="historicalGrounding">Historical grounding</span>
-                <span class="context-summary-title" data-i18n="documentedImagined">What is documented, what is imagined</span>
+              <span class="disclosure-summary-copy">
+                <span class="context-layer-label" data-i18n="beforeWriting">Before you write</span>
+                <span class="disclosure-summary-title" data-i18n="verifiedHere">What is verified here</span>
               </span>
-              <span class="context-summary-status" id="context-summary-status"></span>
+              <span class="disclosure-summary-status" id="pre-writing-status"></span>
             </summary>
-            <div class="context-body">
-              <section class="context-note" id="context-note-section" aria-labelledby="context-note-heading">
-                <h2 id="context-note-heading" data-i18n="behindStory">Behind this story</h2>
-                <p id="context-note"></p>
-              </section>
-              <div class="context-record" id="context-record">
-                <section class="context-record-section" aria-labelledby="context-sources-heading">
-                  <h3 id="context-sources-heading" data-i18n="readSources">Read the sources</h3>
-                  <div id="context-sources"></div>
-                </section>
-                <section class="context-record-section" id="context-artefact-section" aria-labelledby="context-artefact-heading" hidden>
-                  <h3 id="context-artefact-heading" data-i18n="photoArtefact">Photograph or artefact</h3>
-                  <div id="context-artefact"></div>
-                </section>
-                <section class="context-record-section" id="context-audio-section" aria-labelledby="context-audio-heading" hidden>
-                  <h3 id="context-audio-heading" data-i18n="audio">Audio</h3>
-                  <div id="context-audio"></div>
-                </section>
-              </div>
+            <div class="disclosure-body">
+              <p id="pre-writing-evidence"></p>
+              <p class="reference-note" id="reference-note"></p>
+              <p class="disclosure-later" data-i18n="sourcesReturnLater">The fuller context and sources return after the line arrives.</p>
             </div>
           </details>
 
@@ -200,6 +187,12 @@
             <canvas id="guide-canvas" aria-hidden="true"></canvas>
             <canvas id="writing-canvas" aria-label="A canvas for tracing the selected Nüshu form" data-i18n-aria="writingCanvasAria" aria-describedby="writing-instruction brush-guidance ink-status"></canvas>
             <div class="character-feedback-layer" id="character-feedback-layer" aria-hidden="true"></div>
+            <canvas id="living-ink-canvas" aria-hidden="true"></canvas>
+            <div class="release-visual" id="release-visual" aria-hidden="true" hidden>
+              <canvas id="release-canvas"></canvas>
+              <div class="release-fan-panels" id="release-fan-panels"></div>
+              <canvas id="release-effects-canvas"></canvas>
+            </div>
             <span class="brush-cursor" id="brush-cursor" aria-hidden="true"></span>
             <div class="brush-readout" id="brush-readout" aria-hidden="true">
               <span class="brush-pressure"><i></i></span>
@@ -252,6 +245,46 @@
             </div>
           </section>
           <p class="after-quote" id="after-quote"></p>
+          <details class="context-layer return-context" id="character-context">
+            <summary>
+              <span class="context-summary-copy">
+                <span class="context-layer-label" data-i18n="returnStage">04 · Return</span>
+                <span class="context-summary-title" data-i18n="returnContext">Return this line to its context</span>
+              </span>
+              <span class="context-summary-status" id="context-summary-status"></span>
+            </summary>
+            <div class="context-body">
+              <p class="return-context-intro" data-i18n="returnContextIntro">Now that the line has arrived, place it back beside the histories that shaped this encounter.</p>
+              <div class="return-comparison" aria-label="What is imagined and what is documented" data-i18n-aria="documentedImagined">
+                <section>
+                  <h3 data-i18n="imaginedHere">Imagined here</h3>
+                  <p data-i18n="imaginedHereNote">The sender, receiver, moment, and narrative details are fictional composites grounded in documented histories.</p>
+                </section>
+                <section>
+                  <h3 data-i18n="documentedHere">Documented here</h3>
+                  <p id="return-documented-copy"></p>
+                </section>
+              </div>
+              <section class="context-note" id="context-note-section" aria-labelledby="context-note-heading">
+                <h2 id="context-note-heading" data-i18n="behindStory">Behind this story</h2>
+                <p id="context-note"></p>
+              </section>
+              <div class="context-record" id="context-record">
+                <section class="context-record-section" aria-labelledby="context-sources-heading">
+                  <h3 id="context-sources-heading" data-i18n="readSources">Read the sources</h3>
+                  <div id="context-sources"></div>
+                </section>
+                <section class="context-record-section" id="context-artefact-section" aria-labelledby="context-artefact-heading" hidden>
+                  <h3 id="context-artefact-heading" data-i18n="photoArtefact">Photograph or artefact</h3>
+                  <div id="context-artefact"></div>
+                </section>
+                <section class="context-record-section" id="context-audio-section" aria-labelledby="context-audio-heading" hidden>
+                  <h3 id="context-audio-heading" data-i18n="audio">Audio</h3>
+                  <div id="context-audio"></div>
+                </section>
+              </div>
+            </div>
+          </details>
           <section class="care-reflection" aria-labelledby="care-reflection-title">
             <p class="eyebrow" data-i18n="pauseKeeping">Pause before keeping</p>
             <h2 id="care-reflection-title" data-i18n="reflectionTitle">What changed when the line passed through your hand?</h2>
@@ -263,7 +296,6 @@
           </section>
           <div class="panel-actions">
             <button class="button button-primary" type="button" data-action="archive" data-i18n="keepRecord">Keep a record of this encounter</button>
-            <button class="button button-quiet" type="button" data-action="review-context" data-i18n="returnContext">Return to the documented context</button>
             <button class="button button-quiet" type="button" data-action="return-writing" data-i18n="writeAgain">Write it again</button>
           </div>
         </section>
@@ -313,6 +345,23 @@
       </aside>
     </main>
 
+    <dialog class="release-dialog" id="release-dialog" aria-labelledby="release-title" aria-describedby="release-description release-boundary">
+      <button class="close-button dialog-close" type="button" data-action="cancel-release" aria-label="Return to writing" data-i18n-aria="releaseCloseAria">×</button>
+      <div class="release-dialog-heading">
+        <span class="release-material-mark" aria-hidden="true"></span>
+        <div>
+          <p class="eyebrow" data-i18n="releaseEyebrow">Before beginning again</p>
+          <h2 id="release-title" data-i18n="releaseTitle">Let this unfinished trace go?</h2>
+        </div>
+      </div>
+      <p class="release-description" id="release-description"></p>
+      <p class="release-boundary" id="release-boundary" data-i18n="releaseBoundary">This material transition is an interpretive interface gesture, not a reconstruction of a historical correction practice.</p>
+      <div class="release-actions">
+        <button class="button button-quiet" type="button" data-action="cancel-release" data-i18n="releaseCancel">Return to writing</button>
+        <button class="button button-primary" type="button" data-action="confirm-release" data-i18n="releaseConfirm">Release and begin again</button>
+      </div>
+    </dialog>
+
     <dialog class="about-dialog" id="about-dialog">
       <button class="close-button dialog-close" type="button" data-close-about aria-label="Close" data-i18n-aria="closeAria">×</button>
       <p class="eyebrow" data-i18n="contextCare">Context &amp; care</p>
@@ -321,6 +370,16 @@
       <p data-i18n="aboutTwo">The four named women and the moments around them are imagined. Their letters, songs, settings, and social ties are grounded in the historical sources inside each story.</p>
       <p data-i18n="aboutThree">Nüshu is syllabic: one form may carry the sounds of several Chinese words. The first guide is checked against a documented letter; the other three are clearly marked as provisional dictionary reconstructions.</p>
       <p class="source-note" data-i18n="aboutFour">This is a living cultural heritage. Enter as a guest, and let each line return your attention to the women and communities that carried it.</p>
+      <p class="about-visual-note" data-i18n="aboutVisual">The four carriers borrow structural cues—patterned paper, binding, stitch, vertical columns, and landscape brushwork—from museum objects, but remain contemporary interpretations drawn for this site rather than reconstructions. The handkerchief reference is from the Straits Settlements and is used only to understand silk, drawn-thread edging, and embroidery—not as evidence of a Jiangyong motif.</p>
+      <details class="about-visual-references">
+        <summary data-i18n="visualReferences">Collection references for the contemporary interpretation</summary>
+        <ul>
+          <li><a href="https://www.metmuseum.org/art/collection/search/45748" target="_blank" rel="noreferrer" data-i18n="visualLetterRef">Ming letter by Wang Ao: patterned stationery and album-leaf structure</a></li>
+          <li><a href="https://www.roots.gov.sg/Collection-Landing/listing/1114431" target="_blank" rel="noreferrer" data-i18n="visualClothRef">Early twentieth-century silk handkerchief: stitch and edge structure (not Jiangyong provenance)</a></li>
+          <li><a href="https://courier.unesco.org/en/articles/nushu-tears-sunshine" target="_blank" rel="noreferrer" data-i18n="visualNushuRef">UNESCO: cover and inside page of a third-day book</a></li>
+          <li><a href="https://www.metmuseum.org/art/collection/search/737743" target="_blank" rel="noreferrer" data-i18n="visualLandscapeRef">Huang Jun’s Qing album: fine contours and pale colour</a></li>
+        </ul>
+      </details>
     </dialog>
 
     <noscript>This experience needs JavaScript enabled. / 本体验需要启用 JavaScript。</noscript>

@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 380">
+  <defs>
+    <filter id="paper-grain" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency=".72" numOctaves="3" seed="17"/>
+      <feColorMatrix values="0 0 0 0 .25 0 0 0 0 .20 0 0 0 0 .15 0 0 0 .13 0"/>
+    </filter>
+    <g id="petal" fill="#A77D66" fill-opacity=".08" stroke="#765041" stroke-width="1.15">
+      <path d="M0 0C-8-4-10-12-4-17C3-18 8-11 5-4C4-1 2 0 0 0Z"/>
+    </g>
+  </defs>
+  <rect width="420" height="380" fill="#51463A" opacity=".18" filter="url(#paper-grain)"/>
+  <g fill="none" stroke="#805B48" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M284 382C302 338 318 300 334 255C347 220 362 184 388 146" stroke-width="1.55" opacity=".82"/>
+    <path d="M333 256C306 245 292 223 288 195" stroke-width="1.05" opacity=".82"/>
+    <path d="M349 219C373 214 392 201 408 181" stroke-width="1.05" opacity=".82"/>
+    <path d="M364 185C346 171 339 155 340 135" stroke-width=".9" opacity=".76"/>
+    <g transform="translate(289 193) scale(.86)" opacity="1">
+      <use href="#petal" transform="rotate(0)"/><use href="#petal" transform="rotate(64)"/><use href="#petal" transform="rotate(128)"/><use href="#petal" transform="rotate(192)"/><use href="#petal" transform="rotate(256)"/>
+      <circle r="2.1" fill="#A66C52" stroke="none"/>
+    </g>
+    <g transform="translate(340 134) scale(.72)" opacity=".9">
+      <use href="#petal" transform="rotate(10)"/><use href="#petal" transform="rotate(82)"/><use href="#petal" transform="rotate(154)"/><use href="#petal" transform="rotate(226)"/><use href="#petal" transform="rotate(298)"/>
+      <circle r="1.8" fill="#A66C52" stroke="none"/>
+    </g>
+    <g transform="translate(408 180) scale(.62)" opacity=".86">
+      <use href="#petal" transform="rotate(0)"/><use href="#petal" transform="rotate(72)"/><use href="#petal" transform="rotate(144)"/><use href="#petal" transform="rotate(216)"/><use href="#petal" transform="rotate(288)"/>
+    </g>
+    <path d="M275 370C306 351 336 346 369 352" stroke-width=".9" opacity=".62"/>
+    <path d="M273 374C306 358 338 358 374 365" stroke-width=".6" opacity=".52"/>
+  </g>
+  <g fill="#A78367" opacity=".18">
+    <circle cx="372" cy="82" r="18"/><circle cx="397" cy="101" r="8"/><circle cx="311" cy="317" r="13"/>
+  </g>
+</svg>
