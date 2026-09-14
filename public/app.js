@@ -51,6 +51,12 @@ const state = {
   lineResponsePlayed: false,
   lineResponsePreserved: false,
   lineResponseTimer: null,
+  livingInkActive: false,
+  livingInkSettled: false,
+  livingInkFrame: null,
+  livingInkStartedAt: null,
+  livingInkProgress: 0,
+  livingInkScene: null,
   writingDistance: 0,
   revealedWritingLines: 0,
   writingAspectRatio: 1,
@@ -58,6 +64,11 @@ const state = {
   lastKeyboardAttendTime: null,
   partialTrace: false,
   sending: false,
+  releaseInProgress: false,
+  releaseTimer: null,
+  releaseFrame: null,
+  releaseStartedAt: null,
+  releaseParticles: [],
   stage: "threshold",
   surface: "paper",
   activeAudio: null,
@@ -84,6 +95,9 @@ const els = {
   sceneSequence: document.querySelector("#scene-sequence"),
   guideLabel: document.querySelector("#guide-label"),
   beginAction: document.querySelector("#begin-action"),
+  preWritingDisclosure: document.querySelector("#pre-writing-disclosure"),
+  preWritingStatus: document.querySelector("#pre-writing-status"),
+  preWritingEvidence: document.querySelector("#pre-writing-evidence"),
   characterContext: document.querySelector("#character-context"),
   contextSummaryStatus: document.querySelector("#context-summary-status"),
   contextNoteSection: document.querySelector("#context-note-section"),
@@ -117,6 +131,7 @@ const els = {
   afterReadingList: document.querySelector("#after-reading-list"),
   afterReadingNote: document.querySelector("#after-reading-note"),
   deliveryTrack: document.querySelector("#delivery-track"),
+  returnDocumentedCopy: document.querySelector("#return-documented-copy"),
   cardForm: document.querySelector("#card-form"),
   cardTranscription: document.querySelector("#card-transcription"),
   cardReading: document.querySelector("#card-reading"),
@@ -128,11 +143,19 @@ const els = {
   promptList: document.querySelector("#prompt-list"),
   guide: document.querySelector("#guide-canvas"),
   writing: document.querySelector("#writing-canvas"),
+  livingInk: document.querySelector("#living-ink-canvas"),
   after: document.querySelector("#after-canvas"),
   card: document.querySelector("#card-canvas"),
   canvasFrame: document.querySelector("#canvas-frame"),
   guideSizePicker: document.querySelector("#guide-size-picker"),
   characterFeedbackLayer: document.querySelector("#character-feedback-layer"),
+  releaseVisual: document.querySelector("#release-visual"),
+  siteInkCursor: document.querySelector("#site-ink-cursor"),
+  releaseCanvas: document.querySelector("#release-canvas"),
+  releaseEffectsCanvas: document.querySelector("#release-effects-canvas"),
+  releaseFanPanels: document.querySelector("#release-fan-panels"),
+  releaseDialog: document.querySelector("#release-dialog"),
+  releaseDescription: document.querySelector("#release-description"),
   inkStatus: document.querySelector("#ink-status"),
   brushCursor: document.querySelector("#brush-cursor"),
   brushReadout: document.querySelector("#brush-readout"),
@@ -177,24 +200,33 @@ const staticZh = {
   skipIntroduction: "略过引言",
   careRouteAria: "这段相遇所经过的路径",
   receive: "接信",
-  receiveNote: "先倾听，再解释",
+  receiveNote: "进入一则故事，接过其中的字句",
   attend: "凝神",
-  attendNote: "让节奏塑成笔迹",
+  attendNote: "循着字形，一字一字描写",
   carry: "传递",
-  carryNote: "不让史料边界隐去",
+  carryNote: "写完这一行，再将它送出",
   return: "归返",
-  returnNote: "让注意重新回到语境",
+  returnNote: "回看哪些出于想象，哪些见于史料",
   homeEyebrow: "四位女人 · 四封想象的书信",
   homeTitle: "你愿意替谁传递这一句话？",
   homeDeck: "每一次相遇，都从一句写向远方的话开始。选择一个故事，接过那行文字，让它朝另一位倾听者继续前行。",
   homeChoicesAria: "从四个女书语境中选择一个",
   loadingContexts: "正在展开四封书信……",
-  homeMethod: "每一次相遇都围绕复合虚构人物展开。进入故事前，页面会标明其文献依据；所有来源也始终留在故事之中。",
+  homeMethod: "每一次相遇都围绕复合虚构人物展开。参与以前，页面会标明证据状态；待字句抵达以后，完整史料将重新出现。",
   readOpening: "重读开篇",
   storyEyebrow: "一封等待被传递的信",
   fictionalComposite: "复合虚构人物",
+  beforeWriting: "落笔以前",
+  verifiedHere: "这里有哪些已经核对",
+  sourcesReturnLater: "更完整的语境与资料来源，将在这行字抵达以后重新出现。",
   historicalGrounding: "史料依据",
   documentedImagined: "哪些见于文献，哪些出于想象",
+  returnStage: "04 · 归返",
+  returnContext: "让这行字归回它的来处",
+  returnContextIntro: "现在，这行字已经抵达。请把它重新放回塑成这次相遇的历史语境之中。",
+  imaginedHere: "此处的想象",
+  imaginedHereNote: "写信人与收信人、相遇时刻及叙事细节，均为以文献记载为基础的复合虚构。",
+  documentedHere: "此处的文献依据",
   behindStory: "故事背后",
   readSources: "查阅来源",
   photoArtefact: "照片或文物",
@@ -223,6 +255,12 @@ const staticZh = {
   writingCanvasAria: "描写所选女书字形的画布",
   inkBrush: "墨笔",
   clearAgain: "清去笔迹，重新开始",
+  releaseCloseAria: "回到书写",
+  releaseEyebrow: "重新落笔以前",
+  releaseTitle: "要让这段未竟的墨迹离开吗？",
+  releaseBoundary: "这一材质过渡是界面中的诠释性动作，并非对历史订正方式的复原。",
+  releaseCancel: "回到书写",
+  releaseConfirm: "放下此迹，重新开始",
   partialTrace: "带着未竟的笔迹继续",
   arrivalEyebrow: "这一行字已经抵达",
   whatCarried: "你所传递的",
@@ -236,7 +274,6 @@ const staticZh = {
   reflectionUnknown: "关于这位女人的经历，仍有哪些是你无法知晓的？",
   reflectionPrivacy: "这些文字只停留在当前页面，不会写入下载的记录。",
   keepRecord: "留下这次相遇的记录",
-  returnContext: "回到有文献依据的语境",
   writeAgain: "再写一次",
   keptHand: "留在你手中",
   savedCardAria: "你保存的书写卡片",
@@ -253,7 +290,13 @@ const staticZh = {
   aboutOne: "女书是与中国湖南江永县密切相关的女性文字。几代女人曾以它传递书信、歌谣，以及亲密而隐微的扶持。",
   aboutTwo: "页面中的四位女人及其相遇时刻均属想象；她们的书信、歌谣、处境与社会关系，则以每个故事内列出的历史资料为依据。",
   aboutThree: "女书是一种音节文字：同一字形可能承载多个汉语词语的读音。第一组字帖已与文献书信核对；其余三组均明确标作暂依字典所得的重构。",
-  aboutFour: "这是一项仍在延续的文化遗产。请以访客的身份进入，让每一行字把你的注意带回曾经传递它的女人与社群。"
+  aboutFour: "这是一项仍在延续的文化遗产。请以访客的身份进入，让每一行字把你的注意带回曾经传递它的女人与社群。",
+  aboutVisual: "四件载体从馆藏物件中提取纸张暗花、装帧、针法、竖列和山水笔法，但仍是为本网站绘制的当代视觉转译，并非历史物件的复原。手帕参照物来自海峡殖民地，仅用于理解丝缎、抽纱边与刺绣结构，不作为江永地方纹样的证据。",
+  visualReferences: "当代视觉转译的馆藏参照",
+  visualLetterRef: "明代王鏊书札：暗花笺纸与册页",
+  visualClothRef: "二十世纪初丝缎手帕：针法与边缘结构（非江永来源）",
+  visualNushuRef: "UNESCO：三朝书封面与内页",
+  visualLandscapeRef: "清代黄均《仿古山水册》：细线与淡设色"
 };
 
 const dynamicCopy = {
@@ -278,6 +321,7 @@ const dynamicCopy = {
     pageOpen: "The page is open.", beginFirstTop: "Begin with the first form at the top.", clearBeforeGuide: "Clear the page to change the guide size", lineReadyFor: ({ sender, receiver }) => `${sender}’s line is ready for ${receiver}.`, sendItOnward: "Send it onward", startHere: "start here", next: "next", progressReady: ({ total }) => `${total} of ${total} · the line is ready.`, progressContinue: ({ index, total }) => `${index} of ${total} · continue downward.`, progressNextColumn: ({ index, total }) => `${index} of ${total} · move to the top of the left column.`, returnToForm: ({ index }) => `Return to the pale area for form ${index}.`, traceMore: ({ index }) => `Follow more of the pale structure in form ${index}.`, revisionKept: ({ index }) => `Your added stroke remains. Continue with form ${index}.`, finishCurrentFirst: ({ index }) => `Finish form ${index} before moving to the forms below.`, continueForm: ({ index }) => `Continue with form ${index} below.`, continueNextColumn: ({ index }) => `Continue with form ${index} at the top of the left column.`,
     pressurePace: "pressure · pace", touchPressure: "touch pressure", stylusPressure: "stylus pressure", paceSensing: "pace sensing", stylusPace: "stylus · pace", touchPace: "touch · pace", pressureDeepens: "Your pressure deepens the ink.", slowerFuller: "A slower movement leaves a fuller stroke.",
     beginBeforeSend: "Begin the first form before sending the line.", incompleteLine: ({ index }) => `The line is not complete yet. Continue with form ${index}, or choose the partial-trace path.`, guideRecedes: "The guide recedes. Stay with your trace before it arrives.", partialRecedes: "The guide recedes. This partial trace will remain named as partial.",
+    releasePaper: "The ink will darken at its edges, then lift through the paper fibres as ash. A clear page waits beneath.", releaseFan: "The fan will gather the unfinished line panel by panel, then open again as a clear surface.", releaseCloth: "The trace will loosen strand by strand with the weave. The cloth will remain ready to receive the line again.", releaseInProgress: "The unfinished trace is leaving the surface.", releaseComplete: "The surface is open again. Begin with the first form.",
     surfacePaper: "paper", surfaceFan: "paper fan", surfaceCloth: "woven cloth", meaningLabel: "MEANING", hanTranscription: "HAN TRANSCRIPTION", jiangyongReading: "JIANGYONG READING", archiveKeyboard: "KEYBOARD-PACED ATTENTION TRACE · PERSONAL RECORD", archivePartial: "PARTIAL HANDWRITING TRACE · PERSONAL RECORD", archiveHandwriting: "HANDWRITING TRACE · PERSONAL RECORD", archiveDocumented: "HISTORICAL FICTION · DOCUMENTED LINE", archiveProvisional: "HISTORICAL FICTION · PROVISIONAL FORMS", archiveOpen: "HISTORICAL FICTION · OPEN RESPONSE"
   },
   zh: {
@@ -301,6 +345,7 @@ const dynamicCopy = {
     pageOpen: "纸页已经展开。", beginFirstTop: "请从最上方的第一个字形开始。", clearBeforeGuide: "请先清去笔迹，再调整字帖大小", lineReadyFor: ({ sender, receiver }) => `${sender}的这一行，已经可以送往${receiver}。`, sendItOnward: "送它继续前行", startHere: "从这里开始", next: "下一字", progressReady: ({ total }) => `${total}/${total} · 这一行已经写好。`, progressContinue: ({ index, total }) => `${index}/${total} · 继续向下。`, progressNextColumn: ({ index, total }) => `${index}/${total} · 请移至左列顶端。`, returnToForm: ({ index }) => `请回到第 ${index} 个字形的淡色区域。`, traceMore: ({ index }) => `请沿着第 ${index} 个淡色字形继续描摹。`, revisionKept: ({ index }) => `补写的墨迹已留下，请继续第 ${index} 个字形。`, finishCurrentFirst: ({ index }) => `请先写完第 ${index} 个字形，再继续后面的字。`, continueForm: ({ index }) => `请继续描写下方第 ${index} 个字形。`, continueNextColumn: ({ index }) => `请移至左列顶端，继续第 ${index} 个字形。`,
     pressurePace: "笔压 · 行速", touchPressure: "触屏压力", stylusPressure: "触控笔压力", paceSensing: "感知行笔速度", stylusPace: "触控笔 · 行速", touchPace: "触屏 · 行速", pressureDeepens: "你的笔压让墨色渐深。", slowerFuller: "行笔越缓，墨痕越丰。",
     beginBeforeSend: "请先写下第一个字形，再送出这一行。", incompleteLine: ({ index }) => `这一行尚未写完。请继续第 ${index} 个字形，或选择带着未竟的笔迹前行。`, guideRecedes: "淡色字帖缓缓隐去；在它抵达以前，再陪你的笔迹片刻。", partialRecedes: "淡色字帖缓缓隐去；这道未竟的痕迹仍会被如实标明。",
+    releasePaper: "墨缘将先焦褐，再沿纸张纤维化作灰屑离开；一页清纸仍在其下等候。", releaseFan: "折扇会逐片收拢未竟的字句，再度展开一面空白。", releaseCloth: "笔迹将随经纬一丝丝松开，织物仍会留下，重新承接这一行字。", releaseInProgress: "这段未竟的墨迹正在离开书写载体。", releaseComplete: "书写载体重新展开了。请从第一个字形落笔。",
     surfacePaper: "纸张", surfaceFan: "折扇", surfaceCloth: "织物", meaningLabel: "所写之意", hanTranscription: "汉字转写", jiangyongReading: "江永读音", archiveKeyboard: "键盘节奏凝神痕迹 · 个人记录", archivePartial: "未竟手写痕迹 · 个人记录", archiveHandwriting: "手写痕迹 · 个人记录", archiveDocumented: "历史虚构 · 文献所载句", archiveProvisional: "历史虚构 · 暂定字形", archiveOpen: "历史虚构 · 开放书写"
   }
 };
@@ -335,6 +380,7 @@ function applyStaticTranslations() {
     : "A quiet, embodied writing encounter with Nüshu.";
   els.languageToggle.textContent = state.language === "zh" ? "English" : "中文";
   els.languageToggle.setAttribute("aria-label", state.language === "zh" ? "切换至英文" : "Switch to Chinese");
+  syncReleaseDialogCopy();
 }
 
 const thresholdSessionKey = "held-in-ink-threshold-seen-v1";
@@ -360,6 +406,19 @@ const surfaceLabels = {
   fan: "paper fan",
   cloth: "woven cloth"
 };
+
+const releaseCopyKeys = {
+  paper: "releasePaper",
+  fan: "releaseFan",
+  cloth: "releaseCloth"
+};
+
+function syncReleaseDialogCopy() {
+  if (!els.releaseDialog || !els.releaseDescription) return;
+  const surface = releaseCopyKeys[state.surface] ? state.surface : "paper";
+  els.releaseDialog.dataset.surface = surface;
+  els.releaseDescription.textContent = tr(releaseCopyKeys[surface]);
+}
 
 const sceneAccents = {
   message: "#984e3a",
@@ -391,7 +450,9 @@ function syncCanvasFrameState() {
   const sizeClass = state.current && hasStrokeGuide() && state.guideSize === "comfort" ? " is-comfort-guide" : "";
   const preservedClass = state.lineResponsePreserved ? " is-line-preserved" : "";
   const sendingClass = state.sending ? " is-sending" : "";
-  els.canvasFrame.className = `canvas-frame surface-${state.surface}${guideClass}${sizeClass}${inkClass}${drawingClass}${cursorClass}${preservedClass}${sendingClass}`;
+  const releaseClass = state.releaseInProgress ? " is-releasing" : "";
+  const livingInkClass = state.livingInkActive || state.livingInkSettled ? " is-line-awake" : "";
+  els.canvasFrame.className = `canvas-frame surface-${state.surface}${guideClass}${sizeClass}${inkClass}${drawingClass}${cursorClass}${preservedClass}${sendingClass}${releaseClass}${livingInkClass}`;
 }
 
 async function loadPrompts() {
@@ -426,6 +487,7 @@ async function loadPrompts() {
 
 function setLanguage(language) {
   if (!["en", "zh"].includes(language) || language === state.language) return;
+  finishReleaseVisual({ announce: false });
   const currentId = state.current?.id;
   const pickerWasOpen = !els.promptPicker.hidden;
   state.language = language;
@@ -440,6 +502,7 @@ function setLanguage(language) {
   renderHomepage();
   const localizedPrompt = state.prompts.find((prompt) => prompt.id === currentId) || state.prompts[0];
   selectPrompt(localizedPrompt, { preserveInteraction: true });
+  syncLocalizedInkStatus();
   if (state.stage === "threshold" || state.stage === "home") delete document.body.dataset.scene;
   syncStageLabel();
   if (pickerWasOpen) showPicker();
@@ -813,11 +876,41 @@ function renderAudio(audioRecord) {
 }
 
 function renderHomepage() {
+  const carrierForTheme = {
+    message: "book",
+    crossing: "cloth",
+    witness: "song",
+    invocation: "fold"
+  };
+  const carrierArtwork = {
+    book: "assets/carrier-book-letterpaper.svg",
+    cloth: "assets/carrier-cloth-peony.svg",
+    song: "assets/carrier-song-manuscript.svg",
+    fold: "assets/carrier-fold-mountains.svg"
+  };
   const choices = state.prompts.map((prompt, index) => {
     const button = document.createElement("button");
+    const carrier = carrierForTheme[prompt.scene.theme] || "paper";
     button.type = "button";
-    button.className = `context-choice context-choice-${prompt.scene.theme}`;
+    button.className = `context-choice context-choice-${prompt.scene.theme} carrier-${carrier}`;
     button.dataset.contextId = prompt.id;
+    button.dataset.carrier = carrier;
+
+    const surface = document.createElement("span");
+    surface.className = "context-choice-surface";
+    const material = document.createElement("span");
+    material.className = "carrier-material";
+    material.setAttribute("aria-hidden", "true");
+    if (carrier === "song" && prompt.layers.stroke.phrase) {
+      material.classList.add("nushu-glyph");
+      material.textContent = prompt.layers.stroke.phrase;
+    }
+    const illustration = document.createElement("img");
+    illustration.className = "carrier-illustration";
+    illustration.src = carrierArtwork[carrier];
+    illustration.alt = "";
+    illustration.setAttribute("aria-hidden", "true");
+    illustration.draggable = false;
 
     const top = document.createElement("span");
     top.className = "context-choice-topline";
@@ -837,15 +930,6 @@ function renderHomepage() {
     deck.className = "context-choice-deck";
     deck.textContent = prompt.scene.homeDeck;
 
-    const sequence = document.createElement("span");
-    sequence.className = "context-choice-sequence";
-    sequence.setAttribute("aria-hidden", "true");
-    prompt.scene.sequence.forEach((beat) => {
-      const item = document.createElement("span");
-      item.textContent = beat;
-      sequence.append(item);
-    });
-
     const bottom = document.createElement("span");
     bottom.className = "context-choice-bottom";
     const boundary = document.createElement("span");
@@ -859,7 +943,8 @@ function renderHomepage() {
     action.textContent = tr("carryWords");
     bottom.append(boundary, evidence, action);
 
-    button.append(top, title, deck, sequence, bottom);
+    surface.append(illustration, material, top, title, deck, bottom);
+    button.append(surface);
     return button;
   });
   els.homeContextList.replaceChildren(...choices);
@@ -938,6 +1023,7 @@ function syncWritingInstruction() {
 
 function selectPrompt(prompt, { preserveInteraction = false } = {}) {
   stopActiveAudio();
+  const disclosureWasOpen = els.preWritingDisclosure.open;
   const contextWasOpen = els.characterContext.open;
   state.current = prompt;
   const stroke = strokeFor(prompt);
@@ -961,6 +1047,9 @@ function selectPrompt(prompt, { preserveInteraction = false } = {}) {
   els.storyPlace.textContent = narrative.place;
   els.storyType.textContent = narrative.storyType;
   els.evidenceBoundaryStatus.textContent = prompt.scene.evidenceLabel;
+  els.preWritingStatus.textContent = prompt.scene.evidenceLabel;
+  els.preWritingEvidence.textContent = evidenceBoundaryText(prompt);
+  els.returnDocumentedCopy.textContent = evidenceBoundaryText(prompt);
   els.referenceSymbol.textContent = verified ? stroke.symbol : tr("formPending");
   els.referenceSymbol.classList.toggle("nushu-glyph", verified);
   els.referenceSymbol.classList.toggle("is-pending-form", !verified);
@@ -1004,6 +1093,7 @@ function selectPrompt(prompt, { preserveInteraction = false } = {}) {
     reading: stroke.phraseReading || tr("readingUnavailable")
   });
   renderContext(prompt.layers.context);
+  els.preWritingDisclosure.open = preserveInteraction ? disclosureWasOpen : false;
   els.characterContext.open = preserveInteraction ? contextWasOpen : false;
   if (preserveInteraction) state.revealedWritingLines = 0;
   setupWritingNarrative();
@@ -1054,6 +1144,32 @@ function revealWritingNarrative() {
 function lineIsComplete() {
   const total = totalForms();
   return total > 0 ? state.completedCharacters.size === total : state.hasMarks;
+}
+
+function syncLocalizedInkStatus() {
+  if (!state.current || state.stage !== "writing") return;
+  if (state.releaseInProgress) {
+    els.inkStatus.textContent = tr("releaseInProgress");
+    return;
+  }
+  if (!state.hasMarks) {
+    els.inkStatus.textContent = hasStrokeGuide() ? tr("beginFirstTop") : tr("pageOpen");
+    return;
+  }
+  const total = totalForms();
+  if (lineIsComplete()) {
+    const narrative = narrativeFor();
+    els.inkStatus.textContent = tr("lineReadyFor", { sender: narrative.sender, receiver: narrative.receiver });
+    return;
+  }
+  if (state.inputMode === "keyboard") {
+    els.inkStatus.textContent = tr("keyboardProgress", { index: state.completedCharacters.size, total });
+    return;
+  }
+  const expected = expectedCharacterIndex();
+  els.inkStatus.textContent = state.completedCharacters.size > 0
+    ? tr("progressContinue", { index: state.completedCharacters.size, total })
+    : tr("traceMore", { index: (expected ?? 0) + 1 });
 }
 
 function syncCompletionControls() {
@@ -1170,8 +1286,43 @@ function attendToNextForm() {
   scheduleLineResponse(total);
 }
 
+let stageTransitionSwapTimer = null;
+let stageTransitionCleanupTimer = null;
+let stageTransitionSequence = 0;
+
 function setStage(stage, moveFocus = true) {
+  const currentPanel = els.panels.find((panel) => panel.dataset.stage === state.stage && !panel.hidden);
+  const motionIsReduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const shouldTransition = moveFocus && !motionIsReduced && stage !== state.stage && Boolean(currentPanel);
+
+  window.clearTimeout(stageTransitionSwapTimer);
+  window.clearTimeout(stageTransitionCleanupTimer);
+  els.panels.forEach((panel) => panel.classList.remove("is-leaving"));
+  document.body.classList.remove("is-stage-transitioning");
+
+  if (!shouldTransition) {
+    applyStage(stage, moveFocus);
+    return;
+  }
+
+  const sequence = ++stageTransitionSequence;
+  currentPanel.classList.add("is-leaving");
+  void document.body.offsetWidth;
+  document.body.classList.add("is-stage-transitioning");
+  stageTransitionSwapTimer = window.setTimeout(() => {
+    if (sequence !== stageTransitionSequence) return;
+    currentPanel.classList.remove("is-leaving");
+    applyStage(stage, moveFocus);
+  }, 190);
+  stageTransitionCleanupTimer = window.setTimeout(() => {
+    if (sequence !== stageTransitionSequence) return;
+    document.body.classList.remove("is-stage-transitioning");
+  }, 760);
+}
+
+function applyStage(stage, moveFocus = true) {
   const previousStage = state.stage;
+  if (previousStage === "writing" && stage !== "writing") finishReleaseVisual({ announce: false });
   if (previousStage === "writing" && stage !== "writing") captureWritingGeometry();
   if (stage !== "entering") stopActiveAudio();
   if (stage !== "writing") {
@@ -1284,9 +1435,15 @@ function setupWritingCanvases() {
   sizeCanvas(els.guide, rect.width, rect.height);
   const writeCtx = sizeCanvas(els.writing, rect.width, rect.height);
   writeCtx.clearRect(0, 0, rect.width, rect.height);
+  const livingInkCtx = sizeCanvas(els.livingInk, rect.width, rect.height);
+  livingInkCtx.clearRect(0, 0, rect.width, rect.height);
   renderRecordedStrokes(writeCtx, { x: 0, y: 0, width: rect.width, height: rect.height }, state.surface);
   drawGuide();
   setupCharacterFeedback();
+  if ((state.livingInkActive || state.livingInkSettled) && lineIsComplete()) {
+    state.livingInkScene = createLivingInkScene(rect.width, rect.height);
+    drawLivingInkScene(state.livingInkProgress || 1);
+  }
 }
 
 function drawGuide() {
@@ -1306,8 +1463,13 @@ function drawGuide() {
   ctx.lineWidth = Math.max(1.15, Math.min(width, height) * 0.0031);
   if (isPhrase) {
     positions.forEach(({ form, x, y, column, statusSide }, index) => {
+      ctx.save();
+      // A completed guide recedes, but remains legible so an early completion
+      // can still be understood and revised without losing the form.
+      ctx.globalAlpha = state.completedCharacters.has(index) ? 0.42 : 1;
       ctx.fillText(form, x, y);
       ctx.strokeText(form, x, y);
+      ctx.restore();
       ctx.save();
       ctx.font = "650 10px Segoe UI, Arial, sans-serif";
       ctx.fillStyle = "rgba(94, 82, 67, 0.62)";
@@ -1329,8 +1491,11 @@ function drawGuide() {
       }
     });
   } else {
+    ctx.save();
+    ctx.globalAlpha = state.completedCharacters.has(0) ? 0.42 : 1;
     ctx.fillText(forms[0], positions[0].x, positions[0].y);
     ctx.strokeText(forms[0], positions[0].x, positions[0].y);
+    ctx.restore();
   }
   ctx.restore();
 }
@@ -1422,11 +1587,390 @@ function syncGuideSizeControls() {
   });
 }
 
+const livingInkDuration = 6200;
+const livingInkPalettes = {
+  message: { stem: [49, 47, 39], leaf: [79, 78, 55], bloom: [124, 61, 43], lineWidth: 1.18 },
+  crossing: { stem: [43, 64, 67], leaf: [66, 91, 82], bloom: [88, 72, 58], lineWidth: 1.08 },
+  witness: { stem: [61, 47, 52], leaf: [85, 69, 64], bloom: [111, 54, 65], lineWidth: 1 },
+  invocation: { stem: [58, 55, 36], leaf: [84, 83, 47], bloom: [126, 72, 35], lineWidth: 1.28 }
+};
+
+function livingInkSeed() {
+  return Array.from(state.current?.id || "held-in-ink").reduce(
+    (seed, character) => Math.imul(seed ^ character.codePointAt(0), 16777619) >>> 0,
+    2166136261
+  );
+}
+
+function livingInkPoint(branch, t) {
+  const inverse = 1 - t;
+  return {
+    x: inverse ** 3 * branch.start.x
+      + 3 * inverse ** 2 * t * branch.controlA.x
+      + 3 * inverse * t ** 2 * branch.controlB.x
+      + t ** 3 * branch.end.x,
+    y: inverse ** 3 * branch.start.y
+      + 3 * inverse ** 2 * t * branch.controlA.y
+      + 3 * inverse * t ** 2 * branch.controlB.y
+      + t ** 3 * branch.end.y
+  };
+}
+
+function livingInkTangent(branch, t) {
+  const before = livingInkPoint(branch, Math.max(0, t - 0.012));
+  const after = livingInkPoint(branch, Math.min(1, t + 0.012));
+  return Math.atan2(after.y - before.y, after.x - before.x);
+}
+
+function createLivingInkScene(width, height) {
+  if (width <= 0 || height <= 0) return null;
+  const bounds = { x: 0, y: 0, width, height };
+  const theme = state.current?.scene.theme || "message";
+  const palette = livingInkPalettes[theme] || livingInkPalettes.message;
+  const layout = guideLayout(width, height);
+  const target = characterTargetDimensions(layout);
+  if (!layout.positions.length) return null;
+  const seed = livingInkSeed();
+  const endpointGroups = layout.positions.map(() => []);
+
+  state.strokes.forEach((stroke) => {
+    if (!stroke.points?.length) return;
+    const restored = stroke.points.map((point) => restoredPoint(point, bounds));
+    [restored[0], restored.at(-1)].forEach((point) => {
+      let nearestIndex = null;
+      let nearestDistance = Infinity;
+      layout.positions.forEach((position, index) => {
+        const distance = Math.hypot(point.x - position.x, point.y - position.y);
+        if (distance < nearestDistance) {
+          nearestIndex = index;
+          nearestDistance = distance;
+        }
+      });
+      if (nearestIndex !== null && nearestDistance <= Math.max(target.width, target.height) * .72) {
+        endpointGroups[nearestIndex].push(point);
+      }
+    });
+  });
+
+  const ordered = layout.positions.map((position, index) => ({ position, index }));
+  if (layout.flow === "fan-columns") {
+    ordered.sort((a, b) => {
+      const yDifference = a.position.y - b.position.y;
+      return Math.abs(yDifference) < layout.fontSize * .48
+        ? b.position.x - a.position.x
+        : yDifference;
+    });
+  }
+
+  const outerOffset = clamp(target.width * .64, 62, Math.min(width * .2, 146));
+  const nodes = ordered.map(({ position, index }, pathIndex) => {
+    const side = layout.flow === "fan-columns"
+      ? (position.x >= width / 2 ? 1 : -1)
+      : (pathIndex % 2 === 0 ? -1 : 1);
+    const yDrift = (seededNoise(seed, pathIndex, 2) - .5) * Math.min(layout.fontSize * .18, 18);
+    const vine = {
+      x: clamp(position.x + side * outerOffset, 28, width - 28),
+      y: clamp(position.y + yDrift, 26, height - 26)
+    };
+    const endpoints = endpointGroups[index];
+    const attachment = endpoints.length
+      ? endpoints.reduce((selected, point) => (
+        side < 0 ? (point.x < selected.x ? point : selected) : (point.x > selected.x ? point : selected)
+      ), endpoints[0])
+      : {
+        x: position.x + side * Math.min(layout.fontSize * .27, target.width * .34),
+        y: position.y
+      };
+    return { position, originalIndex: index, pathIndex, side, vine, attachment };
+  });
+
+  const first = nodes[0];
+  const firstGap = nodes[1] ? Math.abs(nodes[1].vine.y - first.vine.y) : layout.fontSize;
+  const start = {
+    x: clamp(first.vine.x - first.side * outerOffset * .28, 28, width - 28),
+    y: clamp(first.vine.y - Math.max(36, Math.min(firstGap * .58, 92)), 24, height - 24)
+  };
+  const mainPoints = [start, ...nodes.map((node) => node.vine)];
+  const mainSegments = mainPoints.slice(0, -1).map((segmentStart, index) => {
+    const end = mainPoints[index + 1];
+    const node = nodes[index];
+    const previousSide = index === 0 ? -node.side : nodes[index - 1].side;
+    const verticalDistance = Math.max(34, Math.abs(end.y - segmentStart.y));
+    const sweep = clamp(verticalDistance * .62 + outerOffset * .34, 44, 132);
+    return {
+      start: segmentStart,
+      end,
+      controlA: {
+        x: clamp(segmentStart.x + previousSide * sweep, 18, width - 18),
+        y: segmentStart.y + (end.y - segmentStart.y) * .28
+      },
+      controlB: {
+        x: clamp(end.x + node.side * sweep * .86, 18, width - 18),
+        y: end.y - (end.y - segmentStart.y) * .3
+      },
+      direction: node.side,
+      leafSize: clamp(width * .015, 7.5, 13),
+      leafTurns: [
+        (seededNoise(seed, index, 6) - .5) * .56,
+        (seededNoise(seed, index, 7) - .5) * .46
+      ],
+      seed: seed + index * 101
+    };
+  });
+
+  const connections = nodes.map((node, index) => {
+    const curl = clamp(target.width * .28, 24, 54);
+    const verticalCurl = (index % 2 === 0 ? -1 : 1) * Math.min(layout.fontSize * .22, 24);
+    return {
+      start: node.vine,
+      end: node.attachment,
+      controlA: {
+        x: clamp(node.vine.x + node.side * curl, 18, width - 18),
+        y: node.vine.y + verticalCurl
+      },
+      controlB: {
+        x: node.attachment.x + node.side * curl * .78,
+        y: node.attachment.y - verticalCurl * .72
+      },
+      direction: -node.side,
+      seed: seed + index * 137
+    };
+  });
+
+  const lastSegment = mainSegments.at(-1);
+  return {
+    theme,
+    palette,
+    nodes,
+    mainSegments,
+    connections,
+    flower: {
+      point: nodes.at(-1).vine,
+      angle: lastSegment ? livingInkTangent(lastSegment, 1) : -Math.PI / 2,
+      size: clamp(width * .022, 13, 21),
+      seed: seed + 2027
+    }
+  };
+}
+
+function strokeLivingInkBranch(ctx, branch, progress, color, width, alpha, dry) {
+  if (progress <= 0) return;
+  const steps = Math.max(3, Math.ceil(progress * 28));
+  ctx.save();
+  ctx.beginPath();
+  const start = livingInkPoint(branch, 0);
+  ctx.moveTo(start.x, start.y);
+  for (let step = 1; step <= steps; step += 1) {
+    const point = livingInkPoint(branch, (step / steps) * progress);
+    ctx.lineTo(point.x, point.y);
+  }
+  ctx.strokeStyle = `rgba(${color.join(",")},${alpha})`;
+  ctx.lineWidth = width;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  if (dry) ctx.setLineDash([6, 2.5, 1.3, 3.2]);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function strokeLivingInkVine(ctx, segment, progress, palette, alpha, isConnection = false) {
+  const width = palette.lineWidth * (isConnection ? .72 : 1);
+  strokeLivingInkBranch(ctx, segment, progress, palette.stem, width * 5.6, alpha * .055, false);
+  strokeLivingInkBranch(ctx, segment, progress, palette.leaf, width * 2.25, alpha * .17, false);
+  strokeLivingInkBranch(ctx, segment, progress, palette.stem, width, alpha * (isConnection ? .74 : 1), true);
+}
+
+function drawLivingInkLeaf(ctx, branch, t, size, side, reveal, palette, alpha) {
+  if (reveal <= 0) return;
+  const point = livingInkPoint(branch, t);
+  const angle = livingInkTangent(branch, t) + side * (0.78 + branch.leafTurns[side > 0 ? 0 : 1]);
+  const length = size * (1.65 + t * 0.2) * reveal;
+  const breadth = size * 0.58 * reveal;
+  ctx.save();
+  ctx.translate(point.x, point.y);
+  ctx.rotate(angle);
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.bezierCurveTo(length * .32, -breadth, length * .82, -breadth * .62, length, 0);
+  ctx.bezierCurveTo(length * .75, breadth * .72, length * .28, breadth * .82, 0, 0);
+  ctx.fillStyle = `rgba(${palette.leaf.join(",")},${alpha * .18})`;
+  ctx.strokeStyle = `rgba(${palette.stem.join(",")},${alpha * .88})`;
+  ctx.lineWidth = Math.max(.58, palette.lineWidth * .72);
+  ctx.fill();
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(length * .08, 0);
+  ctx.lineTo(length * .82, 0);
+  ctx.strokeStyle = `rgba(${palette.stem.join(",")},${alpha * .45})`;
+  ctx.lineWidth = .48;
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawLivingInkFlower(ctx, flower, reveal, palette, alpha) {
+  if (reveal <= 0) return;
+  const point = flower.point;
+  const size = flower.size * (.68 + reveal * .32);
+  ctx.save();
+  ctx.translate(point.x, point.y);
+  ctx.rotate(flower.angle);
+
+  const wash = ctx.createRadialGradient(0, 0, 0, 0, 0, size * 1.65);
+  wash.addColorStop(0, `rgba(${palette.bloom.join(",")},${alpha * .11 * reveal})`);
+  wash.addColorStop(1, `rgba(${palette.bloom.join(",")},0)`);
+  ctx.fillStyle = wash;
+  ctx.beginPath();
+  ctx.arc(0, 0, size * 1.65, 0, Math.PI * 2);
+  ctx.fill();
+
+  for (let petal = 0; petal < 5; petal += 1) {
+    const irregularity = .86 + seededNoise(flower.seed, petal, 1) * .24;
+    ctx.save();
+    ctx.rotate((petal / 5) * Math.PI * 2 - Math.PI / 2 + (seededNoise(flower.seed, petal, 2) - .5) * .16);
+    ctx.scale(reveal, reveal);
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.bezierCurveTo(-size * .32, -size * .34, -size * .28, -size * 1.04 * irregularity, 0, -size * 1.18 * irregularity);
+    ctx.bezierCurveTo(size * .31, -size * 1.01 * irregularity, size * .35, -size * .34, 0, 0);
+    ctx.fillStyle = `rgba(${palette.bloom.join(",")},${alpha * .12})`;
+    ctx.strokeStyle = `rgba(${palette.bloom.join(",")},${alpha * .72})`;
+    ctx.lineWidth = .76;
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  ctx.fillStyle = `rgba(${palette.stem.join(",")},${alpha * .8})`;
+  for (let dot = 0; dot < 5; dot += 1) {
+    const angle = (dot / 5) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.arc(Math.cos(angle) * size * .18, Math.sin(angle) * size * .18, .7 + reveal * .65, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawLivingInkScene(progress) {
+  const canvas = els.livingInk;
+  const ctx = canvas?.getContext("2d");
+  if (!ctx) return;
+  const width = canvas.clientWidth;
+  const height = canvas.clientHeight;
+  ctx.clearRect(0, 0, width, height);
+  const scene = state.livingInkScene;
+  if (!scene?.mainSegments.length) return;
+  const { palette } = scene;
+  const settle = progress < .88 ? 1 : 1 - ((progress - .88) / .12) * .22;
+  const alpha = .69 * settle;
+  const vineProgress = clamp((progress - .035) / .61, 0, 1);
+  const segmentCount = scene.mainSegments.length;
+
+  scene.mainSegments.forEach((segment, index) => {
+    const segmentProgress = clamp(vineProgress * segmentCount - index, 0, 1);
+    const easedSegment = 1 - (1 - segmentProgress) ** 3;
+    strokeLivingInkVine(ctx, segment, easedSegment, palette, alpha);
+
+    [0.36, 0.67].forEach((t, leafIndex) => {
+      const leafArrival = .12 + ((index + t) / segmentCount) * .56 + leafIndex * .025;
+      const leafProgress = clamp((progress - leafArrival) / .14, 0, 1);
+      const side = (index + leafIndex) % 2 === 0 ? segment.direction : -segment.direction;
+      drawLivingInkLeaf(
+        ctx,
+        segment,
+        t,
+        segment.leafSize,
+        side,
+        1 - (1 - leafProgress) ** 2,
+        palette,
+        alpha
+      );
+    });
+  });
+
+  scene.connections.forEach((connection, index) => {
+    const arrival = .1 + ((index + 1) / scene.connections.length) * .5;
+    const connectionProgress = clamp((progress - arrival) / .16, 0, 1);
+    strokeLivingInkVine(
+      ctx,
+      connection,
+      1 - (1 - connectionProgress) ** 3,
+      palette,
+      alpha * .82,
+      true
+    );
+
+    if (connectionProgress > 0 && progress < arrival + .25) {
+      const washProgress = clamp((progress - arrival) / .25, 0, 1);
+      const wash = ctx.createRadialGradient(connection.end.x, connection.end.y, 0, connection.end.x, connection.end.y, 18 + washProgress * 18);
+      wash.addColorStop(0, `rgba(${palette.leaf.join(",")},${(1 - washProgress) * .07})`);
+      wash.addColorStop(1, `rgba(${palette.leaf.join(",")},0)`);
+      ctx.fillStyle = wash;
+      ctx.fillRect(connection.end.x - 38, connection.end.y - 38, 76, 76);
+    }
+  });
+
+  const flowerProgress = clamp((progress - .69) / .2, 0, 1);
+  drawLivingInkFlower(
+    ctx,
+    scene.flower,
+    1 - (1 - flowerProgress) ** 3,
+    palette,
+    alpha
+  );
+}
+
+function clearLivingInk() {
+  if (state.livingInkFrame !== null) window.cancelAnimationFrame(state.livingInkFrame);
+  state.livingInkFrame = null;
+  state.livingInkStartedAt = null;
+  state.livingInkProgress = 0;
+  state.livingInkScene = null;
+  state.livingInkActive = false;
+  state.livingInkSettled = false;
+  const ctx = els.livingInk?.getContext("2d");
+  ctx?.clearRect(0, 0, els.livingInk.clientWidth, els.livingInk.clientHeight);
+  els.canvasFrame.classList.remove("is-line-awake");
+}
+
+function animateLivingInk(timestamp) {
+  if (!state.livingInkActive || state.stage !== "writing") return;
+  if (state.livingInkStartedAt === null) state.livingInkStartedAt = timestamp;
+  state.livingInkProgress = clamp((timestamp - state.livingInkStartedAt) / livingInkDuration, 0, 1);
+  drawLivingInkScene(state.livingInkProgress);
+  if (state.livingInkProgress < 1) {
+    state.livingInkFrame = window.requestAnimationFrame(animateLivingInk);
+    return;
+  }
+  state.livingInkFrame = null;
+  state.livingInkActive = false;
+  state.livingInkSettled = true;
+  syncCanvasFrameState();
+}
+
+function startLivingInkAnimation({ reduced = false } = {}) {
+  clearLivingInk();
+  const rect = els.canvasFrame.getBoundingClientRect();
+  if (rect.width <= 0 || rect.height <= 0 || !state.strokes.length) return;
+  sizeCanvas(els.livingInk, rect.width, rect.height);
+  state.livingInkScene = createLivingInkScene(rect.width, rect.height);
+  if (!state.livingInkScene?.mainSegments.length) return;
+  state.livingInkActive = !reduced;
+  state.livingInkSettled = reduced;
+  state.livingInkProgress = reduced ? 1 : 0;
+  syncCanvasFrameState();
+  if (reduced) {
+    drawLivingInkScene(1);
+    return;
+  }
+  state.livingInkFrame = window.requestAnimationFrame(animateLivingInk);
+}
+
 function clearLineResponse() {
   if (state.lineResponseTimer !== null) window.clearTimeout(state.lineResponseTimer);
   state.lineResponseTimer = null;
   state.lineResponsePlayed = false;
   state.lineResponsePreserved = false;
+  clearLivingInk();
   els.characterFeedbackLayer.classList.remove("is-line-breathing", "is-line-preserved");
   els.canvasFrame.classList.remove("is-line-preserved");
 }
@@ -1443,6 +1987,7 @@ function scheduleLineResponse(total) {
     layer.classList.remove("is-line-breathing", "is-line-preserved");
     void layer.offsetWidth;
     layer.classList.add("is-line-breathing");
+    startLivingInkAnimation({ reduced: motionIsReduced });
     const narrative = narrativeFor();
     els.inkStatus.textContent = tr("lineReadyFor", { sender: narrative.sender, receiver: narrative.receiver });
     state.lineResponseTimer = window.setTimeout(() => {
@@ -1635,6 +2180,9 @@ function settleCharacter(index) {
     response.classList.add("is-responding");
     window.setTimeout(() => response.classList.remove("is-responding"), 2400);
   }
+  window.setTimeout(() => {
+    if (state.completedCharacters.has(index) && state.stage === "writing") drawGuide();
+  }, 620);
   const total = guideLayout(els.writing.clientWidth, els.writing.clientHeight).positions.length;
   const layout = guideLayout(els.writing.clientWidth, els.writing.clientHeight);
   const nextIndex = index + 1;
@@ -1999,6 +2547,7 @@ function startDrawing(event) {
     event.isPrimary === false ||
     (event.pointerType === "mouse" && event.button !== 0)
   ) return;
+  finishReleaseVisual({ announce: false });
   event.preventDefault();
   if (event.pointerType === "touch" || event.pointerType === "pen") {
     window.getSelection?.()?.removeAllRanges();
@@ -2119,6 +2668,270 @@ function cancelDrawing(event) {
   if (!state.drawing || event.pointerId !== state.activePointerId) return;
   finishActiveStroke({ taper: false, releaseCapture: false });
   updateBrushCursor();
+}
+
+function snapshotTraceForRelease() {
+  const source = els.writing;
+  const target = els.releaseCanvas;
+  if (!source || !target || source.width < 1 || source.height < 1) return false;
+  target.width = source.width;
+  target.height = source.height;
+  const context = target.getContext("2d");
+  if (!context) return false;
+  context.setTransform(1, 0, 0, 1, 0, 0);
+  context.clearRect(0, 0, target.width, target.height);
+  context.drawImage(source, 0, 0, target.width, target.height);
+  return true;
+}
+
+const releaseVisualDuration = 1480;
+
+function seededReleaseRandom(seed) {
+  let value = (seed >>> 0) || 1;
+  return () => {
+    value += 0x6d2b79f5;
+    let mixed = value;
+    mixed = Math.imul(mixed ^ (mixed >>> 15), mixed | 1);
+    mixed ^= mixed + Math.imul(mixed ^ (mixed >>> 7), mixed | 61);
+    return ((mixed ^ (mixed >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function sampledReleaseInk(random, limit = 150) {
+  const source = els.releaseCanvas;
+  const sampleScale = Math.min(1, 260 / Math.max(source.width, source.height));
+  const sampleWidth = Math.max(1, Math.round(source.width * sampleScale));
+  const sampleHeight = Math.max(1, Math.round(source.height * sampleScale));
+  const sampler = document.createElement("canvas");
+  sampler.width = sampleWidth;
+  sampler.height = sampleHeight;
+  const context = sampler.getContext("2d", { willReadFrequently: true });
+  if (!context) return [];
+  context.drawImage(source, 0, 0, sampleWidth, sampleHeight);
+  const pixels = context.getImageData(0, 0, sampleWidth, sampleHeight).data;
+  const candidates = [];
+  for (let y = 0; y < sampleHeight; y += 2) {
+    for (let x = 0; x < sampleWidth; x += 2) {
+      const offset = (y * sampleWidth + x) * 4;
+      if (pixels[offset + 3] > 22) candidates.push({ x, y });
+    }
+  }
+  if (!candidates.length) return [];
+  const points = [];
+  const count = Math.min(limit, candidates.length);
+  for (let index = 0; index < count; index += 1) {
+    const candidate = candidates[Math.floor(random() * candidates.length)];
+    points.push({
+      x: (candidate.x / sampleWidth) * source.width,
+      y: (candidate.y / sampleHeight) * source.height
+    });
+  }
+  return points;
+}
+
+function buildReleaseFanPanels() {
+  if (!els.releaseFanPanels) return;
+  els.releaseFanPanels.replaceChildren();
+  const panelCount = window.innerWidth < 700 ? 9 : 13;
+  const image = els.releaseCanvas.toDataURL("image/png");
+  for (let index = 0; index < panelCount; index += 1) {
+    const panel = document.createElement("span");
+    const distanceFromCentre = Math.abs(index - (panelCount - 1) / 2);
+    panel.className = "release-fan-panel";
+    panel.style.left = `${(index / panelCount) * 100}%`;
+    panel.style.width = `calc(${100 / panelCount}% + 1px)`;
+    panel.style.backgroundImage = `url(${image})`;
+    panel.style.backgroundSize = `${panelCount * 100}% 100%`;
+    panel.style.backgroundPosition = `${panelCount === 1 ? 0 : (index / (panelCount - 1)) * 100}% 0`;
+    const foldShift = (((panelCount - 1) / 2) - index) * 100;
+    const foldTurn = index % 2 === 0 ? -82 : 82;
+    panel.style.setProperty("--fold-shift-mid", `${foldShift * 0.72}%`);
+    panel.style.setProperty("--fold-shift", `${foldShift}%`);
+    panel.style.setProperty("--fold-turn-mid", `${foldTurn * 0.78}deg`);
+    panel.style.setProperty("--fold-turn", `${foldTurn}deg`);
+    panel.style.setProperty("--fold-delay", `${Math.round(distanceFromCentre * 12)}ms`);
+    els.releaseFanPanels.append(panel);
+  }
+}
+
+function prepareReleaseParticles(surface, seed) {
+  const effects = els.releaseEffectsCanvas;
+  const source = els.releaseCanvas;
+  if (!effects || !source) return;
+  effects.width = source.width;
+  effects.height = source.height;
+  effects.getContext("2d")?.clearRect(0, 0, effects.width, effects.height);
+  const random = seededReleaseRandom(seed);
+  const points = sampledReleaseInk(random, surface === "cloth" ? 170 : 135);
+  const centreX = source.width / 2;
+  const scale = Math.max(1, Math.min(source.width, source.height) / 520);
+  state.releaseParticles = points.map((point, index) => ({
+    x: point.x + (random() - 0.5) * 7 * scale,
+    y: point.y + (random() - 0.5) * 7 * scale,
+    delay: random() * (surface === "fan" ? 0.22 : 0.3),
+    drift: (random() - 0.5) * (surface === "paper" ? 60 : 38) * scale,
+    lift: (45 + random() * 105) * scale,
+    size: (0.8 + random() * 2.8) * scale,
+    length: (10 + random() * 32) * scale,
+    phase: random() * Math.PI * 2,
+    direction: point.x < centreX ? 1 : -1,
+    axis: index % 3 === 0 ? "warp" : "weft"
+  }));
+  if (surface === "fan") buildReleaseFanPanels();
+  else els.releaseFanPanels?.replaceChildren();
+  state.releaseStartedAt = null;
+}
+
+function drawPaperRelease(context, progress, width, height) {
+  const scale = Math.max(1, Math.min(width, height) / 520);
+  state.releaseParticles.forEach((particle, index) => {
+    const local = Math.max(0, Math.min(1, (progress - particle.delay) / (1 - particle.delay)));
+    if (local <= 0 || local >= 1) return;
+    const ease = 1 - ((1 - local) ** 3);
+    const x = particle.x + particle.drift * ease + Math.sin(particle.phase + local * 9) * 4 * scale;
+    const y = particle.y - particle.lift * ease;
+    const alpha = Math.sin(Math.PI * local) * (1 - local * 0.3);
+    if (index % 8 === 0 && local < 0.56) {
+      const radius = particle.size * (5 + local * 7);
+      const glow = context.createRadialGradient(x, y, 0, x, y, radius);
+      glow.addColorStop(0, `rgba(240, 137, 54, ${alpha * 0.32})`);
+      glow.addColorStop(1, "rgba(184, 61, 25, 0)");
+      context.fillStyle = glow;
+      context.beginPath();
+      context.arc(x, y, radius, 0, Math.PI * 2);
+      context.fill();
+    }
+    context.fillStyle = local < 0.48
+      ? `rgba(189, 72, 31, ${alpha * 0.88})`
+      : `rgba(60, 51, 42, ${alpha * 0.7})`;
+    context.beginPath();
+    context.arc(x, y, Math.max(0.7 * scale, particle.size * (1 - local * 0.55)), 0, Math.PI * 2);
+    context.fill();
+  });
+}
+
+function drawFanRelease(context, progress, width, height) {
+  const scale = Math.max(1, Math.min(width, height) / 520);
+  const centreX = width / 2;
+  const gatherY = height * 0.9;
+  state.releaseParticles.forEach((particle, index) => {
+    const local = Math.max(0, Math.min(1, (progress - particle.delay) / (1 - particle.delay)));
+    if (local <= 0 || local >= 1 || index % 2) return;
+    const ease = local * local * (3 - 2 * local);
+    const x = particle.x + (centreX - particle.x) * ease * 0.88;
+    const y = particle.y + (gatherY - particle.y) * ease * 0.55;
+    const alpha = Math.sin(Math.PI * local) * 0.7;
+    context.save();
+    context.translate(x, y);
+    context.rotate(particle.phase + local * 2.4);
+    context.fillStyle = `rgba(144, 94, 43, ${alpha})`;
+    context.fillRect(-particle.size * 1.7, -0.45 * scale, particle.size * 3.4, 0.9 * scale);
+    context.restore();
+  });
+}
+
+function drawClothRelease(context, progress, width, height) {
+  const scale = Math.max(1, Math.min(width, height) / 520);
+  state.releaseParticles.forEach((particle) => {
+    const local = Math.max(0, Math.min(1, (progress - particle.delay) / (1 - particle.delay)));
+    if (local <= 0 || local >= 1) return;
+    const ease = 1 - ((1 - local) ** 2);
+    const travel = particle.direction * particle.length * 2.7 * ease;
+    const x = particle.x + (particle.axis === "weft" ? travel : Math.sin(particle.phase + local * 8) * 5 * scale);
+    const y = particle.y + (particle.axis === "warp" ? travel * 0.45 : Math.sin(particle.phase + local * 6) * 3 * scale);
+    const alpha = Math.sin(Math.PI * local) * 0.76;
+    context.strokeStyle = particle.axis === "warp"
+      ? `rgba(247, 233, 207, ${alpha})`
+      : `rgba(86, 65, 45, ${alpha * 0.8})`;
+    context.lineWidth = particle.axis === "warp" ? 0.8 * scale : 1.15 * scale;
+    context.beginPath();
+    if (particle.axis === "warp") {
+      context.moveTo(x, y - particle.length);
+      context.quadraticCurveTo(x + Math.sin(particle.phase) * 7 * scale, y, x, y + particle.length);
+    } else {
+      context.moveTo(x - particle.length, y);
+      context.quadraticCurveTo(x, y + Math.cos(particle.phase) * 6 * scale, x + particle.length, y);
+    }
+    context.stroke();
+  });
+}
+
+function animateReleaseEffects(timestamp, surface) {
+  if (!state.releaseInProgress || !els.releaseEffectsCanvas) return;
+  if (state.releaseStartedAt === null) state.releaseStartedAt = timestamp;
+  const progress = Math.min(1, (timestamp - state.releaseStartedAt) / releaseVisualDuration);
+  const context = els.releaseEffectsCanvas.getContext("2d");
+  if (!context) return;
+  const { width, height } = els.releaseEffectsCanvas;
+  context.clearRect(0, 0, width, height);
+  if (surface === "paper") drawPaperRelease(context, progress, width, height);
+  if (surface === "fan") drawFanRelease(context, progress, width, height);
+  if (surface === "cloth") drawClothRelease(context, progress, width, height);
+  if (progress < 1) {
+    state.releaseFrame = window.requestAnimationFrame((nextTimestamp) => animateReleaseEffects(nextTimestamp, surface));
+  } else {
+    state.releaseFrame = null;
+  }
+}
+
+function finishReleaseVisual({ announce = true } = {}) {
+  if (state.releaseTimer !== null) window.clearTimeout(state.releaseTimer);
+  if (state.releaseFrame !== null) window.cancelAnimationFrame(state.releaseFrame);
+  state.releaseTimer = null;
+  state.releaseFrame = null;
+  state.releaseStartedAt = null;
+  state.releaseParticles = [];
+  const wasInProgress = state.releaseInProgress;
+  state.releaseInProgress = false;
+  els.releaseVisual.hidden = true;
+  els.releaseCanvas.getContext("2d")?.clearRect(0, 0, els.releaseCanvas.width, els.releaseCanvas.height);
+  els.releaseEffectsCanvas?.getContext("2d")?.clearRect(0, 0, els.releaseEffectsCanvas.width, els.releaseEffectsCanvas.height);
+  els.releaseFanPanels?.replaceChildren();
+  delete els.canvasFrame.dataset.releaseSurface;
+  syncCanvasFrameState();
+  if (wasInProgress && announce && !state.hasMarks && state.stage === "writing") {
+    els.inkStatus.textContent = tr("releaseComplete");
+  }
+}
+
+function requestWritingRelease() {
+  if (!state.hasMarks) {
+    els.inkStatus.textContent = state.current && !hasStrokeGuide()
+      ? tr("pageOpen")
+      : tr("beginFirstTop");
+    return;
+  }
+  finishActiveStroke();
+  syncReleaseDialogCopy();
+  if (!els.releaseDialog.open) els.releaseDialog.showModal();
+}
+
+function confirmWritingRelease() {
+  if (!state.hasMarks) {
+    els.releaseDialog.close();
+    return;
+  }
+  const surface = state.surface;
+  const releaseSeed = (state.strokeCounter + 1) * 7919 + state.strokes.length * 101;
+  const hasSnapshot = snapshotTraceForRelease();
+  els.releaseDialog.close();
+  state.releaseInProgress = hasSnapshot;
+  els.releaseVisual.hidden = !hasSnapshot;
+  if (hasSnapshot) {
+    els.canvasFrame.dataset.releaseSurface = surface;
+    prepareReleaseParticles(surface, releaseSeed);
+  }
+  clearWriting();
+  if (!hasSnapshot) return;
+  els.inkStatus.textContent = tr("releaseInProgress");
+  const motionIsReduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  if (!motionIsReduced) {
+    state.releaseFrame = window.requestAnimationFrame((timestamp) => animateReleaseEffects(timestamp, surface));
+  }
+  state.releaseTimer = window.setTimeout(
+    () => finishReleaseVisual({ announce: true }),
+    motionIsReduced ? 0 : releaseVisualDuration
+  );
 }
 
 function clearWriting({ resetInputMode = false } = {}) {
@@ -2411,13 +3224,82 @@ function pauseWithMark({ allowPartial = false } = {}) {
   window.setTimeout(() => setStage("after"), motionIsReduced ? 0 : 1400);
 }
 
-function reviewContext() {
-  setStage("entering");
-  els.characterContext.open = true;
-  requestAnimationFrame(() => els.characterContext.querySelector("summary")?.focus({ preventScroll: true }));
+function inkActionTarget(target) {
+  const interactive = target instanceof Element
+    ? target.closest("button:not(:disabled), a[href], summary")
+    : null;
+  return interactive?.closest("#writing-canvas") ? null : interactive;
 }
 
+const siteCursorMedia = window.matchMedia?.("(hover: hover) and (pointer: fine)");
+
+function hideSiteInkCursor() {
+  document.documentElement.classList.remove("has-site-ink-cursor");
+  els.siteInkCursor?.classList.remove("is-visible", "is-over-action", "is-over-canvas", "is-pressing");
+}
+
+document.addEventListener("pointermove", (event) => {
+  if (!els.siteInkCursor || !siteCursorMedia?.matches || event.pointerType !== "mouse") {
+    hideSiteInkCursor();
+    return;
+  }
+  const target = event.target instanceof Element ? event.target : null;
+  const overCanvas = Boolean(target?.closest("#writing-canvas"));
+  const overAction = Boolean(target?.closest("button:not(:disabled), a[href], summary, textarea, input, label, [role='button']"));
+  els.siteInkCursor.style.left = `${event.clientX}px`;
+  els.siteInkCursor.style.top = `${event.clientY}px`;
+  els.siteInkCursor.classList.add("is-visible");
+  els.siteInkCursor.classList.toggle("is-over-action", overAction && !overCanvas);
+  els.siteInkCursor.classList.toggle("is-over-canvas", overCanvas);
+  document.documentElement.classList.add("has-site-ink-cursor");
+}, { passive: true });
+
+document.addEventListener("pointerdown", (event) => {
+  if (event.pointerType === "mouse") els.siteInkCursor?.classList.add("is-pressing");
+}, { passive: true });
+
+document.addEventListener("pointerup", () => {
+  els.siteInkCursor?.classList.remove("is-pressing");
+}, { passive: true });
+
+window.addEventListener("blur", hideSiteInkCursor);
+document.documentElement.addEventListener("mouseleave", hideSiteInkCursor);
+siteCursorMedia?.addEventListener?.("change", () => {
+  if (!siteCursorMedia.matches) hideSiteInkCursor();
+});
+
+function leaveInkActionMark(x, y, pressure = 0.48, pointerType = "mouse") {
+  if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+  const mark = document.createElement("span");
+  const penPressure = pointerType === "pen" && Number.isFinite(pressure) && pressure > 0
+    ? clamp(pressure, 0.16, 1)
+    : 0.48;
+  const size = 46 + penPressure * 42;
+  mark.className = "ink-action-mark";
+  mark.dataset.inkTemperament = document.body.dataset.scene || "threshold";
+  mark.style.setProperty("--ink-x", `${x}px`);
+  mark.style.setProperty("--ink-y", `${y}px`);
+  mark.style.setProperty("--ink-size", `${size}px`);
+  mark.style.setProperty("--ink-strength", String(0.42 + penPressure * 0.46));
+  mark.style.setProperty("--ink-fade", String(0.22 + penPressure * 0.28));
+  mark.style.setProperty("--ink-line", `${(0.8 + penPressure * 1.35).toFixed(2)}px`);
+  mark.style.setProperty("--ink-turn", `${(Math.random() * 18 - 9).toFixed(2)}deg`);
+  document.body.append(mark);
+  mark.addEventListener("animationend", () => mark.remove(), { once: true });
+  window.setTimeout(() => mark.remove(), 1100);
+}
+
+document.addEventListener("pointerdown", (event) => {
+  if (!inkActionTarget(event.target) || event.button > 0) return;
+  leaveInkActionMark(event.clientX, event.clientY, event.pressure, event.pointerType);
+}, { passive: true });
+
 document.addEventListener("click", (event) => {
+  const inkTarget = inkActionTarget(event.target);
+  if (inkTarget && event.detail === 0) {
+    const rect = inkTarget.getBoundingClientRect();
+    leaveInkActionMark(rect.left + rect.width / 2, rect.top + rect.height / 2, 0.48, "keyboard");
+  }
   const action = event.target.closest("[data-action]")?.dataset.action;
   if (action === "toggle-language") setLanguage(state.language === "en" ? "zh" : "en");
   if (action === "enter-threshold" || action === "skip-threshold") {
@@ -2437,13 +3319,14 @@ document.addEventListener("click", (event) => {
   if (action === "begin") setStage("writing");
   if (action === "change") showPicker();
   if (action === "close-picker") hidePicker();
-  if (action === "clear") clearWriting();
+  if (action === "clear") requestWritingRelease();
+  if (action === "cancel-release") els.releaseDialog.close();
+  if (action === "confirm-release") confirmWritingRelease();
   if (action === "toggle-input-mode") toggleInputMode();
   if (action === "attend-form") attendToNextForm();
   if (action === "pause") pauseWithMark();
   if (action === "pause-partial") pauseWithMark({ allowPartial: true });
   if (action === "archive") setStage("archive");
-  if (action === "review-context") reviewContext();
   if (action === "return-writing") { clearWriting(); setStage("writing"); }
   if (action === "download") archiveImage();
   if (action === "start-over") { clearWriting({ resetInputMode: true }); setStage("home"); }
@@ -2480,6 +3363,7 @@ els.canvasFrame.addEventListener("selectstart", (event) => event.preventDefault(
 els.canvasFrame.addEventListener("dragstart", (event) => event.preventDefault());
 window.addEventListener("resize", () => {
   if (state.stage !== "writing") return;
+  finishReleaseVisual({ announce: false });
   finishActiveStroke({ taper: false, releaseCapture: false });
   updateBrushCursor();
   setupWritingCanvases();

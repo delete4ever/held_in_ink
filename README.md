@@ -16,15 +16,16 @@ A static, single-page design prototype for an English-language graduation thesis
 ## Interaction and ethical framing
 
 - A first-visit narrative threshold positions the visitor as a temporary carrier rather than a spokesperson, owner, or traveller with direct access to the past. It can be skipped and revisited without interrupting later returns to the four encounters.
-- The threshold previews the care loop as receive, attend, carry, and return, while naming the fictional-composite and documentary boundaries before role-play begins.
+- The threshold previews the care loop in concrete visitor actions: enter a story and receive its line, trace each form, send the line onward, then revisit what is imagined and documented. The four short labels remain receive, attend, carry, and return for the conceptual framework used in the thesis.
 - English and Simplified Chinese versions share the same evidence states, source URLs, Nüshu forms, completion logic, and care loop. Language can be changed at any stage without discarding the visitor's current trace.
 
 - The drawing path asks for an attempt in every form region before its primary send action becomes available. It does not score visual correctness. A secondary partial-trace route remains available and keeps that incompleteness visible at Arrival.
 - Narrative lines unfold at character-settlement pauses rather than according to total pointer distance. This ties story progression to attentive completion without claiming to measure understanding or care.
+- Restarting is framed as a confirmable act of release rather than an eraser. A lightweight local particle layer now derives ash, ember, dust, and loose-thread movement from the visitor's actual trace; the paper chars and disperses, the fan gathers panel by panel, and cloth unweaves strand by strand. These remain interpretive interface gestures, not reconstructed historical correction practices. No external texture or particle download is required. The trace data clears immediately after confirmation, while the non-blocking visual remnant can be interrupted by writing again and is removed entirely for reduced-motion preferences.
 - A keyboard-paced pathway offers one deliberate activation per form. It records a small rhythm-sensitive attention trace and labels that trace separately from handwriting; it does not generate a counterfeit Nüshu hand.
 - Arrival presents the personal trace before the standardized line, names the boundary between fiction and documentary evidence again, and offers private reflection prompts before archival action.
 - The archive is described as a personal record of encounter, not a heritage object. Reflection text remains in the current page only and is not included in the downloaded image.
-- The care loop can return from Arrival to the expanded source context, keeping interpretation answerable to documentation rather than ending with possession of an image.
+- Documentary disclosure and contextual return are intentionally separated. Before writing, a compact disclosure states the evidence status and reference boundary without front-loading the full bibliography. After Arrival, an in-place Return section distinguishes the fictional composite from the documented material and restores the contextual note and complete source list before the archive actions. This keeps interpretation answerable to documentation without making Return feel like backward navigation.
 
 ## File structure
 

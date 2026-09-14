@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 405">
+  <defs>
+    <filter id="fibres" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency=".035 .62" numOctaves="2" seed="8"/>
+      <feColorMatrix values="0 0 0 0 .23 0 0 0 0 .19 0 0 0 0 .15 0 0 0 .12 0"/>
+    </filter>
+    <radialGradient id="stain">
+      <stop stop-color="#87684F" stop-opacity=".15"/><stop offset="1" stop-color="#87684F" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="390" height="405" fill="#5C4A39" opacity=".16" filter="url(#fibres)"/>
+  <g stroke="#765E4C" fill="none">
+    <path d="M11 112C99 108 191 116 378 110" stroke-width=".65" opacity=".28"/>
+    <path d="M9 116C123 112 238 120 381 114" stroke-width=".28" opacity=".18"/>
+    <path d="M214 7C210 98 217 205 212 398" stroke-width=".55" opacity=".2"/>
+    <path d="M219 5C216 118 223 252 218 399" stroke-width=".26" opacity=".14"/>
+    <path d="M286 30L286 370M321 28L321 372M356 25L356 375" stroke-width=".42" opacity=".24"/>
+  </g>
+  <ellipse cx="342" cy="69" rx="56" ry="48" fill="url(#stain)"/>
+  <ellipse cx="84" cy="350" rx="72" ry="46" fill="url(#stain)" opacity=".55"/>
+  <path d="M24 398C91 390 149 398 210 393C275 388 329 397 377 390" fill="none" stroke="#765E4C" stroke-width=".8" opacity=".2"/>
+</svg>
