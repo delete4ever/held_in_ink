@@ -509,7 +509,7 @@ body[data-scene="invocation"] .scene-sequence li { grid-template-columns: 1fr; }
 body[data-scene="invocation"] .scene-sequence li::before { display: block; margin-bottom: 2px; }
 .canvas-frame.is-unguided { border-color: color-mix(in srgb, var(--rust) 38%, transparent); }
 .canvas-frame.is-unguided::after { content: "UNGUIDED RESPONSE · NÜSHU FORM WITHHELD"; position: absolute; z-index: 2; top: 13px; left: 15px; color: var(--rust); font: 650 10px/1 var(--sans); letter-spacing: .11em; pointer-events: none; }
-html[lang="zh-Hans"] .canvas-frame.is-unguided::after { content: "开放书写 · 暂不提供女书字形"; }
+html[lang="zh-Hans"] .canvas-frame.is-unguided::after { content: "自由书写 · 不显示女书字帖"; }
 .prompt-list { grid-template-columns: repeat(4, 1fr); }
 .prompt-option { border-top: 3px solid var(--rust); }
 .prompt-option-crossing { --rust: #3f6877; }
